@@ -1,0 +1,143 @@
+spring:
+  application:
+    name: demo
+  main:
+    banner-mode: off
+  # Datasource Configuration
+  datasource:
+    url: jdbc:h2:mem:devdb;INIT=CREATE SCHEMA IF NOT EXISTS app
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  # H2 Console (desenvolvimento)
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: always
+  # JPA Configuration
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+
+external:
+  authorization:
+    url: https://util.devi.tools/api/v2
+  notification:
+    url: https://util.devi.tools/api/v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # ← Expõe TODOS os endpoints (dev only)
+  endpoint:
+    health:
+      show-details: always  # ← Mostra detalhes sempre
+
+  health:
+    circuitbreakers:
+      enabled: true  # ← Habilita health dos CBs
+
+
+# Resilience4j - Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - java.lang.Exception
+#        ignoreExceptions:
+#          - com.example.simplepay.domain.exception.FieldValidationException
+
+    instances:
+      # Authorization Service - Mais restritivo (crítico)
+      authorizationService:
+        baseConfig: default
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50  # 50% de falhas abre o circuito
+        slowCallDurationThreshold: 5s
+        slowCallRateThreshold: 50
+
+      # Notification Service - Mais permissivo (não crítico)
+      notificationService:
+        baseConfig: default
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 60s
+        failureRateThreshold: 70  # 70% de falhas abre o circuito
+        slowCallDurationThreshold: 10s
+        slowCallRateThreshold: 70
+
+  # Retry Configuration
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.lang.Exception
+#        ignoreExceptions:
+#          - com.example.simplepay.domain.exception.FieldValidationException
+
+    instances:
+      # Authorization Service - Menos tentativas (crítico)
+      authorizationService:
+        maxAttempts: 2
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.RestClientException
+          - com.example.demo.domain.exception.AppException
+
+      # Notification Service - Mais tentativas (não crítico)
+      notificationService:
+        maxAttempts: 3
+        waitDuration: 2s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.RestClientException
+          - com.example.demo.domain.exception.AppException
+
+  # Time Limiter Configuration (opcional)
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
+    instances:
+      authorizationService:
+        timeoutDuration: 5s
+      notificationService:
+        timeoutDuration: 10s
+
+  # Bulkhead Configuration (opcional - para limitar concorrência)
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 100ms
+    instances:
+      authorizationService:
+        maxConcurrentCalls: 5
+      notificationService:
+        maxConcurrentCalls: 10

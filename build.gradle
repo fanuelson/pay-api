@@ -1,0 +1,74 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// STARTER
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+
+	// DB
+	implementation 'org.springframework.boot:spring-boot-h2console'
+
+	// Resilience4j - Circuit Breaker + Retry
+	implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-circuitbreaker:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-timelimiter:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-bulkhead:2.2.0")
+
+	// Kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
+	// Redis
+	implementation("org.redisson:redisson:3.35.0")  // ← Mudança aqui
+
+	// Mapper
+	implementation 'org.mapstruct:mapstruct:1.6.3'
+	compileOnly 'org.projectlombok:lombok'
+
+	// DB
+	runtimeOnly 'com.h2database:h2'
+
+	// PROCESSORS
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+	// Kafka
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+
+	// TEST
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
