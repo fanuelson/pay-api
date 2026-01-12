@@ -16,6 +16,10 @@ public class ValidationError {
     return new ValidationError(code, message, field, value);
   }
 
+  public static ValidationError of(String code, String message, String field) {
+    return new ValidationError(code, message, field, null);
+  }
+
   public static ValidationError of(String code, String message) {
     return new ValidationError(code, message, null, null);
   }

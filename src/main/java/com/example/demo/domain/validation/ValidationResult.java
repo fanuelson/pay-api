@@ -16,23 +16,18 @@ public class ValidationResult {
     return new ValidationResult(true, List.of());
   }
 
-  public static ValidationResult invalid(String field, String message) {
-    return new ValidationResult(
-            false,
-            List.of(ValidationError.of(field, message))
-    );
+  public static ValidationResult invalid(String code, String message) {
+    return new ValidationResult(false, List.of(ValidationError.of(code, message)));
+  }
+
+  public static ValidationResult invalid(String code, String message, String field) {
+    return new ValidationResult(false, List.of(ValidationError.of(code, field, message)));
   }
 
   public static ValidationResult invalid(
-          String code,
-          String message,
-          String field,
-          Object value
+    String code, String message, String field, Object value
   ) {
-    return new ValidationResult(
-            false,
-            List.of(ValidationError.of(code, message, field, value))
-    );
+    return new ValidationResult(false, List.of(ValidationError.of(code, message, field, value)));
   }
 
   public static ValidationResult invalid(List<ValidationError> errors) {
