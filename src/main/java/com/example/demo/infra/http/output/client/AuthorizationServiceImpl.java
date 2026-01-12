@@ -1,9 +1,9 @@
-package com.example.demo.infra.http.client;
+package com.example.demo.infra.http.output.client;
 
 import com.example.demo.domain.exception.AppException;
 import com.example.demo.domain.model.AuthorizationResponse;
 import com.example.demo.domain.port.service.AuthorizationService;
-import com.example.demo.infra.http.resource.AuthorizationResponseDTO;
+import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;

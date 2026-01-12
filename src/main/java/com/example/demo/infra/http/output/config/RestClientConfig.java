@@ -1,4 +1,4 @@
-package com.example.demo.infra.http.config;
+package com.example.demo.infra.http.output.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

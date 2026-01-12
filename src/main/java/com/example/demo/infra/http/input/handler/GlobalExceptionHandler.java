@@ -1,4 +1,4 @@
-package com.example.demo.infra.controller.handler;
+package com.example.demo.infra.http.input.handler;
 
 import com.example.demo.domain.exception.BusinessValidationException;
 import org.slf4j.Logger;
