@@ -1,6 +1,8 @@
 package com.example.demo.infra.messaging.listener;
 
+import com.example.demo.application.port.in.ExecuteTransferCommand;
 import com.example.demo.application.port.out.event.TransferEvent;
+import com.example.demo.application.usecase.ExecuteTransferUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransferEventListener {
 
+  private final ExecuteTransferUseCase executeTransferUseCase;
+
   @KafkaListener(
     topics = "${kafka.topics.transfer-events}",
     containerFactory = "transferListenerContainerFactory"
@@ -25,21 +29,14 @@ public class TransferEventListener {
     @Header(KafkaHeaders.OFFSET) long offset,
     Acknowledgment ack
   ) {
-    log.info("Received TransferEvent: transactionId={}, status={}, partition={}, offset={}",
-      event.transactionId(), event.status(), partition, offset);
+    log.info("Received TransferEvent: transactionId={}, partition={}, offset={}",
+      event.transactionId(), partition, offset);
 
     try {
-      processTransferEvent(event);
+      executeTransferUseCase.execute(new ExecuteTransferCommand(event.transactionId()));
       ack.acknowledge();
-      log.debug("TransferEvent processed successfully: transactionId={}", event.transactionId());
     } catch (Exception e) {
       log.error("Error processing TransferEvent: transactionId={}", event.transactionId(), e);
-      // Não faz ack - mensagem será reprocessada
     }
-  }
-
-  private void processTransferEvent(TransferEvent event) {
-    // TODO: Implementar lógica de processamento
-    // Exemplo: atualizar status da transação, notificar sistemas externos, etc.
   }
 }

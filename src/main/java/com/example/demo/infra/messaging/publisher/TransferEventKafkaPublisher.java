@@ -24,7 +24,7 @@ public class TransferEventKafkaPublisher implements TransferEventPublisher {
   public void publish(TransferEvent event) {
     log.info("Publishing TransferEvent: transactionId={}, status={}", event.transactionId(), event.status());
 
-    kafkaTemplate.send(topic, event.transactionId(), event)
+    kafkaTemplate.send(topic, String.valueOf(event.payerId()), event)
       .whenComplete((result, ex) -> {
         if (ex != null) {
           log.error("Failed to publish: transactionId={}", event.transactionId(), ex);
