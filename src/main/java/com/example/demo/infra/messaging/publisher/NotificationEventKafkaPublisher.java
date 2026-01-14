@@ -1,7 +1,7 @@
 package com.example.demo.infra.messaging.publisher;
 
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
-import com.example.demo.domain.model.NotificationEvent;
+import com.example.demo.application.port.out.event.NotificationEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

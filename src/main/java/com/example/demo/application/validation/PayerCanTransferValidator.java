@@ -1,10 +1,6 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.domain.model.TransferContext;
 import com.example.demo.domain.model.UserType;
-import com.example.demo.domain.validation.TransferValidator;
-import com.example.demo.domain.validation.ValidationError;
-import com.example.demo.domain.validation.ValidationResult;
 import org.springframework.stereotype.Component;
 
 @Component

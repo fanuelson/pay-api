@@ -1,4 +1,4 @@
-package com.example.demo.domain.validation;
+package com.example.demo.application.validation;
 
 
 public interface Validator<C> {

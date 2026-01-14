@@ -1,6 +1,6 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.domain.model.AuthorizationResponse;
+import com.example.demo.application.port.out.service.AuthorizationResponse;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.infra.http.output.exception.AuthorizationException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;

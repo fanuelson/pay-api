@@ -1,5 +1,7 @@
-package com.example.demo.domain.model;
+package com.example.demo.application.validation;
 
+import com.example.demo.domain.model.User;
+import com.example.demo.domain.model.Wallet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

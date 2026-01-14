@@ -1,4 +1,4 @@
-package com.example.demo.domain.model;
+package com.example.demo.application.port.out.event;
 
 import java.time.LocalDateTime;
 

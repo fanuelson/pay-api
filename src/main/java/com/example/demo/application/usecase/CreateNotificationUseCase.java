@@ -2,7 +2,7 @@ package com.example.demo.application.usecase;
 
 import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.model.NotificationEvent;
+import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.NotificationRepository;
 import com.example.demo.domain.repository.UserRepository;

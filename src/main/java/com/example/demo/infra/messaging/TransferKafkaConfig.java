@@ -1,6 +1,6 @@
 package com.example.demo.infra.messaging;
 
-import com.example.demo.domain.model.TransferEvent;
+import com.example.demo.application.port.out.event.TransferEvent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;

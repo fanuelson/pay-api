@@ -1,4 +1,4 @@
-package com.example.demo.domain.validation;
+package com.example.demo.application.validation;
 
 public record ValidationError(String code, String message, String field, Object value) {
 

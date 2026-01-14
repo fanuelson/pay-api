@@ -1,6 +1,6 @@
 package com.example.demo.infra.messaging.listener;
 
-import com.example.demo.domain.model.TransferEvent;
+import com.example.demo.application.port.out.event.TransferEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
