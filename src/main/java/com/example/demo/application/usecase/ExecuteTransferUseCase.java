@@ -19,6 +19,7 @@ public class ExecuteTransferUseCase {
   private final AuthorizeStep authorizeStep;
   private final CreditStep creditStep;
   private final CompleteStep completeStep;
+  private final NotifyStep notifyStep;
 
   public void execute(ExecuteTransferCommand command) {
     var context = TransferSagaContext.builder()
@@ -31,7 +32,8 @@ public class ExecuteTransferUseCase {
         reserveBalanceStep,
         authorizeStep,
         creditStep,
-        completeStep
+        completeStep,
+        notifyStep
     ));
 
     saga.execute(context);

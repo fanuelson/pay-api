@@ -36,7 +36,6 @@ public class SendNotificationUseCase {
 
   private void send(Notification notification) {
     try {
-      throwing();
       final var user = userRepository
         .findById(notification.getRecipientId())
         .orElse(null);
