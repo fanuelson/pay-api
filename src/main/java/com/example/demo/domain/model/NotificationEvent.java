@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class NotificationEvent {
 
@@ -15,4 +15,5 @@ public class NotificationEvent {
   public static NotificationEvent of(final Long notificationId) {
     return new NotificationEvent(notificationId, LocalDateTime.now());
   }
+
 }

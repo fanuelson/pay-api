@@ -6,4 +6,7 @@ public class ElementNotFoundException extends DomainException {
     super(message);
   }
 
+  public static ElementNotFoundException of(String element, Object id) {
+    return new ElementNotFoundException("%s not found with id: %s".formatted(element, String.valueOf(id)));
+  }
 }

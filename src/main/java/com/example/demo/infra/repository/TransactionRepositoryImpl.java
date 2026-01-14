@@ -2,7 +2,7 @@ package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Transaction;
-import com.example.demo.domain.port.repository.TransactionRepository;
+import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.infra.repository.jpa.TransactionJpaRepository;
 import com.example.demo.infra.repository.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;

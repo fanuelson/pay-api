@@ -2,7 +2,7 @@ package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Wallet;
-import com.example.demo.domain.port.repository.WalletRepository;
+import com.example.demo.domain.repository.WalletRepository;
 import com.example.demo.infra.repository.jpa.WalletJpaRepository;
 import com.example.demo.infra.repository.mapper.WalletMapper;
 import lombok.RequiredArgsConstructor;

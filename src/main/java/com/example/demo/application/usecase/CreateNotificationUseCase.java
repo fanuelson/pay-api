@@ -1,22 +1,27 @@
 package com.example.demo.application.usecase;
 
+import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.model.NotificationEvent;
-import com.example.demo.domain.port.event.NotificationEventPublisher;
-import com.example.demo.domain.port.repository.NotificationRepository;
-import com.example.demo.domain.port.repository.UserRepository;
+import com.example.demo.application.port.out.NotificationEventPublisher;
+import com.example.demo.domain.repository.NotificationRepository;
+import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SendTransferNotificationUseCase {
+public class CreateNotificationUseCase {
 
   private final UserRepository userRepository;
   private final NotificationRepository notificationRepository;
   private final NotificationEventPublisher notificationEventPublisher;
 
-  public void execute(final String transactionId, final Long userId, final String msg) {
+  public void execute(final CreateNotificationCommand command) {
+    final var userId = command.getUserId();
+    final var transactionId = command.getTransactionId();
+    final var msg = command.getMsg();
+
     final var user = userRepository.findById(userId).orElseThrow();
 
     user.getEnabledNotificationChannels()

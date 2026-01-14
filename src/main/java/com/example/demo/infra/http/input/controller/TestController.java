@@ -1,13 +1,14 @@
 package com.example.demo.infra.http.input.controller;
 
-import com.example.demo.application.usecase.SendTransferNotificationUseCase;
+import com.example.demo.application.port.in.CreateNotificationCommand;
+import com.example.demo.application.usecase.CreateNotificationUseCase;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
-import com.example.demo.domain.port.event.NotificationEventPublisher;
-import com.example.demo.domain.port.repository.TransactionRepository;
-import com.example.demo.domain.port.service.AuthorizationService;
-import com.example.demo.domain.port.service.LockService;
-import com.example.demo.domain.port.service.NotificationService;
+import com.example.demo.application.port.out.NotificationEventPublisher;
+import com.example.demo.domain.repository.TransactionRepository;
+import com.example.demo.application.port.out.service.AuthorizationService;
+import com.example.demo.application.port.out.service.LockService;
+import com.example.demo.application.port.out.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ public class TestController {
   private final LockService lockService;
 
   private final TransactionRepository transactionRepository;
-  private final SendTransferNotificationUseCase sendTransferNotificationUseCase;
+  private final CreateNotificationUseCase createNotificationUseCase;
   private final NotificationEventPublisher notificationEventPublisher;
 
   @GetMapping("/authorize")
@@ -77,7 +78,7 @@ public class TestController {
         .status(TransactionStatus.PENDING)
         .build()
     );
-    sendTransferNotificationUseCase.execute(t.getId(), 2L, "heeey");
+    createNotificationUseCase.execute(CreateNotificationCommand.of(t.getId(), 2L, "heeey"));
     return "ok";
   }
 

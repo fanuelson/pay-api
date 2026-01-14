@@ -2,7 +2,7 @@ package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.port.repository.NotificationRepository;
+import com.example.demo.domain.repository.NotificationRepository;
 import com.example.demo.infra.repository.mapper.NotificationMapper;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +33,12 @@ public class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @Override
-  public Notification update(Long id, Notification notification) {
-    return repository.findById(id)
+  public Notification update(Notification notification) {
+    return repository.findById(notification.getId())
       .map(mapper.updateFrom(notification))
       .map(repository::save)
       .map(mapper::toDomain)
-      .orElseThrow(() -> {
-        log.error("Notification not found for update: {}", id);
-        return new ElementNotFoundException("Notification with ID=[" + id + "] not found");
-      });
+      .orElseThrow(() -> ElementNotFoundException.of("Notification", notification.getId()));
   }
 
   @Override

@@ -1,6 +1,6 @@
 package com.example.demo.infra.cache;
 
-import com.example.demo.domain.port.service.LockService;
+import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.infra.cache.exception.LockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

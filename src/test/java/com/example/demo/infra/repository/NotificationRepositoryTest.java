@@ -59,7 +59,7 @@ public class NotificationRepositoryTest {
   void shouldExecuteUpdateAndThrowError() {
     ElementNotFoundException ex = assertThrows(
       ElementNotFoundException.class,
-      () -> repository.update(1L, Notification.builder().build())
+      () -> repository.update(Notification.builder().id(1L).build())
     );
 
     assertNotNull(ex);
@@ -101,7 +101,7 @@ public class NotificationRepositoryTest {
     repository.save(createPendingNotification());
 
     //ACT
-    final var result = repository.update(1L, createSentNotification());
+    final var result = repository.update(createSentNotification().withId(1L));
 
     //ASSERT
     assertNotNull(result);

@@ -1,6 +1,6 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.domain.port.service.NotificationService;
+import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.infra.exception.InfraException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

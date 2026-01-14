@@ -1,17 +1,19 @@
 package com.example.demo.infra.messaging.publisher;
 
 import com.example.demo.domain.model.NotificationEvent;
-import com.example.demo.domain.port.event.NotificationEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
-public class NotificationEventKafkaPublisher implements NotificationEventPublisher {
+public class NotificationEventPublisher implements com.example.demo.application.port.out.NotificationEventPublisher {
 
   @Autowired
   @Qualifier("notificationKafkaTemplate")
@@ -26,13 +28,15 @@ public class NotificationEventKafkaPublisher implements NotificationEventPublish
     log.info("Publishing NotificationEvent: notificationId={}", notificationId);
 
     kafkaTemplate.send(topic, notificationId.toString(), event)
-      .whenComplete((result, ex) -> {
-        if (ex != null) {
-          log.error("Failed to publish: notificationId={}", notificationId, ex);
-        } else {
-          log.debug("Published: notificationId={}, partition={}, offset={}",
-            notificationId, result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
-        }
-      });
+      .whenComplete((result, ex) -> handleComplete(notificationId, result, ex));
+  }
+
+  private void handleComplete(Long notificationId, SendResult<String, NotificationEvent> result, Throwable ex) {
+    if (nonNull(ex)) {
+      log.error("Failed to publish: notificationId={}", notificationId, ex);
+    } else {
+      log.debug("Published: notificationId={}, partition={}, offset={}",
+        notificationId, result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
+    }
   }
 }

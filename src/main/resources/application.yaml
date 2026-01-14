@@ -47,14 +47,6 @@ kafka:
   topics:
     transfer-events: transfer-events
     notification-events: notification-events
-  dlt:
-    topic: notification-events-dlt
-    retry:
-      max-attempts: 3
-      backoff-ms: 5000
-    dlt-retry:
-      max-attempts: 5
-      backoff-ms: 10000
 
 external:
   authorization:

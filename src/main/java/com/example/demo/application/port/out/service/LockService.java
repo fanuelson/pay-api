@@ -1,4 +1,4 @@
-package com.example.demo.domain.port.service;
+package com.example.demo.application.port.out.service;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;

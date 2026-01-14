@@ -54,6 +54,14 @@ public class Notification {
       .build();
   }
 
+  public boolean is(NotificationStatus status) {
+    return status.equals(this.status);
+  }
+
+  public boolean isNot(NotificationStatus status) {
+    return !status.equals(this.status);
+  }
+
   public void incrementAttempts() {
     this.attempts++;
   }

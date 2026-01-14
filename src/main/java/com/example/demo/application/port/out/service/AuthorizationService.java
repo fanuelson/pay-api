@@ -1,4 +1,4 @@
-package com.example.demo.domain.port.service;
+package com.example.demo.application.port.out.service;
 
 
 import com.example.demo.domain.model.AuthorizationResponse;

@@ -1,4 +1,4 @@
-package com.example.demo.domain.port.repository;
+package com.example.demo.domain.repository;
 
 import com.example.demo.domain.model.Wallet;
 
