@@ -113,7 +113,7 @@ class RedisLockServiceIntegrationTest {
       lockService.withLock(lockKey, 1, 10, TimeUnit.SECONDS, () -> "should not execute")
     );
 
-    assertTrue(exception.getMessage().contains("Failed to acquire lock"), exception.getMessage());
+    assertTrue(exception.getMessage().contains("already acquired"), exception.getMessage());
 
     testComplete.countDown();
     executor.shutdown();

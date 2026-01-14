@@ -3,6 +3,7 @@ package com.example.demo.infra.http.input.handler;
 import com.example.demo.domain.exception.BusinessValidationException;
 import com.example.demo.domain.exception.DuplicateElementException;
 import com.example.demo.domain.exception.ElementNotFoundException;
+import com.example.demo.infra.exception.InfraException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+  @ExceptionHandler(InfraException.class)
+  public ResponseEntity<ErrorResponse> handleException(InfraException ex) {
+    final var status = HttpStatus.INTERNAL_SERVER_ERROR;
+    final var res = ErrorResponse.of(status.toString(), ex.getClass().getName(), ex.getMessage());
+    return ResponseEntity.status(status.value()).body(res);
+  }
 
   @ExceptionHandler(ElementNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleElementNotFound(ElementNotFoundException ex) {

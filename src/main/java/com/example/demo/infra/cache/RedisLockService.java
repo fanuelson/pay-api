@@ -1,7 +1,7 @@
 package com.example.demo.infra.cache;
 
 import com.example.demo.domain.port.service.LockService;
-import com.example.demo.infra.exception.InfraException;
+import com.example.demo.infra.cache.exception.LockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -82,13 +82,12 @@ public class RedisLockService implements LockService {
     Supplier<T> block
   ) {
     logDebug("Executing with lock", key);
-    final RLock lock = getLock(key);
-
     try {
+      final RLock lock = getLock(key);
       boolean acquired = lock.tryLock(waitTime, leaseTime, unit);
 
       if (!acquired) {
-        throw new InfraException("Failed to acquire lock, lock key: " + key);
+        throw LockException.alreadyAcquired(key);
       }
 
       try {
@@ -105,10 +104,10 @@ public class RedisLockService implements LockService {
     } catch (InterruptedException e) {
       logError("Interrupted while executing", key, e);
       Thread.currentThread().interrupt();
-      throw new InfraException("Lock interrupted while executing, key: " + mountKey(key));
+      throw LockException.interrupted(key);
     } catch (Exception e) {
       logError("Error", key, e);
-      throw new InfraException("Error: " + e.getMessage(), e);
+      throw LockException.of("Error: " + e.getMessage(), e);
     }
   }
 

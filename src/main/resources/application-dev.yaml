@@ -1,0 +1,7 @@
+logging:
+  level:
+    root: WARN
+    com.example.demo: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    io.github.resilience4j: DEBUG

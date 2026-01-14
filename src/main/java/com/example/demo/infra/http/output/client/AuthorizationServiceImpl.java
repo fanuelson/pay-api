@@ -2,7 +2,7 @@ package com.example.demo.infra.http.output.client;
 
 import com.example.demo.domain.model.AuthorizationResponse;
 import com.example.demo.domain.port.service.AuthorizationService;
-import com.example.demo.infra.exception.InfraException;
+import com.example.demo.infra.http.output.exception.AuthorizationException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -37,10 +37,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
       if (nonNull(response) && response.isAuthorized()) {
         return AuthorizationResponse.authorized(generateAuthorizationCode());
       }
-      return AuthorizationResponse.denied("Authorization service denied the transfer");
+      return AuthorizationResponse.denied();
     } catch (Exception ex) {
       log.error("Error authorizing transfer", ex);
-      throw new InfraException("Authorization failed: " + ex.getMessage());
+      throw AuthorizationException.of(ex);
     }
   }
 
@@ -48,7 +48,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     Long payerId, Long payeeId, Long amountInCents, Exception ex
   ) {
     log.error("Circuit breaker activated for authorization service", ex);
-    return AuthorizationResponse.denied("Authorization service is temporarily unavailable");
+    return AuthorizationResponse.unavailable();
   }
 
   private String generateAuthorizationCode() {
