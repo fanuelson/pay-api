@@ -26,7 +26,35 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 6000ms
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: simplepay-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      isolation-level: read_committed
+    producer:
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+    listener:
+      concurrency: 3
+      ack-mode: manual
 
+
+kafka:
+  topics:
+    transfer-events: transfer-events
+    notification-events: notification-events
+  dlt:
+    topic: notification-events-dlt
+    retry:
+      max-attempts: 3
+      backoff-ms: 5000
+    dlt-retry:
+      max-attempts: 5
+      backoff-ms: 10000
 
 external:
   authorization:

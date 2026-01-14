@@ -19,8 +19,8 @@ INSERT INTO users (id, full_name, document, email, user_type, created_at, update
 VALUES (4, 'Pedro Oliveira', '11122233344', 'pedro.oliveira@email.com', 'COMMON', NOW(), NOW());
 
 -- Usuário COMMON destino 2
-INSERT INTO users (id, full_name, document, email, user_type, created_at, updated_at)
-VALUES (5, 'Ana Costa', '55566677788', 'ana.costa@email.com', 'COMMON', NOW(), NOW());
+INSERT INTO users (id, full_name, document, email, user_type, enabled_notification_channels, created_at, updated_at)
+VALUES (5, 'Ana Costa', '55566677788', 'ana.costa@email.com', 'COMMON', 'EMAIL;SMS;FACEBOOK', NOW(), NOW());
 
 -- ==================================================
 -- CARTEIRAS

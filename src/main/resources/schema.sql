@@ -5,6 +5,7 @@ CREATE TABLE users
     full_name  VARCHAR(255) NOT NULL,
     document   VARCHAR(14)  NOT NULL UNIQUE,
     email      VARCHAR(255) NOT NULL UNIQUE,
+    enabled_notification_channels VARCHAR(255) NOT NULL DEFAULT 'EMAIL',
     user_type  VARCHAR(20)  NOT NULL,
     created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -63,8 +64,9 @@ CREATE TABLE notifications
     id             BIGINT AUTO_INCREMENT PRIMARY KEY,
     transaction_id VARCHAR(36) NOT NULL,
     recipient_id   BIGINT      NOT NULL,
-    type           VARCHAR(20) NOT NULL,
+    channel        VARCHAR(50) NOT NULL,
     status         VARCHAR(20) NOT NULL,
+    message        TEXT,
     attempts       INT         NOT NULL DEFAULT 0,
     max_attempts   INT         NOT NULL DEFAULT 3,
     error_message  TEXT,
@@ -73,7 +75,6 @@ CREATE TABLE notifications
 
     CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
     CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id),
-    CONSTRAINT chk_notification_type CHECK (type IN ('EMAIL', 'SMS')),
     CONSTRAINT chk_notification_status CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
 );
 

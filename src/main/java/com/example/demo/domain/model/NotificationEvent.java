@@ -1,20 +1,18 @@
 package com.example.demo.domain.model;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Value
-@Builder
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class NotificationEvent {
 
-  String transactionId;
-  Long recipientId;
-  String recipientEmail;
-  String message;
-  NotificationStatus type;
+  private Long notificationId;
+  private LocalDateTime timestamp;
 
-  @Builder.Default
-  LocalDateTime timestamp = LocalDateTime.now();
+  public static NotificationEvent of(final Long notificationId) {
+    return new NotificationEvent(notificationId, LocalDateTime.now());
+  }
 }

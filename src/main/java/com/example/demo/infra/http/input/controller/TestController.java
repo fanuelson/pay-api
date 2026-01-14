@@ -1,5 +1,10 @@
 package com.example.demo.infra.http.input.controller;
 
+import com.example.demo.application.usecase.SendTransferNotificationUseCase;
+import com.example.demo.domain.model.Transaction;
+import com.example.demo.domain.model.TransactionStatus;
+import com.example.demo.domain.port.event.NotificationEventPublisher;
+import com.example.demo.domain.port.repository.TransactionRepository;
 import com.example.demo.domain.port.service.AuthorizationService;
 import com.example.demo.domain.port.service.LockService;
 import com.example.demo.domain.port.service.NotificationService;
@@ -24,6 +29,10 @@ public class TestController {
   private final AuthorizationService authorizationService;
   private final NotificationService notificationService;
   private final LockService lockService;
+
+  private final TransactionRepository transactionRepository;
+  private final SendTransferNotificationUseCase sendTransferNotificationUseCase;
+  private final NotificationEventPublisher notificationEventPublisher;
 
   @GetMapping("/authorize")
   public Map<String, Object> authorize() {
@@ -55,6 +64,21 @@ public class TestController {
     } catch (Exception e) {
       return e.getMessage();
     }
+  }
+
+  @GetMapping("notify-event/{transactionId}")
+  public String notifyEvent(@PathVariable String transactionId) {
+    final var t = transactionRepository.save(
+      Transaction.builder()
+        .id(transactionId)
+        .payerId(1L)
+        .payeeId(2L)
+        .amountInCents(200L)
+        .status(TransactionStatus.PENDING)
+        .build()
+    );
+    sendTransferNotificationUseCase.execute(t.getId(), 2L, "heeey");
+    return "ok";
   }
 
 }

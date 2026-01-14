@@ -3,7 +3,7 @@ package com.example.demo.infra.repository;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.model.NotificationStatus;
-import com.example.demo.domain.model.NotificationType;
+import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.jpa.config.JpaConfig;
 import com.example.demo.infra.repository.mapper.NotificationMapperImpl;
@@ -120,7 +120,7 @@ public class NotificationRepositoryTest {
     return Notification.builder()
       .transactionId("t1")
       .recipientId(10L)
-      .type(NotificationType.EMAIL)
+      .channel(NotificationChannel.EMAIL)
       .status(status)
       .build();
   }

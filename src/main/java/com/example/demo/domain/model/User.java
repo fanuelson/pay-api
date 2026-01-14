@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
@@ -18,6 +19,7 @@ public class User {
     private String document;     // CPF ou CNPJ
     private String email;
     private UserType type;
+    private Set<NotificationChannel> enabledNotificationChannels;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

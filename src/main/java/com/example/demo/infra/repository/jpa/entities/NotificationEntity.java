@@ -1,7 +1,7 @@
 package com.example.demo.infra.repository.jpa.entities;
 
 import com.example.demo.domain.model.NotificationStatus;
-import com.example.demo.domain.model.NotificationType;
+import com.example.demo.domain.model.NotificationChannel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,12 +39,15 @@ public class NotificationEntity {
   private Long recipientId;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "type", nullable = false, length = 20)
-  private NotificationType type;
+  @Column(name = "channel", nullable = false, length = 50)
+  private NotificationChannel channel;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false, length = 20)
   private NotificationStatus status;
+
+  @Column(name = "message", columnDefinition = "TEXT")
+  private String message;
 
   @Column(name = "attempts", nullable = false)
   private int attempts;

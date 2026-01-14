@@ -1,5 +1,6 @@
 package com.example.demo.infra.repository.jpa.entities;
 
+import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.domain.model.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -39,6 +41,10 @@ public class UserEntity {
 
   @Column(name = "email", nullable = false, unique = true, length = 255)
   private String email;
+
+  @Convert(converter = EnabledNotificationChannelsConverter.class)
+  @Column(name = "enabled_notification_channels", nullable = false, length = 20)
+  private Set<NotificationChannel> enabledNotificationChannels;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "user_type", nullable = false, length = 20)

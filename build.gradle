@@ -37,6 +37,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 
 	// DB
 	implementation 'org.springframework.boot:spring-boot-h2console'
@@ -47,9 +48,6 @@ dependencies {
 	implementation("io.github.resilience4j:resilience4j-retry:2.2.0")
 	implementation("io.github.resilience4j:resilience4j-timelimiter:2.2.0")
 	implementation("io.github.resilience4j:resilience4j-bulkhead:2.2.0")
-
-	// Kafka
-	implementation("org.springframework.kafka:spring-kafka")
 
 	// Redis client
 	implementation 'org.redisson:redisson-spring-boot-starter:4.0.0'
