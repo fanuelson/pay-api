@@ -5,7 +5,7 @@ spring:
     banner-mode: off
   # Datasource Configuration
   datasource:
-    url: jdbc:h2:mem:devdb;INIT=CREATE SCHEMA IF NOT EXISTS app
+    url: jdbc:h2:mem:localdb;INIT=CREATE SCHEMA IF NOT EXISTS app
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -21,6 +21,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 6000ms
 
 
 external:
@@ -59,7 +64,7 @@ resilience4j:
         recordExceptions:
           - java.lang.Exception
 #        ignoreExceptions:
-#          - com.example.simplepay.domain.exception.FieldValidationException
+#          - com.example.demo.domain.exception.FieldValidationException
 
     instances:
       # Authorization Service - Mais restritivo (crítico)
@@ -95,7 +100,7 @@ resilience4j:
         retryExceptions:
           - java.lang.Exception
 #        ignoreExceptions:
-#          - com.example.simplepay.domain.exception.FieldValidationException
+#          - com.example.demo.domain.exception.FieldValidationException
 
     instances:
       # Authorization Service - Menos tentativas (crítico)
@@ -106,7 +111,7 @@ resilience4j:
         exponentialBackoffMultiplier: 2
         retryExceptions:
           - org.springframework.web.client.RestClientException
-          - com.example.demo.domain.exception.AppException
+          - com.example.demo.infra.exception.InfraException
 
       # Notification Service - Mais tentativas (não crítico)
       notificationService:
@@ -116,7 +121,7 @@ resilience4j:
         exponentialBackoffMultiplier: 2
         retryExceptions:
           - org.springframework.web.client.RestClientException
-          - com.example.demo.domain.exception.AppException
+          - com.example.demo.infra.exception.InfraException
 
   # Time Limiter Configuration (opcional)
   timelimiter:

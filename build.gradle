@@ -24,11 +24,16 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('testcontainersVersion', "2.0.2")
+}
+
 dependencies {
 
 	// STARTER
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
@@ -46,8 +51,8 @@ dependencies {
 	// Kafka
 	implementation("org.springframework.kafka:spring-kafka")
 
-	// Redis
-	implementation("org.redisson:redisson:3.35.0")  // ← Mudança aqui
+	// Redis client
+	implementation 'org.redisson:redisson-spring-boot-starter:4.0.0'
 
 	// Mapper
 	implementation 'org.mapstruct:mapstruct:1.6.3'
@@ -60,13 +65,26 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
-	// Kafka
-	testImplementation("org.springframework.kafka:spring-kafka-test")
-
-	// TEST
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+
+	// Testcontainers
+	testImplementation 'org.testcontainers:testcontainers:2.0.2'
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter:2.0.2'
+
+	// Kafka
+	testImplementation 'org.testcontainers:testcontainers-kafka:2.0.2'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+	}
 }
 
 tasks.named('test') {

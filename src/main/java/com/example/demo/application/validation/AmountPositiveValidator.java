@@ -1,7 +1,8 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.domain.validation.TransferContext;
+import com.example.demo.domain.model.TransferContext;
 import com.example.demo.domain.validation.TransferValidator;
+import com.example.demo.domain.validation.ValidationError;
 import com.example.demo.domain.validation.ValidationResult;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,12 @@ public class AmountPositiveValidator implements TransferValidator {
 
     if (amountInCents <= 0) {
       return ValidationResult.invalid(
-        "TRANSFER_AMOUNT_MUST_BE_POSITIVE",
-        "Transfer amount must be greater than zero",
-        "amountInCents",
-        amountInCents
+        ValidationError.of(
+          "TRANSFER_AMOUNT_MUST_BE_POSITIVE",
+          "Transfer amount must be greater than zero",
+          "amountInCents",
+          amountInCents
+        )
       );
     }
 

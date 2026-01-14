@@ -51,29 +51,5 @@ public class User {
         }
     }
 
-    /* ==== Regras de domínio ==== */
-
-    public boolean isMerchant() {
-        return type == UserType.MERCHANT;
-    }
-
-    public boolean isCommon() {
-        return type == UserType.COMMON;
-    }
-
-    public boolean canSendMoney() {
-        return type == UserType.COMMON;
-    }
-
-    public boolean canTransfer() {
-        return canSendMoney();
-    }
-
-    public boolean isNotAbleToTransfer() {
-        return !canTransfer();
-    }
-
-    public boolean canReceiveMoney() {
-        return true;
-    }
+    public boolean is(final UserType userType) { return userType.equals(getType()); }
 }

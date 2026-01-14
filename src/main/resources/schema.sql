@@ -48,8 +48,7 @@ CREATE TABLE transactions
     CONSTRAINT fk_transaction_payer FOREIGN KEY (payer_id) REFERENCES users (id),
     CONSTRAINT fk_transaction_payee FOREIGN KEY (payee_id) REFERENCES users (id),
     CONSTRAINT chk_amount CHECK (amount_in_cents > 0),
-    CONSTRAINT chk_different_users CHECK (payer_id != payee_id
-) ,
+    CONSTRAINT chk_different_users CHECK (payer_id != payee_id),
     CONSTRAINT chk_status CHECK (status IN ('PENDING', 'AUTHORIZED', 'COMPLETED', 'FAILED', 'REVERSED'))
 );
 
@@ -74,7 +73,7 @@ CREATE TABLE notifications
 
     CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
     CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id),
---     CONSTRAINT chk_notification_type CHECK (type IN ('EMAIL', 'SMS')),
+    CONSTRAINT chk_notification_type CHECK (type IN ('EMAIL', 'SMS')),
     CONSTRAINT chk_notification_status CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
 );
 

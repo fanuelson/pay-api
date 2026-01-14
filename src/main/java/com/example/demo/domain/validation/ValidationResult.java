@@ -1,40 +1,36 @@
 package com.example.demo.domain.validation;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidationResult {
 
-  private boolean isValid;
   private List<ValidationError> errors;
 
+  public static ValidationResult of(final List<ValidationError> errors) {
+    return new ValidationResult(errors);
+  }
+
   public static ValidationResult valid() {
-    return new ValidationResult(true, List.of());
+    return of(List.of());
   }
 
-  public static ValidationResult invalid(String code, String message) {
-    return new ValidationResult(false, List.of(ValidationError.of(code, message)));
+  public static ValidationResult invalid(final List<ValidationError> errors) {
+    return of(errors);
   }
 
-  public static ValidationResult invalid(String code, String message, String field) {
-    return new ValidationResult(false, List.of(ValidationError.of(code, field, message)));
-  }
-
-  public static ValidationResult invalid(
-    String code, String message, String field, Object value
-  ) {
-    return new ValidationResult(false, List.of(ValidationError.of(code, message, field, value)));
-  }
-
-  public static ValidationResult invalid(List<ValidationError> errors) {
-    return new ValidationResult(false, errors);
+  public static ValidationResult invalid(final ValidationError error) {
+    return invalid(List.of(error));
   }
 
   public boolean isInvalid() {
-    return !isValid;
+    return errors != null && !errors.isEmpty();
   }
+
+  public boolean isValid() { return !isInvalid(); }
 }

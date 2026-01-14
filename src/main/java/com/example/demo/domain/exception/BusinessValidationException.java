@@ -1,10 +1,15 @@
 package com.example.demo.domain.exception;
 
 import com.example.demo.domain.validation.ValidationError;
+import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class BusinessValidationException extends DomainException {
+import static com.example.demo.domain.helper.StringHelper.join;
+
+@Getter
+public class BusinessValidationException extends BusinessException {
 
   private final List<ValidationError> errors;
 
@@ -13,16 +18,14 @@ public class BusinessValidationException extends DomainException {
     this.errors = errors;
   }
 
-  public List<ValidationError> getErrors() {
-    return errors;
-  }
-
   private static String buildMessage(List<ValidationError> errors) {
-    return "Business validation failed with " + errors.size() + " error(s): " +
+    return join(
+      "Business validation failed with " + errors.size(),
+      " error(s): ",
       errors.stream()
-        .map(e -> e.getCode() + ": " + e.getMessage())
-        .reduce((a, b) -> a + ", " + b)
-        .orElse("");
+        .map(it -> join(it.code(), ": ", it.message()))
+        .collect(Collectors.joining(", "))
+    );
   }
 
   public static BusinessValidationException single(ValidationError error) {
@@ -31,19 +34,12 @@ public class BusinessValidationException extends DomainException {
 
   public static BusinessValidationException of(String code, String message, String field) {
     return new BusinessValidationException(
-            List.of(new ValidationError(code, message, field, null))
+      List.of(new ValidationError(code, message, field, null))
     );
   }
 
   public boolean hasError(String code) {
-    return errors.stream().anyMatch(e -> e.getCode().equals(code));
+    return errors.stream().anyMatch(e -> e.code().equals(code));
   }
 
-  public List<ValidationError> getFieldErrors() {
-    return errors.stream().filter(e -> e.getField() != null).toList();
-  }
-
-  public List<ValidationError> getGeneralErrors() {
-    return errors.stream().filter(e -> e.getField() == null).toList();
-  }
 }

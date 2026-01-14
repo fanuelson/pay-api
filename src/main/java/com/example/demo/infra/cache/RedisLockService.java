@@ -1,7 +1,7 @@
 package com.example.demo.infra.cache;
 
-import com.example.demo.domain.exception.AppException;
 import com.example.demo.domain.port.service.LockService;
+import com.example.demo.infra.exception.InfraException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import static com.example.demo.domain.helper.StringHelper.join;
 
 @Slf4j
 @Service
@@ -21,71 +23,72 @@ public class RedisLockService implements LockService {
   private final RedissonClient redissonClient;
 
   public boolean tryLock(String key, long waitTime, long leaseTime, TimeUnit unit) {
-    String lockKey = LOCK_PREFIX + key;
-    RLock lock = redissonClient.getLock(lockKey);
+    final RLock lock = getLock(key);
 
-    log.debug("Trying to acquire lock: {} (wait: {}, lease: {} {})",
-            lockKey, waitTime, leaseTime, unit.name());
+    logDebug(
+      "Trying to acquire lock (wait: %d, lease: %d %s)"
+        .formatted(waitTime, leaseTime, unit.name()),
+      key
+    );
 
     try {
       boolean acquired = lock.tryLock(waitTime, leaseTime, unit);
 
       if (acquired) {
-        log.debug("Lock acquired successfully: {}", lockKey);
+        logDebug("Lock acquired successfully", key);
       } else {
-        log.warn("Failed to acquire lock: {} (timeout)", lockKey);
+        logWarn("Failed to acquire lock (timeout)", key);
       }
 
       return acquired;
 
     } catch (InterruptedException e) {
-      log.error("Interrupted while trying to acquire lock: {}", lockKey, e);
+      logError("Interrupted while trying to acquire lock", key, e);
       Thread.currentThread().interrupt();
       return false;
     } catch (Exception e) {
-      log.error("Error trying to acquire lock: {}", lockKey, e);
+      logError("Error trying to acquire lock", key, e);
       return false;
     }
   }
 
-  public void unlock(String key) {
-    String lockKey = LOCK_PREFIX + key;
-    RLock lock = redissonClient.getLock(lockKey);
+  public boolean unlock(final String key) {
+    final RLock lock = getLock(key);
 
     try {
       if (lock.isHeldByCurrentThread()) {
         lock.unlock();
-        log.debug("Lock released: {}", lockKey);
+        logDebug("Lock released", key);
+        return true;
       } else {
-        log.warn("Attempted to unlock a lock not held by current thread: {}", lockKey);
+        logWarn("Attempted to unlock a lock not held by current thread", key);
       }
+      return false;
     } catch (Exception e) {
-      log.error("Error releasing lock: {}", lockKey, e);
+      logError("Error releasing lock", key, e);
+      return false;
     }
   }
 
-  public boolean isLocked(String key) {
-    String lockKey = LOCK_PREFIX + key;
-    return redissonClient.getLock(lockKey).isLocked();
+  public boolean isLocked(final String key) {
+    return getLock(key).isLocked();
   }
 
   public <T> T withLock(
-          String key,
-          long waitTime,
-          long leaseTime,
-          TimeUnit unit,
-          Supplier<T> block
+    String key,
+    long waitTime,
+    long leaseTime,
+    TimeUnit unit,
+    Supplier<T> block
   ) {
-    String lockKey = LOCK_PREFIX + key;
-    RLock lock = redissonClient.getLock(lockKey);
-
-    log.debug("Executing with lock: {}", lockKey);
+    logDebug("Executing with lock", key);
+    final RLock lock = getLock(key);
 
     try {
       boolean acquired = lock.tryLock(waitTime, leaseTime, unit);
 
       if (!acquired) {
-        throw new AppException();
+        throw new InfraException("Failed to acquire lock, lock key: " + key);
       }
 
       try {
@@ -93,14 +96,39 @@ public class RedisLockService implements LockService {
       } finally {
         if (lock.isHeldByCurrentThread()) {
           lock.unlock();
-          log.debug("Lock released after execution: {}", lockKey);
+          logDebug("Lock released after execution", key);
+        } else {
+          logDebug("Lock not released after execution, is not held by current thread", key);
         }
       }
 
     } catch (InterruptedException e) {
-      log.error("Interrupted while executing with lock: {}", lockKey, e);
+      logError("Interrupted while executing", key, e);
       Thread.currentThread().interrupt();
-      throw new AppException(key);
+      throw new InfraException("Lock interrupted while executing, key: " + mountKey(key));
+    } catch (Exception e) {
+      logError("Error", key, e);
+      throw new InfraException("Error: " + e.getMessage(), e);
     }
+  }
+
+  private RLock getLock(final String key) {
+    return this.redissonClient.getLock(mountKey(key));
+  }
+
+  private static String mountKey(final String key) {
+    return join(LOCK_PREFIX, key);
+  }
+
+  private void logDebug(final String msg, final String key) {
+    log.debug("{} - lock key: {}", msg, mountKey(key));
+  }
+
+  private void logWarn(final String msg, final String key) {
+    log.warn("{} - lock key: {}", msg, mountKey(key));
+  }
+
+  private void logError(final String msg, final String key, final Exception ex) {
+    log.error("{} - lock key: {}", msg, mountKey(key), ex);
   }
 }

@@ -1,8 +1,8 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.domain.exception.AppException;
 import com.example.demo.domain.model.AuthorizationResponse;
 import com.example.demo.domain.port.service.AuthorizationService;
+import com.example.demo.infra.exception.InfraException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.UUID;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -32,13 +34,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         .retrieve()
         .body(AuthorizationResponseDTO.class);
 
-      if(response != null && response.isAuthorized()) {
+      if (nonNull(response) && response.isAuthorized()) {
         return AuthorizationResponse.authorized(generateAuthorizationCode());
       }
       return AuthorizationResponse.denied("Authorization service denied the transfer");
     } catch (Exception ex) {
       log.error("Error authorizing transfer", ex);
-      throw new AppException("Authorization failed: " + ex.getMessage());
+      throw new InfraException("Authorization failed: " + ex.getMessage());
     }
   }
 

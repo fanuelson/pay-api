@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 public interface LockService {
   boolean tryLock(String key, long waitTime, long leaseTime, TimeUnit unit);
-  void unlock(String key);
+  boolean unlock(String key);
   boolean isLocked(String key);
   <T> T withLock(String key, long waitTime, long leaseTime, TimeUnit unit,Supplier<T> block);
 }

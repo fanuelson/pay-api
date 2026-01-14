@@ -13,55 +13,50 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Notification {
 
-    private Long id;
-    private String transactionId;
-    private Long recipientId;
-    private String type;          // EMAIL, SMS
-    private String status;        // PENDING, SENT, FAILED
-    private int attempts;
-    private int maxAttempts;
-    private String errorMessage;
-    private LocalDateTime createdAt;
-    private LocalDateTime sentAt;
+  private Long id;
+  private String transactionId;
+  private Long recipientId;
+  private NotificationType type;          // EMAIL, SMS
+  private NotificationStatus status;        // PENDING, SENT, FAILED
+  private int attempts;
+  private int maxAttempts;
+  private String errorMessage;
+  private LocalDateTime createdAt;
+  private LocalDateTime sentAt;
 
-    /**
-     * Construtor equivalente aos defaults do Kotlin
-     */
-    public Notification(String transactionId, Long recipientId, String type, String status) {
-        this.id = null;
-        this.transactionId = transactionId;
-        this.recipientId = recipientId;
-        this.type = type;
-        this.status = status;
-        this.attempts = 0;
-        this.maxAttempts = 3;
-        this.errorMessage = null;
-        this.createdAt = LocalDateTime.now();
-        this.sentAt = null;
-    }
+  public Notification(String transactionId, Long recipientId, NotificationType type, NotificationStatus status) {
+    this.id = null;
+    this.transactionId = transactionId;
+    this.recipientId = recipientId;
+    this.type = type;
+    this.status = status;
+    this.attempts = 0;
+    this.maxAttempts = 3;
+    this.errorMessage = null;
+    this.createdAt = LocalDateTime.now();
+    this.sentAt = null;
+  }
 
-    /* ==== Regras de domínio ==== */
+  public void incrementAttempts() {
+    this.attempts++;
+  }
 
-    public void incrementAttempts() {
-        this.attempts++;
-    }
+  public boolean hasReachedMaxAttempts() {
+    return this.attempts >= this.maxAttempts;
+  }
 
-    public boolean hasReachedMaxAttempts() {
-        return this.attempts >= this.maxAttempts;
-    }
+  public void markAsSent() {
+    this.status = NotificationStatus.SENT;
+    this.sentAt = LocalDateTime.now();
+  }
 
-    public void markAsSent() {
-        this.status = "SENT";
-        this.sentAt = LocalDateTime.now();
-    }
+  public void markAsFailed(String reason) {
+    this.status = NotificationStatus.FAILED;
+    this.errorMessage = reason;
+    incrementAttempts();
+  }
 
-    public void markAsFailed(String reason) {
-        this.status = "FAILED";
-        this.errorMessage = reason;
-        incrementAttempts();
-    }
-
-    public boolean canRetry() {
-        return !hasReachedMaxAttempts() && !"SENT".equals(this.status);
-    }
+  public boolean canRetry() {
+    return !hasReachedMaxAttempts() && !NotificationStatus.SENT.equals(this.status);
+  }
 }

@@ -36,14 +36,10 @@ public class RestClientConfig {
   private ClientHttpRequestInterceptor loggingInterceptor() {
     return (request, body, execution) -> {
       long start = System.currentTimeMillis();
-
       log.info("→ Request: {} {}", request.getMethod(), request.getURI());
-
       var response = execution.execute(request, body);
       long duration = System.currentTimeMillis() - start;
-
       log.info("← Response: {} ({}ms)", response.getStatusCode(), duration);
-
       return response;
     };
   }

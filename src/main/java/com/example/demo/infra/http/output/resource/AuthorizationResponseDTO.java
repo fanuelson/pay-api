@@ -1,8 +1,12 @@
 package com.example.demo.infra.http.output.resource;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
+
+import static java.util.Objects.nonNull;
 
 /*
  * Consulta serviço autorizador externo
@@ -20,16 +24,13 @@ public class AuthorizationResponseDTO {
   @JsonProperty("data")
   private AuthorizationData data;
 
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class AuthorizationData {
-
-    @JsonProperty("authorization")
-    private Boolean authorization;
+  public boolean isAuthorized() {
+    return "success".equals(status) && nonNull(data) && data.getAuthorization();
   }
 
-  public boolean isAuthorized() {
-    return "success".equals(status) && data != null && Boolean.TRUE.equals(data.getAuthorization());
+  @Value
+  public static class AuthorizationData {
+    @JsonProperty("authorization")
+    Boolean authorization;
   }
 }

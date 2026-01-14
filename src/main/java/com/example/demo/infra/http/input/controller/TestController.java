@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static java.util.Optional.ofNullable;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/test")
@@ -24,14 +26,14 @@ public class TestController {
     final var res = authorizationService.authorize(1L, 1L, 100L);
     return Map.of(
       "authorized", res.isAuthorized(),
-      "authorizationCode", res.getAuthorizationCode(),
-      "msg", res.getMessage()
+      "authorizationCode", ofNullable(res.getAuthorizationCode()).orElse(""),
+      "msg", ofNullable(res.getMessage()).orElse("")
     );
   }
 
   @GetMapping("/notify")
   public String sendNotification() {
-    notificationService.notify(1L, "mail.com", "heeey");
+    notificationService.sendNotification(1L, "mail.com", "heeey");
     return "ok";
   }
 

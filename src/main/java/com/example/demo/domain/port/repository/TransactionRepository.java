@@ -12,6 +12,5 @@ public interface TransactionRepository {
   void delete(String id);
   Optional<Transaction> findById(String id);
   List<Transaction> findByUserId(Long userId, int limit);
-  List<Transaction> findByUserId(Long userId);
 
 }
