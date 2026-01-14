@@ -1,5 +1,6 @@
 package com.example.demo.infra.messaging.publisher;
 
+import com.example.demo.application.port.out.event.TransferEventPublisher;
 import com.example.demo.domain.model.TransferEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class TransferEventPublisher implements com.example.demo.application.port.out.TransferEventPublisher {
+public class TransferEventKafkaPublisher implements TransferEventPublisher {
 
   @Autowired
   @Qualifier("transferKafkaTemplate")

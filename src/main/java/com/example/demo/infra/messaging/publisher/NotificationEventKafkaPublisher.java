@@ -1,5 +1,6 @@
 package com.example.demo.infra.messaging.publisher;
 
+import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.model.NotificationEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
-public class NotificationEventPublisher implements com.example.demo.application.port.out.NotificationEventPublisher {
+public class NotificationEventKafkaPublisher implements NotificationEventPublisher {
 
   @Autowired
   @Qualifier("notificationKafkaTemplate")

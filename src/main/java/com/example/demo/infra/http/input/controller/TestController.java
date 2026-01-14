@@ -4,7 +4,7 @@ import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
-import com.example.demo.application.port.out.NotificationEventPublisher;
+import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.application.port.out.service.LockService;

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateNotificationCommand {
+
   private final String transactionId;
   private final Long userId;
   private final String msg;
