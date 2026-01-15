@@ -41,6 +41,7 @@ dependencies {
 
 	// DB
 	implementation 'org.springframework.boot:spring-boot-h2console'
+	runtimeOnly 'com.h2database:h2'
 
 	// Resilience4j - Circuit Breaker + Retry
 	implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
@@ -54,21 +55,18 @@ dependencies {
 
 	// Mapper
 	implementation 'org.mapstruct:mapstruct:1.6.3'
-	compileOnly 'org.projectlombok:lombok'
-
-	// DB
-	runtimeOnly 'com.h2database:h2'
-
-	// PROCESSORS
-	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation("org.springframework.kafka:spring-kafka-test")
+
 
 	// Testcontainers
 	testImplementation 'org.testcontainers:testcontainers:2.0.2'
@@ -76,6 +74,7 @@ dependencies {
 
 	// Kafka
 	testImplementation 'org.testcontainers:testcontainers-kafka:2.0.2'
+	testImplementation("org.springframework.kafka:spring-kafka-test")
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
