@@ -22,58 +22,7 @@ public class RedisLockService implements LockService {
 
   private final RedissonClient redissonClient;
 
-  public boolean tryLock(String key, long waitTime, long leaseTime, TimeUnit unit) {
-    final RLock lock = getLock(key);
-
-    logDebug(
-      "Trying to acquire lock (wait: %d, lease: %d %s)"
-        .formatted(waitTime, leaseTime, unit.name()),
-      key
-    );
-
-    try {
-      boolean acquired = lock.tryLock(waitTime, leaseTime, unit);
-
-      if (acquired) {
-        logDebug("Lock acquired successfully", key);
-      } else {
-        logWarn("Failed to acquire lock (timeout)", key);
-      }
-
-      return acquired;
-
-    } catch (InterruptedException e) {
-      logError("Interrupted while trying to acquire lock", key, e);
-      Thread.currentThread().interrupt();
-      return false;
-    } catch (Exception e) {
-      logError("Error trying to acquire lock", key, e);
-      return false;
-    }
-  }
-
-  public boolean unlock(final String key) {
-    final RLock lock = getLock(key);
-
-    try {
-      if (lock.isHeldByCurrentThread()) {
-        lock.unlock();
-        logDebug("Lock released", key);
-        return true;
-      } else {
-        logWarn("Attempted to unlock a lock not held by current thread", key);
-      }
-      return false;
-    } catch (Exception e) {
-      logError("Error releasing lock", key, e);
-      return false;
-    }
-  }
-
-  public boolean isLocked(final String key) {
-    return getLock(key).isLocked();
-  }
-
+  @Override
   public <T> T withLock(
     String key,
     long waitTime,
@@ -109,6 +58,10 @@ public class RedisLockService implements LockService {
       logError("Error", key, e);
       throw LockException.of("Error: " + e.getMessage(), e);
     }
+  }
+
+  public boolean isLocked(final String key) {
+    return getLock(key).isLocked();
   }
 
   private RLock getLock(final String key) {
