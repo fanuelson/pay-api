@@ -25,7 +25,7 @@ public class NotificationEventKafkaPublisher implements NotificationEventPublish
 
   @Override
   public void publish(NotificationEvent event) {
-    var notificationId = event.getNotificationId();
+    var notificationId = event.notificationId();
     log.info("Publishing NotificationEvent: notificationId={}", notificationId);
 
     kafkaTemplate.send(topic, notificationId.toString(), event)

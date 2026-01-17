@@ -1,12 +1,13 @@
 package com.example.demo.domain.model;
 
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 import java.time.LocalDateTime;
 
 @Data
 @With
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
@@ -54,6 +55,10 @@ public class Notification {
       .build();
   }
 
+  public static NotificationBuilder builder() {
+    return new NotificationBuilder();
+  }
+
   public boolean is(NotificationStatus status) {
     return status.equals(this.status);
   }
@@ -83,5 +88,85 @@ public class Notification {
 
   public boolean canRetry() {
     return !hasReachedMaxAttempts() && !NotificationStatus.SENT.equals(this.status);
+  }
+
+  public static class NotificationBuilder {
+    private Long id;
+    private String transactionId;
+    private Long recipientId;
+    private NotificationChannel channel;
+    private NotificationStatus status;
+    private String message;
+    private int attempts;
+    private int maxAttempts;
+    private String errorMessage;
+    private LocalDateTime createdAt;
+    private LocalDateTime sentAt;
+
+    NotificationBuilder() {
+    }
+
+    public NotificationBuilder id(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public NotificationBuilder transactionId(String transactionId) {
+      this.transactionId = transactionId;
+      return this;
+    }
+
+    public NotificationBuilder recipientId(Long recipientId) {
+      this.recipientId = recipientId;
+      return this;
+    }
+
+    public NotificationBuilder channel(NotificationChannel channel) {
+      this.channel = channel;
+      return this;
+    }
+
+    public NotificationBuilder status(NotificationStatus status) {
+      this.status = status;
+      return this;
+    }
+
+    public NotificationBuilder message(String message) {
+      this.message = message;
+      return this;
+    }
+
+    public NotificationBuilder attempts(int attempts) {
+      this.attempts = attempts;
+      return this;
+    }
+
+    public NotificationBuilder maxAttempts(int maxAttempts) {
+      this.maxAttempts = maxAttempts;
+      return this;
+    }
+
+    public NotificationBuilder errorMessage(String errorMessage) {
+      this.errorMessage = errorMessage;
+      return this;
+    }
+
+    public NotificationBuilder createdAt(LocalDateTime createdAt) {
+      this.createdAt = createdAt;
+      return this;
+    }
+
+    public NotificationBuilder sentAt(LocalDateTime sentAt) {
+      this.sentAt = sentAt;
+      return this;
+    }
+
+    public Notification build() {
+      return new Notification(this.id, this.transactionId, this.recipientId, this.channel, this.status, this.message, this.attempts, this.maxAttempts, this.errorMessage, this.createdAt, this.sentAt);
+    }
+
+    public String toString() {
+      return "Notification.NotificationBuilder(id=" + this.id + ", transactionId=" + this.transactionId + ", recipientId=" + this.recipientId + ", channel=" + this.channel + ", status=" + this.status + ", message=" + this.message + ", attempts=" + this.attempts + ", maxAttempts=" + this.maxAttempts + ", errorMessage=" + this.errorMessage + ", createdAt=" + this.createdAt + ", sentAt=" + this.sentAt + ")";
+    }
   }
 }

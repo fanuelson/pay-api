@@ -25,10 +25,10 @@ public class CreateTransactionUseCase {
 
     var transaction = Transaction.builder()
         .id(transactionId)
-        .payerId(command.getPayerId())
-        .payeeId(command.getPayeeId())
+        .payerId(command.payerId())
+        .payeeId(command.payeeId())
         .status(TransactionStatus.PENDING)
-        .amountInCents(command.getAmountInCents())
+        .amountInCents(command.amountInCents())
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -36,9 +36,9 @@ public class CreateTransactionUseCase {
 
     var event = new TransferEvent(
         transactionId,
-        command.getPayerId(),
-        command.getPayeeId(),
-        command.getAmountInCents(),
+        command.payerId(),
+        command.payeeId(),
+        command.amountInCents(),
         TransactionStatus.PENDING.name(),
         null
     );

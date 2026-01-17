@@ -22,7 +22,7 @@ public class NotificationEventListener {
     containerFactory = "notificationListenerContainerFactory"
   )
   public void onNotificationEvent(@Payload NotificationEvent event, Acknowledgment ack) {
-    sendNotificationUseCase.execute(SendNotificationCommand.of(event.getNotificationId()));
+    sendNotificationUseCase.execute(SendNotificationCommand.of(event.notificationId()));
     ack.acknowledge();
   }
 

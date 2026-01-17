@@ -29,13 +29,13 @@ public class AuthorizeStep implements SagaStep<TransferSagaContext> {
     );
 
     log.info("Authorization response: authorized={}, message={}",
-        response.isAuthorized(), response.getMessage());
+        response.isAuthorized(), response.message());
 
     if (!response.isAuthorized()) {
-      throw new BusinessException(response.getMessage());
+      throw new BusinessException(response.message());
     }
 
-    context.getTransaction().authorized(response.getAuthorizationCode());
+    context.getTransaction().authorized(response.authorizationCode());
   }
 
   @Override

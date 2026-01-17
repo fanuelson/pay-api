@@ -1,13 +1,11 @@
 package com.example.demo.application.port.out.service;
 
-import lombok.Value;
+public record AuthorizationResponse(
+  boolean isAuthorized,
+  String authorizationCode,
+  String message
+) {
 
-@Value
-public class AuthorizationResponse {
-
-  boolean isAuthorized;
-  String authorizationCode;
-  String message;
 
   public static AuthorizationResponse authorized(String code) {
     return new AuthorizationResponse(true, code, "Transação autorizada");

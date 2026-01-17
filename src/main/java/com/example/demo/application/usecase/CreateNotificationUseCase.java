@@ -18,9 +18,9 @@ public class CreateNotificationUseCase {
   private final NotificationEventPublisher notificationEventPublisher;
 
   public void execute(final CreateNotificationCommand command) {
-    final var userId = command.getUserId();
-    final var transactionId = command.getTransactionId();
-    final var msg = command.getMsg();
+    final var userId = command.userId();
+    final var transactionId = command.transactionId();
+    final var msg = command.msg();
 
     final var user = userRepository.findById(userId).orElseThrow();
 

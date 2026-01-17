@@ -40,8 +40,8 @@ public class TestController {
     final var res = authorizationService.authorize(1L, 1L, 100L);
     return Map.of(
       "authorized", res.isAuthorized(),
-      "authorizationCode", ofNullable(res.getAuthorizationCode()).orElse(""),
-      "msg", ofNullable(res.getMessage()).orElse("")
+      "authorizationCode", ofNullable(res.authorizationCode()).orElse(""),
+      "msg", ofNullable(res.message()).orElse("")
     );
   }
 

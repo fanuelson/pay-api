@@ -29,7 +29,7 @@ public class SendNotificationUseCase {
   @Transactional
   public void execute(final SendNotificationCommand command) {
     notificationRepository
-      .findById(command.getNotificationId())
+      .findById(command.notificationId())
       .filter(it -> it.isNot(NotificationStatus.SENT))
       .ifPresent(this::send);
   }
