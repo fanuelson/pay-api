@@ -55,14 +55,9 @@ external:
     url: https://util.devi.tools/api/v1
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"  # ← Expõe TODOS os endpoints (dev only)
   endpoint:
     health:
       show-details: always  # ← Mostra detalhes sempre
-
   health:
     circuitbreakers:
       enabled: true  # ← Habilita health dos CBs
@@ -166,3 +161,11 @@ resilience4j:
         maxConcurrentCalls: 5
       notificationService:
         maxConcurrentCalls: 10
+
+logging:
+  level:
+    root: INFO
+    com.example.demo: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    io.github.resilience4j: DEBUG
