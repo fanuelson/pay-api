@@ -11,10 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
 import java.util.UUID;
-
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -34,10 +32,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         .retrieve()
         .body(AuthorizationResponseDTO.class);
 
-      if (nonNull(response) && response.isAuthorized()) {
-        return AuthorizationResponse.authorized(generateAuthorizationCode());
+      if (isNull(response) || response.isNotAuthorized()) {
+        return AuthorizationResponse.denied();
       }
-      return AuthorizationResponse.denied();
+
+      return AuthorizationResponse.authorized(generateAuthorizationCode());
     } catch (Exception ex) {
       log.error("Error authorizing transfer", ex);
       throw AuthorizationException.of(ex);

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
 import java.util.Map;
 
 @Slf4j
@@ -27,7 +26,6 @@ public class NotificationServiceImpl implements NotificationService {
   public boolean sendNotification(Long userId, String email, String message) {
     log.info("Sending notification to userId={}, email={}", userId, email);
 
-//    throw new InfraException("AAA Notification failed: ");
     var response = restClient.post()
       .uri("/notify")
       .contentType(MediaType.APPLICATION_JSON)
@@ -35,12 +33,12 @@ public class NotificationServiceImpl implements NotificationService {
       .retrieve()
       .toBodilessEntity();
 
-    if (response.getStatusCode().is2xxSuccessful()) {
-      log.info("Notification sent successfully to {}", email);
-      return true;
+    if (response.getStatusCode().isError()) {
+      throw new InfraException("Notification failed: " + response.getStatusCode());
     }
 
-    throw new InfraException("Notification failed: " + response.getStatusCode());
+    log.info("Notification sent successfully to {}", email);
+    return true;
   }
 
   private boolean fallback(Long userId, String email, String message, Exception ex) {

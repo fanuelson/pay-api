@@ -1,13 +1,8 @@
 package com.example.demo.infra.messaging;
 
-import com.example.demo.application.port.out.event.NotificationEvent;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
@@ -15,46 +10,40 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 
-@Slf4j
 @EnableKafka
-@Configuration
-@RequiredArgsConstructor
-public class KafkaConfig {
+public abstract class KafkaConfig {
 
-  private final KafkaProperties kafkaProperties;
-
-  // ==================== NOTIFICATION ====================
-
-  @Bean
-  public ProducerFactory<String, NotificationEvent> notificationProducerFactory() {
+  public <T> ProducerFactory<String, T> producerFactory(KafkaProperties properties) {
     return new DefaultKafkaProducerFactory<>(
-      kafkaProperties.buildProducerProperties(),
+      properties.buildProducerProperties(),
       new StringSerializer(),
       new JacksonJsonSerializer<>()
     );
   }
 
-  @Bean
-  public KafkaTemplate<String, NotificationEvent> notificationKafkaTemplate() {
-    return new KafkaTemplate<>(notificationProducerFactory());
+  protected <T> KafkaTemplate<String, T> kafkaTemplate(ProducerFactory<String, T> producerFactory) {
+    return new KafkaTemplate<>(producerFactory);
   }
 
-  @Bean
-  public ConsumerFactory<String, NotificationEvent> notificationConsumerFactory() {
-    var deserializer = new JacksonJsonDeserializer<>(NotificationEvent.class);
-    deserializer.addTrustedPackages("*");
+  protected <T> ConsumerFactory<String, T> consumerFactory(KafkaProperties properties, Class<T> type) {
+    final var deserializer = new JacksonJsonDeserializer<>(type);
+    deserializer.setUseTypeHeaders(false);
+    deserializer.addTrustedPackages(type.getPackageName());
     return new DefaultKafkaConsumerFactory<>(
-      kafkaProperties.buildConsumerProperties(),
+      properties.buildConsumerProperties(),
       new StringDeserializer(),
       deserializer
     );
   }
 
-  @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, NotificationEvent> notificationListenerContainerFactory() {
-    var factory = new ConcurrentKafkaListenerContainerFactory<String, NotificationEvent>();
-    factory.setConsumerFactory(notificationConsumerFactory());
+  protected <T> ConcurrentKafkaListenerContainerFactory<String, T> listenerContainerFactory(
+    ConsumerFactory<String, T> consumerFactory
+  ) {
+    var factory = new ConcurrentKafkaListenerContainerFactory<String, T>();
+    factory.setConsumerFactory(consumerFactory);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
   }
+
+
 }
