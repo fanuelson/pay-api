@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransferEventListener {
 
-  private final ExecuteTransferUseCase executeTransferUseCase;
+  private final ExecuteTransferUseCase executeTransfer;
 
   @KafkaListener(
     topics = "${kafka.topics.transfer-events}",
     containerFactory = "transferListenerContainerFactory"
   )
-  public void onTransferEvent(
+  public void handle(
     @Payload TransferEvent event,
     @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
     @Header(KafkaHeaders.OFFSET) long offset,
@@ -33,7 +33,8 @@ public class TransferEventListener {
       event.transactionId(), partition, offset);
 
     try {
-      executeTransferUseCase.execute(new ExecuteTransferCommand(event.transactionId()));
+      final var command = new ExecuteTransferCommand(event.transactionId());
+      executeTransfer.execute(command);
       ack.acknowledge();
     } catch (Exception e) {
       log.error("Error processing TransferEvent: transactionId={}", event.transactionId(), e);

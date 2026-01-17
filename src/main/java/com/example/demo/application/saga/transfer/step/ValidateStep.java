@@ -8,7 +8,6 @@ import com.example.demo.domain.exception.BusinessValidationException;
 import com.example.demo.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
@@ -44,8 +43,8 @@ public class ValidateStep implements SagaStep<TransferSagaContext> {
   }
 
   @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
-    context.getTransaction().failed(cause.getMessage());
+  public void compensate(TransferSagaContext context, String cause) {
+    context.getTransaction().failed(cause);
     transactionRepository.save(context.getTransaction());
   }
 }

@@ -1,7 +1,7 @@
 package com.example.demo.infra.http.output.client;
 
 import com.example.demo.application.port.out.service.NotificationService;
-import com.example.demo.infra.exception.InfraException;
+import com.example.demo.infra.messaging.exception.NotificationException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,12 @@ public class NotificationServiceImpl implements NotificationService {
     var response = restClient.post()
       .uri("/notify")
       .contentType(MediaType.APPLICATION_JSON)
-      .body(Map.of("message", message))
+      .body(Map.of("receiver", email, "message", message))
       .retrieve()
       .toBodilessEntity();
 
     if (response.getStatusCode().isError()) {
-      throw new InfraException("Notification failed: " + response.getStatusCode());
+      throw NotificationException.msg(response.getStatusCode().toString());
     }
 
     log.info("Notification sent successfully to {}", email);
@@ -42,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   private boolean fallback(Long userId, String email, String message, Exception ex) {
-    log.warn("Circuit breaker open - userId={}, reason={}", userId, ex.getMessage());
+    log.warn("Fallback called, circuit breaker open, reason= {}", ex.getMessage());
     return false;
   }
 }

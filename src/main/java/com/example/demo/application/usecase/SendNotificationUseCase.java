@@ -1,6 +1,5 @@
 package com.example.demo.application.usecase;
 
-
 import com.example.demo.application.port.in.SendNotificationCommand;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.model.Notification;
@@ -43,8 +42,9 @@ public class SendNotificationUseCase {
       if (isNull(user)) {
         return;
       }
-      boolean sent = notificationService
-        .sendNotification(user.getId(), user.getEmail(), notification.getMessage());
+      boolean sent = notificationService.sendNotification(
+        user.getId(), user.getEmail(), notification.getMessage()
+      );
       if (!sent) {
         throw new IllegalStateException("Circuit breaker open");
       }

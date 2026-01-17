@@ -21,11 +21,9 @@ public class ExecuteTransferUseCase {
   private final NotifyStep notifyStep;
 
   public void execute(ExecuteTransferCommand command) {
-    var context = TransferSagaContext.builder()
-      .transactionId(command.transactionId())
-      .build();
+    var context = TransferSagaContext.of(command.transactionId());
 
-    var saga = new SagaOrchestrator<>(List.of(
+    var saga = SagaOrchestrator.of(
       loadDataStep,
       validateStep,
       reserveBalanceStep,
@@ -33,7 +31,7 @@ public class ExecuteTransferUseCase {
       creditStep,
       completeStep,
       notifyStep
-    ));
+    );
 
     saga.execute(context);
   }

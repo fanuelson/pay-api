@@ -25,7 +25,7 @@ public class CreditStep implements SagaStep<TransferSagaContext> {
   }
 
   @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
+  public void compensate(TransferSagaContext context, String cause) {
     var wallet = context.getPayeeWallet();
     wallet.debit(context.getAmountInCents());
     walletRepository.save(wallet);

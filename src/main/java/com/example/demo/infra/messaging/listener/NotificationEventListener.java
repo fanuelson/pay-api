@@ -21,8 +21,11 @@ public class NotificationEventListener {
     topics = "${kafka.topics.notification-events}",
     containerFactory = "notificationListenerContainerFactory"
   )
-  public void onNotificationEvent(@Payload NotificationEvent event, Acknowledgment ack) {
-    sendNotificationUseCase.execute(SendNotificationCommand.of(event.notificationId()));
+  public void handle(@Payload NotificationEvent event, Acknowledgment ack) {
+    final var notificationId = event.notificationId();
+    log.info("Received NotificationEvent: [notificationId={}]", notificationId);
+    final var command = SendNotificationCommand.of(notificationId);
+    sendNotificationUseCase.execute(command);
     ack.acknowledge();
   }
 

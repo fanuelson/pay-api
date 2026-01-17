@@ -1,7 +1,6 @@
 package com.example.demo.application.saga;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +13,11 @@ public class SagaOrchestrator<C> {
     this.steps = steps;
   }
 
+  @SafeVarargs
+  public static <X> SagaOrchestrator<X> of(SagaStep<X>... steps) {
+    return new SagaOrchestrator<>(List.of(steps));
+  }
+
   public void execute(C context) {
     List<SagaStep<C>> executedSteps = new ArrayList<>();
 
@@ -24,13 +28,13 @@ public class SagaOrchestrator<C> {
         executedSteps.add(step);
       } catch (Exception e) {
         log.error("Step failed: {}. Starting compensation.", step.getName(), e);
-        compensate(executedSteps, context, e);
+        compensate(executedSteps, context, e.getMessage());
         throw e;
       }
     }
   }
 
-  private void compensate(List<SagaStep<C>> executedSteps, C context, Exception cause) {
+  private void compensate(List<SagaStep<C>> executedSteps, C context, String cause) {
     executedSteps.reversed().forEach(step -> {
       try {
         log.info("Compensating step: {}", step.getName());

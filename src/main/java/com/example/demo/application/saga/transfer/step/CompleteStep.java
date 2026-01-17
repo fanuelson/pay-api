@@ -21,10 +21,11 @@ public class CompleteStep implements SagaStep<TransferSagaContext> {
   public void execute(TransferSagaContext context) {
     var transaction = context.getTransaction();
     transaction.completed();
-    transactionRepository.save(transaction);
+    final var transactionUpdated = transactionRepository.save(transaction);
+    context.setTransaction(transactionUpdated);
   }
 
   @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
+  public void compensate(TransferSagaContext context, String cause) {
   }
 }

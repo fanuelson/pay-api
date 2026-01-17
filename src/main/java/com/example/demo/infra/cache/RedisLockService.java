@@ -76,10 +76,6 @@ public class RedisLockService implements LockService {
     log.debug("{} - lock key: {}", msg, mountKey(key));
   }
 
-  private void logWarn(final String msg, final String key) {
-    log.warn("{} - lock key: {}", msg, mountKey(key));
-  }
-
   private void logError(final String msg, final String key, final Exception ex) {
     log.error("{} - lock key: {}", msg, mountKey(key), ex);
   }

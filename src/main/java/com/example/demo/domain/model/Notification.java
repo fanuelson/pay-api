@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 @Data
 @With
@@ -53,6 +54,12 @@ public class Notification {
       .maxAttempts(3)
       .createdAt(LocalDateTime.now())
       .build();
+  }
+
+  public static Function<NotificationChannel, Notification> fromChannel(
+    String transactionId, Long recipientId, String msg
+  ) {
+    return channel -> of(transactionId, recipientId, channel, msg);
   }
 
   public static NotificationBuilder builder() {

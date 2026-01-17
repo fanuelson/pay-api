@@ -53,6 +53,6 @@ public class LoadDataStep implements SagaStep<TransferSagaContext> {
   }
 
   @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
+  public void compensate(TransferSagaContext context, String cause) {
   }
 }

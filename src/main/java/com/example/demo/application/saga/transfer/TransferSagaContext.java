@@ -20,4 +20,8 @@ public class TransferSagaContext {
   private User payee;
   private Wallet payerWallet;
   private Wallet payeeWallet;
+
+  public static TransferSagaContext of(String transactionId) {
+    return TransferSagaContext.builder().transactionId(transactionId).build();
+  }
 }
