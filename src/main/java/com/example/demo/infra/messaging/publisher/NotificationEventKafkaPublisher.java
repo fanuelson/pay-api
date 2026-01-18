@@ -19,7 +19,7 @@ public class NotificationEventKafkaPublisher implements NotificationEventPublish
   @Qualifier("notificationKafkaTemplate")
   private KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
-  @Value("${kafka.topics.notification-events}")
+  @Value("${app.kafka.topics.notification-events.name}")
   private String topic;
 
   @Override

@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -59,13 +60,8 @@ public class TransactionEntity {
   private LocalDateTime completedAt;
 
   @PrePersist
-  @PreUpdate
-  private void validate() {
-    if (payerId.equals(payeeId)) {
-      throw new IllegalArgumentException("Payer and payee cannot be the same");
-    }
-    if (amountInCents <= 0) {
-      throw new IllegalArgumentException("Amount must be positive");
-    }
+  private void prePersist() {
+    createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
+
 }

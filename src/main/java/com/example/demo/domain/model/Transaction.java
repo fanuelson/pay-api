@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Data
@@ -34,7 +35,7 @@ public class Transaction {
     this.payeeId = payeeId;
     this.amountInCents = amountInCents;
     this.status = TransactionStatus.PENDING;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     validate();
   }

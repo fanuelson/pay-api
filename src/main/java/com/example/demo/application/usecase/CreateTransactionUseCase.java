@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -29,7 +30,7 @@ public class CreateTransactionUseCase {
         .payeeId(command.payeeId())
         .status(TransactionStatus.PENDING)
         .amountInCents(command.amountInCents())
-        .createdAt(LocalDateTime.now())
+        .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
         .build();
 
     transactionRepository.save(transaction);

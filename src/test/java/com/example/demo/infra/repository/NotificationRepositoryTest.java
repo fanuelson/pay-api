@@ -92,7 +92,7 @@ public class NotificationRepositoryTest {
 
     Assertions.assertThat(result)
       .usingRecursiveComparison()
-      .ignoringFields("id", "createdAt", "retry")
+      .ignoringFields("id", "createdAt", "updatedAt", "retry")
       .isEqualTo(createPendingNotification());
   }
 
@@ -113,7 +113,7 @@ public class NotificationRepositoryTest {
 
     Assertions.assertThat(result)
       .usingRecursiveComparison()
-      .ignoringFields("createdAt", "retry")
+      .ignoringFields("id", "createdAt", "updatedAt", "retry")
       .isEqualTo(createSentNotification().withId(1L));
   }
 

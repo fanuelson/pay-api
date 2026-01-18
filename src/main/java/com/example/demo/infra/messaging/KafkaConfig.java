@@ -6,9 +6,7 @@ import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.ConsumerRecordRecoverer;
 import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 
@@ -45,10 +43,6 @@ public abstract class KafkaConfig {
     factory.setConsumerFactory(consumerFactory);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
-  }
-
-  protected <T> ConsumerRecordRecoverer deadLetterPublishingRecoverer(KafkaTemplate<String, T> template) {
-    return new DeadLetterPublishingRecoverer(template);
   }
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.application.usecase;
 
+import com.example.demo.application.exception.NotificationException;
 import com.example.demo.application.port.in.SendNotificationCommand;
 import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.domain.model.Notification;
@@ -39,8 +40,9 @@ public class SendNotificationUseCase {
       boolean sent = notificationService.sendNotification(
         user.getId(), user.getEmail(), notification.getMessage()
       );
+
       if (!sent) {
-        throw new IllegalStateException("Circuit breaker open");
+        throw NotificationException.create();
       }
       notification.sent();
       notificationRepository.update(notification);

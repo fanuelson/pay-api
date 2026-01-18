@@ -22,6 +22,7 @@ public class Notification {
   private RetryOptions retry;
   private String errorMessage;
   private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
   private LocalDateTime sentAt;
 
   public static Notification pending(
@@ -38,8 +39,9 @@ public class Notification {
       .channel(channel)
       .status(NotificationStatus.PENDING)
       .message(msg)
-      .retry(new RetryOptions(3))
+      .retry(new RetryOptions(5))
       .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+      .updatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
       .build();
   }
 

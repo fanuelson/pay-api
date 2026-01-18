@@ -31,7 +31,7 @@ public class AuthorizeStep implements SagaStep<TransferSagaContext> {
     log.info("Authorization response: authorized={}, message={}",
         response.isAuthorized(), response.message());
 
-    if (!response.isAuthorized()) {
+    if (response.isNotAuthorized()) {
       throw new BusinessException(response.message());
     }
 

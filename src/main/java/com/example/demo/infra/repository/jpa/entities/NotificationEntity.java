@@ -1,16 +1,15 @@
 package com.example.demo.infra.repository.jpa.entities;
 
-import com.example.demo.domain.model.NotificationStatus;
 import com.example.demo.domain.model.NotificationChannel;
+import com.example.demo.domain.model.NotificationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -61,10 +60,23 @@ public class NotificationEntity {
   @Column(name = "error_message", columnDefinition = "TEXT")
   private String errorMessage;
 
-  @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
+
   @Column(name = "sent_at")
   private LocalDateTime sentAt;
+
+  @PrePersist
+  void prePersist() {
+    createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    preUpdate();
+  }
+
+  @PreUpdate
+  void preUpdate() {
+    updatedAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+  }
 }

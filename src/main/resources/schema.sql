@@ -73,6 +73,7 @@ CREATE TABLE notifications
     max_attempts      INT         NOT NULL DEFAULT 3,
     error_message     TEXT,
     created_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sent_at           TIMESTAMP,
 
     CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),

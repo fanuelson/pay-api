@@ -27,6 +27,7 @@ public interface NotificationMapper {
   @Mapping(target = "recipientId", ignore = true)
   @Mapping(target = "channel", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
+  @Mapping(source = "retry.maxAttempts", target = "maxAttempts", ignore = true)
   @Mapping(source = "retry.attempts", target = "attempts")
   NotificationEntity updateEntity(@MappingTarget NotificationEntity entity, Notification domain);
 

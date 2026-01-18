@@ -20,7 +20,7 @@ public class TransferEventListener {
   private final ExecuteTransferUseCase executeTransfer;
 
   @KafkaListener(
-    topics = "${kafka.topics.transfer-events}",
+    topics = "${app.kafka.topics.transfer-events.name}",
     containerFactory = "transferListenerContainerFactory"
   )
   public void handle(

@@ -6,7 +6,6 @@ import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.saga.transfer.step.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +25,8 @@ public class ExecuteTransferUseCase {
     var saga = SagaOrchestrator.of(
       loadDataStep,
       validateStep,
-      reserveBalanceStep,
       authorizeStep,
+      reserveBalanceStep,
       creditStep,
       completeStep,
       notifyStep

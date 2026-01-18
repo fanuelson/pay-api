@@ -1,18 +1,16 @@
 package com.example.demo.infra.messaging;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
-import com.example.demo.infra.messaging.listener.NotificationEventRetryListener;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.FixedBackOff;
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,18 +34,25 @@ public class NotificationKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, NotificationEvent> notificationListenerContainerFactory(
-    NotificationEventRetryListener notificationEventRetryListener
-  ) {
-    final var listenerContainerFactory = listenerContainerFactory(notificationConsumerFactory());
-    final var recoverer = deadLetterPublishingRecoverer(notificationKafkaTemplate());
-    final var backOff = new FixedBackOff(10000, 5);
-    final var errorHandler = new DefaultErrorHandler(recoverer, backOff);
-    errorHandler.setRetryListeners(notificationEventRetryListener);
-    listenerContainerFactory.setCommonErrorHandler(errorHandler);
-    listenerContainerFactory.setConcurrency(2);
+  public ConcurrentKafkaListenerContainerFactory<String, NotificationEvent>
+  notificationListenerContainerFactory() {
+    return listenerContainerFactory(notificationConsumerFactory());
+  }
 
-    return listenerContainerFactory;
+  @Bean
+  public NewTopic notificationEventTopic(NotificationTopicProperties notificationTopic) {
+    return TopicBuilder.name(notificationTopic.getName())
+      .partitions(notificationTopic.getPartitions())
+      .replicas(notificationTopic.getReplicas())
+      .build();
+  }
+
+  @Bean
+  public NewTopic notificationEventRetryTopic(NotificationTopicProperties notificationTopic) {
+    return TopicBuilder.name(notificationTopic.getRetryName())
+      .partitions(notificationTopic.getPartitions())
+      .replicas(notificationTopic.getReplicas())
+      .build();
   }
 
 }

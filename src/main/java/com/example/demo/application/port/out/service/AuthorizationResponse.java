@@ -6,6 +6,9 @@ public record AuthorizationResponse(
   String message
 ) {
 
+  public boolean isNotAuthorized() {
+    return !isAuthorized;
+  }
 
   public static AuthorizationResponse authorized(String code) {
     return new AuthorizationResponse(true, code, "Transação autorizada");

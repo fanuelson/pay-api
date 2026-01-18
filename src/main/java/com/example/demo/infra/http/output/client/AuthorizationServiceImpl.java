@@ -24,7 +24,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
   @Override
   @CircuitBreaker(name = "authorizationService", fallbackMethod = "authorizationFallback")
-  @Retry(name = "authorizationService")
   public AuthorizationResponse authorize(Long payerId, Long payeeId, Long amountInCents) {
     try {
       final var response = restClient.get()

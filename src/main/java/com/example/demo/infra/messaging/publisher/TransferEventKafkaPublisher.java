@@ -17,7 +17,7 @@ public class TransferEventKafkaPublisher implements TransferEventPublisher {
   @Qualifier("transferKafkaTemplate")
   private KafkaTemplate<String, TransferEvent> kafkaTemplate;
 
-  @Value("${kafka.topics.transfer-events}")
+  @Value("${app.kafka.topics.transfer-events.name}")
   private String topic;
 
   @Override
