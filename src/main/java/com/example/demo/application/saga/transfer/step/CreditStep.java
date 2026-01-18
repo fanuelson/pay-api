@@ -21,13 +21,13 @@ public class CreditStep implements SagaStep<TransferSagaContext> {
   public void execute(TransferSagaContext context) {
     var wallet = context.getPayeeWallet();
     wallet.credit(context.getAmountInCents());
-    walletRepository.save(wallet);
+    context.setPayeeWallet(walletRepository.update(wallet.getId(), wallet));
   }
 
   @Override
   public void compensate(TransferSagaContext context, String cause) {
     var wallet = context.getPayeeWallet();
     wallet.debit(context.getAmountInCents());
-    walletRepository.save(wallet);
+    context.setPayeeWallet(walletRepository.update(wallet.getId(), wallet));
   }
 }

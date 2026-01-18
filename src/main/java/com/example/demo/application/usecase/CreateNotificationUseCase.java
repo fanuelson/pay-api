@@ -26,7 +26,7 @@ public class CreateNotificationUseCase {
 
     user.getEnabledNotificationChannels()
       .stream()
-      .map(Notification.fromChannel(transactionId, userId, msg))
+      .map(Notification.fromChannel(transactionId, userId, user.getEmail(), msg))
       .map(notificationRepository::save)
       .map(NotificationEvent.fromNotification())
       .forEach(notificationEventPublisher::publish);

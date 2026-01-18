@@ -20,6 +20,7 @@ public interface WalletMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "userId", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "version", ignore = true)
   WalletEntity updateEntity(@MappingTarget WalletEntity entity, Wallet domain);
 
   default UnaryOperator<WalletEntity> updateFrom(final Wallet domain) {

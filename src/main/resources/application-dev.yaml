@@ -10,4 +10,4 @@ logging:
     com.example.demo: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
-    io.github.resilience4j: DEBUG
+    io.github.resilience4j: INFO

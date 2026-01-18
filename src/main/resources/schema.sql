@@ -1,14 +1,14 @@
 -- Tabela de Usuários
 CREATE TABLE users
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    full_name  VARCHAR(255) NOT NULL,
-    document   VARCHAR(14)  NOT NULL UNIQUE,
-    email      VARCHAR(255) NOT NULL UNIQUE,
+    id                            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    full_name                     VARCHAR(255) NOT NULL,
+    document                      VARCHAR(14)  NOT NULL UNIQUE,
+    email                         VARCHAR(255) NOT NULL UNIQUE,
     enabled_notification_channels VARCHAR(255) NOT NULL DEFAULT 'EMAIL',
-    user_type  VARCHAR(20)  NOT NULL,
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    user_type                     VARCHAR(20)  NOT NULL,
+    created_at                    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_user_type CHECK (user_type IN ('COMMON', 'MERCHANT'))
 );
@@ -49,7 +49,8 @@ CREATE TABLE transactions
     CONSTRAINT fk_transaction_payer FOREIGN KEY (payer_id) REFERENCES users (id),
     CONSTRAINT fk_transaction_payee FOREIGN KEY (payee_id) REFERENCES users (id),
     CONSTRAINT chk_amount CHECK (amount_in_cents > 0),
-    CONSTRAINT chk_different_users CHECK (payer_id != payee_id),
+    CONSTRAINT chk_different_users CHECK (payer_id != payee_id
+) ,
     CONSTRAINT chk_status CHECK (status IN ('PENDING', 'AUTHORIZED', 'COMPLETED', 'FAILED', 'REVERSED'))
 );
 
@@ -61,21 +62,21 @@ CREATE INDEX idx_transaction_created_at ON transactions (created_at);
 -- Tabela de Notificações
 CREATE TABLE notifications
 (
-    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id VARCHAR(36) NOT NULL,
-    recipient_id   BIGINT      NOT NULL,
-    channel        VARCHAR(50) NOT NULL,
-    status         VARCHAR(20) NOT NULL,
-    message        TEXT,
-    attempts       INT         NOT NULL DEFAULT 0,
-    max_attempts   INT         NOT NULL DEFAULT 3,
-    error_message  TEXT,
-    created_at     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sent_at        TIMESTAMP,
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id    VARCHAR(36) NOT NULL,
+    recipient_id      BIGINT      NOT NULL,
+    recipient_address VARCHAR     NOT NULL,
+    channel           VARCHAR(200) NOT NULL,
+    status            VARCHAR(20) NOT NULL,
+    message           TEXT,
+    attempts          INT         NOT NULL DEFAULT 0,
+    max_attempts      INT         NOT NULL DEFAULT 3,
+    error_message     TEXT,
+    created_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    sent_at           TIMESTAMP,
 
     CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
-    CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id),
-    CONSTRAINT chk_notification_status CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
+    CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id)
 );
 
 CREATE INDEX idx_notification_transaction ON notifications (transaction_id);

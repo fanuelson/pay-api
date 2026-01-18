@@ -38,8 +38,11 @@ public class NotificationEntity {
   @Column(name = "recipient_id", nullable = false)
   private Long recipientId;
 
+  @Column(name = "recipient_address", nullable = false)
+  private String recipientAddress;
+
   @Enumerated(EnumType.STRING)
-  @Column(name = "channel", nullable = false, length = 50)
+  @Column(name = "channel", nullable = false, length = 200)
   private NotificationChannel channel;
 
   @Enumerated(EnumType.STRING)

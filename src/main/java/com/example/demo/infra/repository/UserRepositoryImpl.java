@@ -3,12 +3,11 @@ package com.example.demo.infra.repository;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.repository.UserRepository;
-import com.example.demo.infra.repository.mapper.UserMapper;
 import com.example.demo.infra.repository.jpa.UserJpaRepository;
+import com.example.demo.infra.repository.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 @Slf4j

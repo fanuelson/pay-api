@@ -3,14 +3,13 @@ package com.example.demo.infra.repository;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.repository.NotificationRepository;
-import com.example.demo.infra.repository.mapper.NotificationMapper;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
+import com.example.demo.infra.repository.mapper.NotificationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 

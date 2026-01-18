@@ -1,8 +1,8 @@
 package com.example.demo.infra.messaging.listener;
 
 import com.example.demo.application.port.in.SendNotificationCommand;
-import com.example.demo.application.usecase.SendNotificationUseCase;
 import com.example.demo.application.port.out.event.NotificationEvent;
+import com.example.demo.application.usecase.SendNotificationUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

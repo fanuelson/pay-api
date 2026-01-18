@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
-
 import static java.util.Optional.of;
 
 @Slf4j
@@ -45,11 +43,6 @@ public class WalletRepositoryImpl implements WalletRepository {
   }
 
   @Override
-  public void delete(Long id) {
-    repository.deleteById(id);
-  }
-
-  @Override
   public Optional<Wallet> findById(Long id) {
     return repository.findById(id).map(mapper::toDomain);
   }
@@ -59,8 +52,4 @@ public class WalletRepositoryImpl implements WalletRepository {
     return repository.findByUserId(userId).map(mapper::toDomain);
   }
 
-  @Override
-  public boolean existsByUserId(Long userId) {
-    return repository.existsByUserId(userId);
-  }
 }

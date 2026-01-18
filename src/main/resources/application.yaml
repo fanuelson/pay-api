@@ -33,6 +33,7 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: false
       isolation-level: read_committed
+
     producer:
       acks: all
       retries: 3
@@ -97,8 +98,8 @@ resilience4j:
       notificationService:
         baseConfig: default
         slidingWindowSize: 20
-        minimumNumberOfCalls: 10
-        permittedNumberOfCallsInHalfOpenState: 5
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
         waitDurationInOpenState: 60s
         failureRateThreshold: 70  # 70% de falhas abre o circuito
         slowCallDurationThreshold: 10s
@@ -131,7 +132,7 @@ resilience4j:
       # Notification Service - Mais tentativas (não crítico)
       notificationService:
         maxAttempts: 3
-        waitDuration: 2s
+        waitDuration: 5s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
         retryExceptions:
@@ -168,4 +169,4 @@ logging:
     com.example.demo: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
-    io.github.resilience4j: DEBUG
+    io.github.resilience4j: INFO

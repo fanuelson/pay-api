@@ -1,18 +1,14 @@
 package com.example.demo.application.usecase;
 
 import com.example.demo.application.port.in.SendNotificationCommand;
-import com.example.demo.application.port.out.event.NotificationEventPublisher;
+import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.domain.model.Notification;
-import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.domain.model.NotificationStatus;
 import com.example.demo.domain.repository.NotificationRepository;
 import com.example.demo.domain.repository.UserRepository;
-import com.example.demo.application.port.out.service.NotificationService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -23,9 +19,7 @@ public class SendNotificationUseCase {
   private final NotificationService notificationService;
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
-  private final NotificationEventPublisher notificationEventPublisher;
 
-  @Transactional
   public void execute(final SendNotificationCommand command) {
     notificationRepository
       .findById(command.notificationId())
@@ -54,19 +48,15 @@ public class SendNotificationUseCase {
         notification.getId(), notification.getChannel());
     } catch (Exception ex) {
       handleFailure(notification, ex);
+      if (notification.canRetry()) {
+        throw ex;
+      }
     }
-  }
-
-  private void throwing() {
-    throw new IllegalStateException("Circuit breaker open");
   }
 
   private void handleFailure(Notification notification, Exception ex) {
     notification.failed(ex.getMessage());
     notificationRepository.update(notification);
-    if (notification.canRetry()) {
-      notificationEventPublisher.publish(NotificationEvent.of(notification.getId()));
-    }
   }
 
 }

@@ -6,6 +6,7 @@ import com.example.demo.domain.model.NotificationStatus;
 import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.jpa.config.JpaConfig;
+import com.example.demo.infra.repository.mapper.NotificationMapper;
 import com.example.demo.infra.repository.mapper.NotificationMapperImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ public class NotificationRepositoryTest {
 
     Assertions.assertThat(result)
       .usingRecursiveComparison()
-      .ignoringFields("id", "createdAt")
+      .ignoringFields("id", "createdAt", "retry")
       .isEqualTo(createPendingNotification());
   }
 
@@ -112,7 +113,7 @@ public class NotificationRepositoryTest {
 
     Assertions.assertThat(result)
       .usingRecursiveComparison()
-      .ignoringFields("createdAt")
+      .ignoringFields("createdAt", "retry")
       .isEqualTo(createSentNotification().withId(1L));
   }
 
@@ -120,6 +121,7 @@ public class NotificationRepositoryTest {
     return Notification.builder()
       .transactionId("t1")
       .recipientId(10L)
+      .recipientAddress("test@mail.com")
       .channel(NotificationChannel.EMAIL)
       .status(status)
       .build();

@@ -9,12 +9,10 @@ import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.application.port.out.service.NotificationService;
+import com.example.demo.infra.http.input.resources.TransferRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -46,9 +44,16 @@ public class TestController {
   }
 
   @GetMapping("/notify")
-  public String sendNotification() {
-    notificationService.sendNotification(1L, "mail.com", "heeey");
-    return "ok";
+  public Object sendNotification() {
+    try {
+      final var sent = notificationService.sendNotification(1L, "mail.com", "heeey");
+      return Map.of("sent", sent);
+    } catch (Exception e) {
+      log.error("Error sending notification");
+      return Map.of("sent", false);
+    }
+
+
   }
 
   @GetMapping("/lock/{key}")
@@ -67,18 +72,21 @@ public class TestController {
     }
   }
 
-  @GetMapping("notify-event/{transactionId}")
-  public String notifyEvent(@PathVariable String transactionId) {
+  @PostMapping("notify-event/{transactionId}")
+  public String notifyEvent(
+    @PathVariable String transactionId,
+    @RequestBody TransferRequest request) {
     final var t = transactionRepository.save(
       Transaction.builder()
         .id(transactionId)
-        .payerId(1L)
-        .payeeId(2L)
-        .amountInCents(200L)
+        .payerId(request.payerId())
+        .payeeId(request.payeeId())
+        .amountInCents(request.amountInCents())
         .status(TransactionStatus.PENDING)
         .build()
     );
-    createNotificationUseCase.execute(CreateNotificationCommand.of(t.getId(), 2L, "heeey"));
+    final var recipientId = request.payerId();
+    createNotificationUseCase.execute(CreateNotificationCommand.of(t.getId(), recipientId, "heeey"));
     return "ok";
   }
 

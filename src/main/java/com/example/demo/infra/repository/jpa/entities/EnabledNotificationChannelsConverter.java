@@ -19,7 +19,7 @@ public class EnabledNotificationChannelsConverter
 
   @Override
   public String convertToDatabaseColumn(Set<NotificationChannel> attribute) {
-    if(Objects.isNull(attribute) || attribute.isEmpty()) return "";
+    if(Objects.isNull(attribute) || attribute.isEmpty()) return null;
 
     return attribute.stream().map(Enum::name).collect(Collectors.joining(DEFAULT_SEPARATOR));
   }

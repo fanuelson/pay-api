@@ -21,13 +21,13 @@ public class ReserveBalanceStep implements SagaStep<TransferSagaContext> {
   public void execute(TransferSagaContext context) {
     var wallet = context.getPayerWallet();
     wallet.debit(context.getAmountInCents());
-    walletRepository.save(wallet);
+    context.setPayerWallet(walletRepository.update(wallet.getId(), wallet));
   }
 
   @Override
   public void compensate(TransferSagaContext context, String cause) {
     var wallet = context.getPayerWallet();
     wallet.credit(context.getAmountInCents());
-    walletRepository.save(wallet);
+    context.setPayerWallet(walletRepository.update(wallet.getId(), wallet));
   }
 }

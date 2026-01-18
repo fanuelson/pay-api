@@ -8,8 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.util.Map;
+import java.util.function.Function;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -43,5 +47,19 @@ public class GlobalExceptionHandler {
     final var res = ErrorResponse.of(status.toString(), "BUSINESS_VALIDATION_ERROR", ex.getMessage())
       .withErrors(ex.getErrors());
     return ResponseEntity.status(status.value()).body(res);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    final var errors = ex.getBindingResult()
+      .getFieldErrors()
+      .stream()
+      .map(formatMessage())
+      .toList();
+    return ResponseEntity.badRequest().body(Map.of("errors", errors));
+  }
+
+  private Function<FieldError, String> formatMessage() {
+    return field -> String.join(" ", field.getField(), field.getDefaultMessage());
   }
 }

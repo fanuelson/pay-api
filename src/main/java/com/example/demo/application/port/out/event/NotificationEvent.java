@@ -4,14 +4,22 @@ import com.example.demo.domain.model.Notification;
 import java.time.LocalDateTime;
 import java.util.function.Function;
 
-public record NotificationEvent(Long notificationId, LocalDateTime timestamp) {
+public record NotificationEvent(
+  Long notificationId,
+  Notification notification,
+  LocalDateTime timestamp
+) {
 
   public static NotificationEvent of(final Long notificationId) {
-    return new NotificationEvent(notificationId, LocalDateTime.now());
+    return new NotificationEvent(notificationId, null, LocalDateTime.now());
+  }
+
+  public static NotificationEvent of(final Notification notification) {
+    return new NotificationEvent(notification.getId(), notification, LocalDateTime.now());
   }
 
   public static Function<Notification, NotificationEvent> fromNotification() {
-    return notification -> of(notification.getId());
+    return NotificationEvent::of;
   }
 
 }

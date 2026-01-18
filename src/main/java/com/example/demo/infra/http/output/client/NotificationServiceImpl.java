@@ -3,7 +3,6 @@ package com.example.demo.infra.http.output.client;
 import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.infra.messaging.exception.NotificationException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +20,6 @@ public class NotificationServiceImpl implements NotificationService {
   private RestClient restClient;
 
   @Override
-  @Retry(name = "notificationService")
   @CircuitBreaker(name = "notificationService", fallbackMethod = "fallback")
   public boolean sendNotification(Long userId, String email, String message) {
     log.info("Sending notification to userId={}, email={}", userId, email);
@@ -42,7 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   private boolean fallback(Long userId, String email, String message, Exception ex) {
-    log.warn("Fallback called, circuit breaker open, reason= {}", ex.getMessage());
+    log.warn("Fallback called, reason = {}", ex.getMessage());
     return false;
   }
+
 }
