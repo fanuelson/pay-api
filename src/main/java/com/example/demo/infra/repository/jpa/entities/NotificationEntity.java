@@ -2,6 +2,7 @@ package com.example.demo.infra.repository.jpa.entities;
 
 import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.domain.model.NotificationStatus;
+import com.example.demo.domain.helper.DateTimeHelper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -71,12 +71,12 @@ public class NotificationEntity {
 
   @PrePersist
   void prePersist() {
-    createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    createdAt = DateTimeHelper.now();
     preUpdate();
   }
 
   @PreUpdate
   void preUpdate() {
-    updatedAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    updatedAt = DateTimeHelper.now();
   }
 }

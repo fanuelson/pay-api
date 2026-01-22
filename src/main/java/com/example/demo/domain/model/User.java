@@ -1,5 +1,6 @@
 package com.example.demo.domain.model;
 
+import com.example.demo.domain.helper.DateTimeHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,8 +33,8 @@ public class User {
         this.document = document;
         this.email = email;
         this.type = type;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = DateTimeHelper.now();
+        this.updatedAt = DateTimeHelper.now();
 
         validate();
     }

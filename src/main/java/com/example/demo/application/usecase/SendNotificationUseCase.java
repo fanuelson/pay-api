@@ -30,30 +30,34 @@ public class SendNotificationUseCase {
 
   private void send(Notification notification) {
     try {
-      final var user = userRepository
-        .findById(notification.getRecipientId())
-        .orElse(null);
-
-      if (isNull(user)) {
-        return;
-      }
-      boolean sent = notificationService.sendNotification(
-        user.getId(), user.getEmail(), notification.getMessage()
-      );
-
-      if (!sent) {
-        throw NotificationException.create();
-      }
-      notification.sent();
-      notificationRepository.update(notification);
-      log.info("Notification sent successfully: id={}, channel={}",
-        notification.getId(), notification.getChannel());
+      trySend(notification);
     } catch (Exception ex) {
       handleFailure(notification, ex);
-      if (notification.canRetry()) {
-        throw ex;
-      }
+      throw NotificationException.create(ex);
     }
+  }
+
+  void throwing() {
+//    throw NotificationException.create("Mocked exception");
+  }
+
+  private void trySend(Notification notification) {
+    final var user = userRepository
+      .findById(notification.getRecipientId())
+      .orElse(null);
+
+    if (isNull(user)) {
+      return;
+    }
+
+    notificationService.sendNotification(
+      user.getId(), user.getEmail(), notification.getMessage()
+    );
+    throwing();
+    notification.sent();
+    notificationRepository.update(notification);
+    log.info("Notification sent successfully: id={}, channel={}",
+      notification.getId(), notification.getChannel());
   }
 
   private void handleFailure(Notification notification, Exception ex) {

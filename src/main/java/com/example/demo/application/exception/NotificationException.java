@@ -5,7 +5,20 @@ public class NotificationException extends ApplicationException{
     super(msg, throwable);
   }
 
+  public static NotificationException create(String msg, Throwable t) {
+    final var resultMsg = msg == null ? "" : ": " + msg;
+    return new NotificationException("Notification failed" + resultMsg, t);
+  }
+
+  public static NotificationException create(String msg) {
+    return create(msg, null);
+  }
+
   public static NotificationException create() {
-    return new NotificationException("Notification failed", null);
+    return create(null, null);
+  }
+
+  public static NotificationException create(Throwable t) {
+    return create(null, t);
   }
 }

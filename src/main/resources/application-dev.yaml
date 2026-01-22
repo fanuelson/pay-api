@@ -10,6 +10,46 @@ app:
         maxAttempts: 10
         delay: 5000
 
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - java.lang.Exception
+    #        ignoreExceptions:
+    #          - com.example.demo.domain.exception.FieldValidationException
+
+    instances:
+      # Authorization Service - Mais restritivo (crítico)
+      authorizationService:
+        baseConfig: default
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50  # 50% de falhas abre o circuito
+        slowCallDurationThreshold: 5s
+        slowCallRateThreshold: 50
+
+      # Notification Service - Mais permissivo (não crítico)
+      notificationService:
+        baseConfig: default
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 15s
+        failureRateThreshold: 70  # 70% de falhas abre o circuito
+        slowCallDurationThreshold: 10s
+        slowCallRateThreshold: 70
+
 management:
   endpoints:
     web:
@@ -22,4 +62,5 @@ logging:
     com.example.demo: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
-    io.github.resilience4j: INFO
+    io.github.resilience4j: DEBUG
+    org.apache.kafka.common.config: WARN

@@ -1,5 +1,6 @@
 package com.example.demo.application.port.out.event;
 
+import com.example.demo.domain.helper.DateTimeHelper;
 import java.time.LocalDateTime;
 
 public record TransferEvent(
@@ -27,7 +28,7 @@ public record TransferEvent(
       amountInCents,
       status,
       authorizationCode,
-      LocalDateTime.now()
+      DateTimeHelper.now()
     );
   }
 }

@@ -39,9 +39,9 @@ public class NotificationServiceImpl implements NotificationService {
     return true;
   }
 
-  private boolean fallback(Long userId, String email, String message, Exception ex) {
+  private boolean fallback(Long userId, String email, String message, Exception ex) throws Exception {
     log.warn("Fallback called, reason = {}", ex.getMessage());
-    return false;
+    throw ex;
   }
 
 }

@@ -1,6 +1,7 @@
 package com.example.demo.domain.model;
 
 import com.example.demo.domain.helper.MoneyHelper;
+import com.example.demo.domain.helper.DateTimeHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +27,8 @@ public class Wallet {
     this.userId = userId;
     this.balanceInCents = balanceInCents;
     this.version = 0;
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
+    this.createdAt = DateTimeHelper.now();
+    this.updatedAt = DateTimeHelper.now();
 
     validate();
   }
@@ -73,7 +74,7 @@ public class Wallet {
     }
 
     this.balanceInCents = MoneyHelper.subtract(this.balanceInCents, amountInCents);
-    this.updatedAt = LocalDateTime.now();
+    this.updatedAt = DateTimeHelper.now();
   }
 
   public void credit(long amountInCents) {
@@ -82,7 +83,7 @@ public class Wallet {
     }
 
     this.balanceInCents = MoneyHelper.add(this.balanceInCents, amountInCents);
-    this.updatedAt = LocalDateTime.now();
+    this.updatedAt = DateTimeHelper.now();
   }
 
   public boolean hasInsufficientBalance(long amountInCents) {

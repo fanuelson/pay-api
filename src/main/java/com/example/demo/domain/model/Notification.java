@@ -1,8 +1,8 @@
 package com.example.demo.domain.model;
 
+import com.example.demo.domain.helper.DateTimeHelper;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
 
 @Data
@@ -40,8 +40,8 @@ public class Notification {
       .status(NotificationStatus.PENDING)
       .message(msg)
       .retry(new RetryOptions(5))
-      .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
-      .updatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+      .createdAt(DateTimeHelper.now())
+      .updatedAt(DateTimeHelper.now())
       .build();
   }
 
@@ -57,7 +57,7 @@ public class Notification {
 
   public void sent() {
     this.status = NotificationStatus.SENT;
-    this.sentAt = LocalDateTime.now();
+    this.sentAt = DateTimeHelper.now();
   }
 
   public void failed(String reason) {

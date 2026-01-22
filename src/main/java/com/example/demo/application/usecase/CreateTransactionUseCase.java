@@ -7,11 +7,10 @@ import com.example.demo.application.port.out.event.TransferEventPublisher;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.domain.repository.TransactionRepository;
+import com.example.demo.domain.helper.DateTimeHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -30,7 +29,7 @@ public class CreateTransactionUseCase {
         .payeeId(command.payeeId())
         .status(TransactionStatus.PENDING)
         .amountInCents(command.amountInCents())
-        .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+        .createdAt(DateTimeHelper.now())
         .build();
 
     transactionRepository.save(transaction);

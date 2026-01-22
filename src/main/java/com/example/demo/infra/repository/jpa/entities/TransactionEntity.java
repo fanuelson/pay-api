@@ -1,6 +1,7 @@
 package com.example.demo.infra.repository.jpa.entities;
 
 import com.example.demo.domain.model.TransactionStatus;
+import com.example.demo.domain.helper.DateTimeHelper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +11,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -61,7 +61,7 @@ public class TransactionEntity {
 
   @PrePersist
   private void prePersist() {
-    createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    createdAt = DateTimeHelper.now();
   }
 
 }

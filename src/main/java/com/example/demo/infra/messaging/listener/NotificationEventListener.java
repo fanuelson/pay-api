@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
-import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
+import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -21,11 +21,7 @@ public class NotificationEventListener {
   private final SendNotificationUseCase sendNotificationUseCase;
 
   @RetryableTopic(
-    topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
-    backOff = @BackOff(
-      delayString = "#{@notificationTopicProperties.delay}ms",
-      multiplier = 1.5
-    ),
+    backOff = @BackOff(delayString = "#{@notificationTopicProperties.delay}ms"),
     attempts = "#{@notificationTopicProperties.maxAttempts}",
     numPartitions = "#{@notificationTopicProperties.partitions}",
     listenerContainerFactory = "notificationListenerContainerFactory",

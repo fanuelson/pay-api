@@ -49,10 +49,9 @@ public class TestController {
       final var sent = notificationService.sendNotification(1L, "mail.com", "heeey");
       return Map.of("sent", sent);
     } catch (Exception e) {
-      log.error("Error sending notification");
+      log.error("TEST CONTROLLER: Error sending notification", e);
       return Map.of("sent", false);
     }
-
 
   }
 
