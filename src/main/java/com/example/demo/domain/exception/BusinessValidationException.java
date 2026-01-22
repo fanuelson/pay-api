@@ -1,6 +1,6 @@
 package com.example.demo.domain.exception;
 
-import com.example.demo.application.validation.ValidationError;
+import com.example.demo.domain.validation.ValidationError;
 import lombok.Getter;
 
 import java.util.List;

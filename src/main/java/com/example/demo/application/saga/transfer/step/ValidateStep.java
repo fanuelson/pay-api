@@ -2,8 +2,8 @@ package com.example.demo.application.saga.transfer.step;
 
 import com.example.demo.application.saga.SagaStep;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
-import com.example.demo.application.validation.TransferContext;
-import com.example.demo.application.validation.TransferValidator;
+import com.example.demo.domain.validation.TransferContext;
+import com.example.demo.domain.validation.TransferValidator;
 import com.example.demo.domain.exception.BusinessValidationException;
 import com.example.demo.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;

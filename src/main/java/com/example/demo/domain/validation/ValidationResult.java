@@ -1,4 +1,4 @@
-package com.example.demo.application.validation;
+package com.example.demo.domain.validation;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

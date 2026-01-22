@@ -1,4 +1,4 @@
-package com.example.demo.application.validation;
+package com.example.demo.domain.validation;
 
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
