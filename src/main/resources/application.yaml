@@ -46,6 +46,8 @@ spring:
 app:
   kafka:
     topics:
+      transaction-events:
+        name: transaction-events
       transfer-events:
         name: transfer-events
       notification-events:
