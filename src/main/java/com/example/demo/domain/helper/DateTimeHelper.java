@@ -1,6 +1,7 @@
 package com.example.demo.domain.helper;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class DateTimeHelper {
 
@@ -8,6 +9,6 @@ public class DateTimeHelper {
   }
 
   public static LocalDateTime now() {
-    return LocalDateTime.now();
+    return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 }

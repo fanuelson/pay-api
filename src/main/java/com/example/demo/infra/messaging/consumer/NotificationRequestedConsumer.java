@@ -1,4 +1,4 @@
-package com.example.demo.infra.messaging.listener;
+package com.example.demo.infra.messaging.consumer;
 
 import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.application.port.in.SendNotificationCommand;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NotificationEventListener {
+public class NotificationRequestedConsumer {
 
   private final SendNotificationUseCase sendNotificationUseCase;
 

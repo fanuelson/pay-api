@@ -1,4 +1,4 @@
-package com.example.demo.infra.messaging.listener;
+package com.example.demo.infra.messaging.consumer;
 
 import com.example.demo.application.port.in.ExecuteTransferCommand;
 import com.example.demo.application.port.out.event.TransferEvent;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TransferEventListener {
+public class TransferRequestedConsumer {
 
   private final ExecuteTransferUseCase executeTransfer;
 

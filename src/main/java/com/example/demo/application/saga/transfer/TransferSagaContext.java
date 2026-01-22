@@ -1,5 +1,6 @@
 package com.example.demo.application.saga.transfer;
 
+import com.example.demo.domain.aggregate.TransactionAggregate;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
@@ -11,18 +12,57 @@ import lombok.Data;
 @Builder
 public class TransferSagaContext {
 
-  private TransactionId transactionId;
-  private Long payerId;
-  private Long payeeId;
-  private Long amountInCents;
+  private TransactionAggregate transactionAggregate;
 
-  private Transaction transaction;
-  private User payer;
-  private User payee;
-  private Wallet payerWallet;
-  private Wallet payeeWallet;
+  public static TransferSagaContext of(TransactionAggregate transactionAggregate) {
+    return new TransferSagaContext(transactionAggregate);
+  }
 
-  public static TransferSagaContext of(TransactionId transactionId) {
-    return TransferSagaContext.builder().transactionId(transactionId).build();
+  public Transaction getTransaction() {
+    return transactionAggregate.getTransaction();
+  }
+
+  public TransactionId getTransactionId() {
+    return getTransactionAggregate().getTransactionId();
+  }
+
+  public Long getPayerId() {
+    return transactionAggregate.getPayer().getId();
+  }
+
+  public Long getPayeeId() {
+    return transactionAggregate.getPayee().getId();
+  }
+
+  public Long getAmountInCents() {
+    return transactionAggregate.getTransaction().getAmountInCents();
+  }
+
+  public void setTransaction(Transaction transaction) {
+    transactionAggregate.setTransaction(transaction);
+  }
+
+  public Wallet getPayerWallet() {
+    return transactionAggregate.getPayerWallet();
+  }
+
+  public Wallet getPayeeWallet() {
+    return transactionAggregate.getPayeeWallet();
+  }
+
+  public void setPayerWallet(Wallet payerWallet) {
+    transactionAggregate.setPayerWallet(payerWallet);
+  }
+
+  public void setPayeeWallet(Wallet payeeWallet) {
+    transactionAggregate.setPayeeWallet(payeeWallet);
+  }
+
+  public User getPayer() {
+    return transactionAggregate.getPayer();
+  }
+
+  public User getPayee() {
+    return transactionAggregate.getPayee();
   }
 }

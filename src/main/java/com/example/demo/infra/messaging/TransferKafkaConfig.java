@@ -1,7 +1,7 @@
 package com.example.demo.infra.messaging;
 
 import com.example.demo.application.port.out.event.TransferEvent;
-import com.example.demo.infra.messaging.listener.LoggingInterceptor;
+import com.example.demo.infra.messaging.consumer.LoggingInterceptor;
 import com.example.demo.infra.messaging.publisher.KafkaProducerListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;

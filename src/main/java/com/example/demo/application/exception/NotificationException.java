@@ -17,6 +17,6 @@ public class NotificationException extends ApplicationException {
   }
 
   public static NotificationException of(Throwable t) {
-    return of(null, t);
+    return of(t.getMessage(), t);
   }
 }

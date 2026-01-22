@@ -4,6 +4,7 @@ import com.example.demo.application.port.in.ExecuteTransferCommand;
 import com.example.demo.application.saga.SagaOrchestrator;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.saga.transfer.step.*;
+import com.example.demo.domain.repository.TransactionAggregateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ExecuteTransferUseCase {
 
-  private final LoadDataStep loadDataStep;
+  private final TransactionAggregateRepository transactionAggregateRepository;
   private final ValidateStep validateStep;
   private final ReserveBalanceStep reserveBalanceStep;
   private final AuthorizeStep authorizeStep;
@@ -20,10 +21,10 @@ public class ExecuteTransferUseCase {
   private final NotifyStep notifyStep;
 
   public void execute(ExecuteTransferCommand command) {
-    var context = TransferSagaContext.of(command.transactionId());
+    final var transactionAggregate = transactionAggregateRepository.findById(command.transactionId());
+    var context =  TransferSagaContext.of(transactionAggregate);
 
     var saga = SagaOrchestrator.of(
-      loadDataStep,
       validateStep,
       authorizeStep,
       reserveBalanceStep,
