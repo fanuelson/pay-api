@@ -4,6 +4,8 @@ import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.domain.model.NotificationStatus;
+import com.example.demo.domain.vo.NotificationId;
+import com.example.demo.domain.vo.TransactionId;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.jpa.config.JpaConfig;
 import com.example.demo.infra.repository.mapper.NotificationMapperImpl;
@@ -30,13 +32,13 @@ public class NotificationRepositoryTest {
 
   @Test
   void shouldExecuteFindByIdAndResultEmpty() {
-    final var value = repository.findById(1L);
+    final var value = repository.findById(NotificationId.of("1"));
     assertTrue(value.isEmpty());
   }
 
   @Test
   void shouldExecuteFindByTransactionIdAndResultEmpty() {
-    final var value = repository.findByTransactionId("any");
+    final var value = repository.findByTransactionId(TransactionId.of("any"));
     assertTrue(value.isEmpty());
   }
 
@@ -49,7 +51,7 @@ public class NotificationRepositoryTest {
   @Test
   void shouldExecuteDeleteWithEmpty() {
     assertEquals(0, jpaRepository.count());
-    repository.delete(1L);
+    repository.delete(NotificationId.of("1"));
     assertEquals(0, jpaRepository.count());
   }
 
@@ -57,7 +59,7 @@ public class NotificationRepositoryTest {
   void shouldExecuteUpdateAndThrowError() {
     ElementNotFoundException ex = assertThrows(
       ElementNotFoundException.class,
-      () -> repository.update(Notification.builder().id(1L).build())
+      () -> repository.update(Notification.builder().id(NotificationId.of("1")).build())
     );
 
     assertNotNull(ex);
@@ -99,7 +101,7 @@ public class NotificationRepositoryTest {
     repository.save(createPendingNotification());
 
     //ACT
-    final var result = repository.update(createSentNotification().withId(1L));
+    final var result = repository.update(createSentNotification().withId(NotificationId.of("1")));
 
     //ASSERT
     assertNotNull(result);
@@ -111,12 +113,12 @@ public class NotificationRepositoryTest {
     Assertions.assertThat(result)
       .usingRecursiveComparison()
       .ignoringFields("id", "createdAt", "updatedAt", "retry")
-      .isEqualTo(createSentNotification().withId(1L));
+      .isEqualTo(createSentNotification().withId(NotificationId.of("1")));
   }
 
   private Notification createNotification(final NotificationStatus status) {
     return Notification.builder()
-      .transactionId("t1")
+      .transactionId(TransactionId.of("t1"))
       .recipientId(10L)
       .recipientAddress("test@mail.com")
       .channel(NotificationChannel.EMAIL)

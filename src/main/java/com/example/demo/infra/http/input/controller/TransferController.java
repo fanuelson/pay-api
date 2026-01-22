@@ -23,6 +23,6 @@ public class TransferController {
       transferRequest.amountInCents()
     );
     final var output = createTransactionUseCase.execute(command);
-    return new TransferResponse(output.transactionId());
+    return new TransferResponse(output.transactionId().value());
   }
 }

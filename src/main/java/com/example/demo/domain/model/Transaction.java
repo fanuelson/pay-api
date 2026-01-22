@@ -1,6 +1,7 @@
 package com.example.demo.domain.model;
 
 import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.domain.vo.TransactionId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Transaction {
 
-  private String id;
+  private TransactionId id;
   private Long payerId;
   private Long payeeId;
   private Long amountInCents;
@@ -30,7 +31,7 @@ public class Transaction {
     Long payeeId,
     Long amountInCents
   ) {
-    this.id = UUID.randomUUID().toString();
+    this.id = TransactionId.generate();
     this.payerId = payerId;
     this.payeeId = payeeId;
     this.amountInCents = amountInCents;

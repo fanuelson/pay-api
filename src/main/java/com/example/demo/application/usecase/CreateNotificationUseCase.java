@@ -33,7 +33,7 @@ public class CreateNotificationUseCase {
         )
       )
       .map(notificationRepository::save)
-      .map(NotificationEvent.fromNotification())
+      .map(it -> NotificationEvent.request(it.getId()))
       .forEach(notificationEventPublisher::publish);
 
   }

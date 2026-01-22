@@ -1,10 +1,11 @@
 package com.example.demo.domain.model;
 
 import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.domain.vo.NotificationId;
+import com.example.demo.domain.vo.TransactionId;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 @Data
 @With
@@ -13,8 +14,8 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public class Notification {
 
-  private Long id;
-  private String transactionId;
+  private NotificationId id;
+  private TransactionId transactionId;
   private Long recipientId;
   private String recipientAddress;
   private NotificationChannel channel;          // EMAIL, SMS
@@ -27,7 +28,7 @@ public class Notification {
   private LocalDateTime sentAt;
 
   public static Notification pending(
-    String transactionId,
+    TransactionId transactionId,
     Long recipientId,
     String recipientAddress,
     NotificationChannel channel,
@@ -47,7 +48,7 @@ public class Notification {
   }
 
   public static Function<NotificationChannel, Notification> fromChannel(
-    String transactionId, Long recipientId, String recipientAddress, String msg
+    TransactionId transactionId, Long recipientId, String recipientAddress, String msg
   ) {
     return channel -> pending(transactionId, recipientId, recipientAddress, channel, msg);
   }
@@ -61,11 +62,13 @@ public class Notification {
     this.sentAt = DateTimeHelper.now();
   }
 
-  public Notification failed(String reason) {
+  public void failed(String reason) {
     this.status = NotificationStatus.FAILED;
     this.errorMessage = reason;
+  }
+
+  public void increaseAttempts() {
     this.retry = this.retry.incrementAttempts();
-    return this;
   }
 
   public boolean hasReachedMaxAttempts() {

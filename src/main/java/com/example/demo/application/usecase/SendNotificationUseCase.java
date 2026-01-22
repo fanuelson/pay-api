@@ -35,18 +35,20 @@ public class SendNotificationUseCase {
     }
 
     try {
-      notification = send(notification);
+      notification.increaseAttempts();
+      send(notification);
+      notification.sent();
       log.info("Notification sent successfully: id={}, channel={}",
         notification.getId(), notification.getChannel());
     } catch (Exception ex) {
-      notification = handleFailure(notification, ex);
+      notification.failed(ex.getMessage());
       throw NotificationException.create(ex);
     } finally {
       notificationRepository.update(notification);
     }
   }
 
-  private Notification send(Notification notification) {
+  private void send(Notification notification) {
     final var user = userRepository
       .findById(notification.getRecipientId())
       .orElseThrow();
@@ -54,13 +56,6 @@ public class SendNotificationUseCase {
     notificationService.sendNotification(
       user.getId(), user.getEmail(), notification.getMessage()
     );
-
-    notification.sent();
-    return notificationRepository.update(notification);
-  }
-
-  private Notification handleFailure(Notification notification, Exception ex) {
-    return notification.failed(ex.getMessage());
   }
 
 }

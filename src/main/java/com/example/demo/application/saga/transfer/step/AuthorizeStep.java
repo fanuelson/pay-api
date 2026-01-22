@@ -1,8 +1,9 @@
 package com.example.demo.application.saga.transfer.step;
 
+import com.example.demo.application.port.out.service.AuthorizationRequest;
+import com.example.demo.application.port.out.service.TransferAuthorizationGateway;
 import com.example.demo.application.saga.SagaStep;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
-import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthorizeStep implements SagaStep<TransferSagaContext> {
 
-  private final AuthorizationService authorizationService;
+  private final TransferAuthorizationGateway authorizationService;
 
   @Override
   public String getName() {
@@ -22,14 +23,17 @@ public class AuthorizeStep implements SagaStep<TransferSagaContext> {
 
   @Override
   public void execute(TransferSagaContext context) {
-    var response = authorizationService.authorize(
-        context.getPayerId(),
-        context.getPayeeId(),
-        context.getAmountInCents()
+    final var request = new AuthorizationRequest(
+      context.getTransactionId(),
+      context.getPayerId(),
+      context.getPayeeId(),
+      context.getAmountInCents()
     );
 
+    var response = authorizationService.authorize(request);
+
     log.info("Authorization response: authorized={}, message={}",
-        response.isAuthorized(), response.message());
+      response.isAuthorized(), response.message());
 
     if (response.isNotAuthorized()) {
       throw new BusinessException(response.message());

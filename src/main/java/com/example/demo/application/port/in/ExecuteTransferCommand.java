@@ -1,4 +1,6 @@
 package com.example.demo.application.port.in;
 
-public record ExecuteTransferCommand(String transactionId) {
+import com.example.demo.domain.vo.TransactionId;
+
+public record ExecuteTransferCommand(TransactionId transactionId) {
 }

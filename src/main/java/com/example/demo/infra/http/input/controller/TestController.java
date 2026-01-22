@@ -1,14 +1,16 @@
 package com.example.demo.infra.http.input.controller;
 
 import com.example.demo.application.port.in.CreateNotificationCommand;
+import com.example.demo.application.port.out.service.AuthorizationRequest;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.TransactionRepository;
-import com.example.demo.application.port.out.service.AuthorizationService;
+import com.example.demo.application.port.out.service.TransferAuthorizationGateway;
 import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.application.port.out.service.NotificationService;
+import com.example.demo.domain.vo.TransactionId;
 import com.example.demo.infra.http.input.resources.TransferRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 public class TestController {
 
-  private final AuthorizationService authorizationService;
+  private final TransferAuthorizationGateway authorizationService;
   private final NotificationService notificationService;
   private final LockService lockService;
 
@@ -35,7 +37,7 @@ public class TestController {
 
   @GetMapping("/authorize")
   public Map<String, Object> authorize() {
-    final var res = authorizationService.authorize(1L, 1L, 100L);
+    final var res = authorizationService.authorize(new AuthorizationRequest(TransactionId.generate(), 1L, 1L, 100L));
     return Map.of(
       "authorized", res.isAuthorized(),
       "authorizationCode", ofNullable(res.authorizationCode()).orElse(""),
@@ -77,7 +79,7 @@ public class TestController {
     @RequestBody TransferRequest request) {
     final var t = transactionRepository.save(
       Transaction.builder()
-        .id(transactionId)
+        .id(TransactionId.of(transactionId))
         .payerId(request.payerId())
         .payeeId(request.payeeId())
         .amountInCents(request.amountInCents())

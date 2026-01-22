@@ -2,6 +2,7 @@ package com.example.demo.infra.messaging.publisher;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
+import com.example.demo.domain.vo.NotificationId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +28,11 @@ public class NotificationEventKafkaPublisher implements NotificationEventPublish
     var notificationId = event.notificationId();
     log.debug("Publishing NotificationEvent: notificationId={}", notificationId);
 
-    kafkaTemplate.send(topic, notificationId.toString(), event)
+    kafkaTemplate.send(topic, notificationId.value(), event)
       .whenComplete((result, ex) -> handleComplete(notificationId, result, ex));
   }
 
-  private void handleComplete(Long notificationId, SendResult<String, NotificationEvent> result, Throwable ex) {
+  private void handleComplete(NotificationId notificationId, SendResult<String, NotificationEvent> result, Throwable ex) {
     if (nonNull(ex)) {
       log.error("Failed to publish: notificationId={}", notificationId, ex);
     } else {

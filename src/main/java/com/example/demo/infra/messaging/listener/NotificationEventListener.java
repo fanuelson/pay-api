@@ -47,7 +47,7 @@ public class NotificationEventListener {
   )
   public void handleFailure(@Payload NotificationEvent event, Acknowledgment ack) {
     final var notificationId = event.notificationId();
-    log.info("Received Failed NotificationEvent: [notificationId={}]", notificationId);
+    log.info("Received failed, max attempts reached, NotificationEvent: [notificationId={}]", notificationId);
     ack.acknowledge();
   }
 

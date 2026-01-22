@@ -3,6 +3,7 @@ package com.example.demo.application.saga.transfer;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
+import com.example.demo.domain.vo.TransactionId;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import lombok.Data;
 @Builder
 public class TransferSagaContext {
 
-  private String transactionId;
+  private TransactionId transactionId;
   private Long payerId;
   private Long payeeId;
   private Long amountInCents;
@@ -21,7 +22,7 @@ public class TransferSagaContext {
   private Wallet payerWallet;
   private Wallet payeeWallet;
 
-  public static TransferSagaContext of(String transactionId) {
+  public static TransferSagaContext of(TransactionId transactionId) {
     return TransferSagaContext.builder().transactionId(transactionId).build();
   }
 }

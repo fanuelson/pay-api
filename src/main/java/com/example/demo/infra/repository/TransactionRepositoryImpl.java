@@ -3,6 +3,7 @@ package com.example.demo.infra.repository;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.repository.TransactionRepository;
+import com.example.demo.domain.vo.TransactionId;
 import com.example.demo.infra.repository.jpa.TransactionJpaRepository;
 import com.example.demo.infra.repository.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @Override
-  public Optional<Transaction> findById(String id) {
-    return repository.findById(id).map(mapper::toDomain);
+  public Optional<Transaction> findById(TransactionId id) {
+    return repository.findById(id.value()).map(mapper::toDomain);
   }
 
   @Override

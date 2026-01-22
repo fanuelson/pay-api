@@ -14,10 +14,14 @@ public interface NotificationMapper {
 
   @Mapping(target = "retry.maxAttempts", source = "maxAttempts")
   @Mapping(target = "retry.attempts", source = "attempts")
+  @Mapping(target = "transactionId.value", source = "transactionId")
+  @Mapping(target = "id.value", source = "id")
   Notification toDomain(NotificationEntity entity);
 
   @Mapping(source = "retry.maxAttempts", target = "maxAttempts")
   @Mapping(source = "retry.attempts", target = "attempts")
+  @Mapping(source = "transactionId.value", target = "transactionId")
+  @Mapping(source = "id.value", target = "id")
   NotificationEntity toEntity(Notification domain);
 
   List<Notification> toDomainList(List<NotificationEntity> entities);

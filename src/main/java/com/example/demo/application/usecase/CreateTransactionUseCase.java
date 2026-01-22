@@ -4,10 +4,12 @@ import com.example.demo.application.port.in.CreateTransactionCommand;
 import com.example.demo.application.port.in.CreateTransactionOutput;
 import com.example.demo.application.port.out.event.TransferEvent;
 import com.example.demo.application.port.out.event.TransferEventPublisher;
+import com.example.demo.application.port.out.event.TransferEventType;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.domain.vo.TransactionId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ public class CreateTransactionUseCase {
   private final TransferEventPublisher transferEventPublisher;
 
   public CreateTransactionOutput execute(CreateTransactionCommand command) {
-    var transactionId = UUID.randomUUID().toString();
+    var transactionId = TransactionId.generate();
 
     var transaction = Transaction.builder()
         .id(transactionId)
@@ -40,6 +42,7 @@ public class CreateTransactionUseCase {
         command.payeeId(),
         command.amountInCents(),
         TransactionStatus.PENDING.name(),
+        TransferEventType.REQUESTED,
         null
     );
 

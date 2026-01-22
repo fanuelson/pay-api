@@ -1,8 +1,10 @@
 package com.example.demo.application.port.in;
 
-public record CreateTransactionOutput(String transactionId) {
+import com.example.demo.domain.vo.TransactionId;
 
-  public static CreateTransactionOutput of(String transactionId) {
+public record CreateTransactionOutput(TransactionId transactionId) {
+
+  public static CreateTransactionOutput of(TransactionId transactionId) {
     return new CreateTransactionOutput(transactionId);
   }
 }

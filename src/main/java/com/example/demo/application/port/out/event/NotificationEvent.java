@@ -1,26 +1,16 @@
 package com.example.demo.application.port.out.event;
 
-import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.domain.vo.NotificationId;
 import java.time.LocalDateTime;
-import java.util.function.Function;
 
 public record NotificationEvent(
-  Long notificationId,
-  Notification notification,
+  NotificationId notificationId,
   LocalDateTime timestamp
 ) {
 
-  public static NotificationEvent of(final Long notificationId) {
-    return new NotificationEvent(notificationId, null, DateTimeHelper.now());
-  }
-
-  public static NotificationEvent of(final Notification notification) {
-    return new NotificationEvent(notification.getId(), notification, DateTimeHelper.now());
-  }
-
-  public static Function<Notification, NotificationEvent> fromNotification() {
-    return NotificationEvent::of;
+  public static NotificationEvent request(final NotificationId notificationId) {
+    return new NotificationEvent(notificationId, DateTimeHelper.now());
   }
 
 }
