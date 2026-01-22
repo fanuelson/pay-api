@@ -1,4 +1,4 @@
-package com.example.demo.application.port.out.service;
+package com.example.demo.application.port.out.gateway;
 
 import com.example.demo.domain.vo.TransactionId;
 public record AuthorizationRequest(

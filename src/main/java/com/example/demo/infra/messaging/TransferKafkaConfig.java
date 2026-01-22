@@ -1,8 +1,8 @@
 package com.example.demo.infra.messaging;
 
-import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.port.out.event.TransferEvent;
 import com.example.demo.infra.messaging.listener.LoggingInterceptor;
+import com.example.demo.infra.messaging.publisher.KafkaProducerListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +25,12 @@ public class TransferKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, TransferEvent> transferKafkaTemplate() {
-    return kafkaTemplate(transferProducerFactory());
+  public KafkaTemplate<String, TransferEvent> transferKafkaTemplate(
+    KafkaProducerListener<TransferEvent> producerListener
+  ) {
+    final var template = kafkaTemplate(transferProducerFactory());
+    template.setProducerListener(producerListener);
+    return template;
   }
 
   @Bean

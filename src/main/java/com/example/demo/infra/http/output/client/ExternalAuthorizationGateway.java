@@ -1,9 +1,9 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.application.port.out.service.AuthorizationRequest;
-import com.example.demo.application.port.out.service.AuthorizationResult;
-import com.example.demo.application.port.out.service.AuthorizationService;
-import com.example.demo.infra.http.output.exception.AuthorizationException;
+import com.example.demo.application.port.out.gateway.AuthorizationRequest;
+import com.example.demo.application.port.out.gateway.AuthorizationResult;
+import com.example.demo.application.port.out.gateway.AuthorizationGateway;
+import com.example.demo.application.exception.AuthorizationException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +16,14 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class AuthorizationServiceImpl implements AuthorizationService {
+public class ExternalAuthorizationGateway implements AuthorizationGateway {
 
   @Autowired
   @Qualifier("authorizationRestClient")
   private RestClient restClient;
 
   @Override
-  @CircuitBreaker(name = "authorizationService", fallbackMethod = "authorizationFallback")
+  @CircuitBreaker(name = "authorizationService", fallbackMethod = "fallback")
   public AuthorizationResult authorize(AuthorizationRequest request) {
     final var response = restClient.get()
       .uri("/authorize")
@@ -37,7 +37,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     return AuthorizationResult.authorized(generateAuthorizationCode());
   }
 
-  private AuthorizationResult authorizationFallback(AuthorizationRequest request, Exception ex) {
+  private AuthorizationResult fallback(AuthorizationRequest request, Exception ex) {
     log.warn("Authorization fallback called, reason = {}", ex.getMessage());
     throw AuthorizationException.of(ex);
   }

@@ -2,6 +2,7 @@ package com.example.demo.infra.messaging;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.infra.messaging.listener.LoggingInterceptor;
+import com.example.demo.infra.messaging.publisher.KafkaProducerListener;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -25,8 +26,12 @@ public class NotificationKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, NotificationEvent> notificationKafkaTemplate() {
-    return kafkaTemplate(notificationProducerFactory());
+  public KafkaTemplate<String, NotificationEvent> notificationKafkaTemplate(
+    KafkaProducerListener<NotificationEvent> producerListener
+  ) {
+    final var template = kafkaTemplate(notificationProducerFactory());
+    template.setProducerListener(producerListener);
+    return template;
   }
 
   @Bean

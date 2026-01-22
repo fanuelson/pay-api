@@ -7,20 +7,16 @@ public class NotificationException extends ApplicationException {
     super(msg, throwable);
   }
 
-  public static NotificationException create(String msg, Throwable t) {
+  public static NotificationException of(String msg, Throwable t) {
     final var resultMsg = prependIfMissing(msg, ": ");
     return new NotificationException("Notification failed" + resultMsg, t);
   }
 
-  public static NotificationException create(String msg) {
-    return create(msg, null);
+  public static NotificationException of(String msg) {
+    return of(msg, null);
   }
 
-  public static NotificationException create() {
-    return create(null, null);
-  }
-
-  public static NotificationException create(Throwable t) {
-    return create(null, t);
+  public static NotificationException of(Throwable t) {
+    return of(null, t);
   }
 }

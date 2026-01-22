@@ -1,7 +1,7 @@
 package com.example.demo.application.saga.transfer.step;
 
-import com.example.demo.application.port.out.service.AuthorizationRequest;
-import com.example.demo.application.port.out.service.AuthorizationService;
+import com.example.demo.application.port.out.gateway.AuthorizationRequest;
+import com.example.demo.application.port.out.gateway.AuthorizationGateway;
 import com.example.demo.application.saga.SagaStep;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.domain.exception.BusinessException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthorizeStep implements SagaStep<TransferSagaContext> {
 
-  private final AuthorizationService authorizationService;
+  private final AuthorizationGateway authorizationGateway;
 
   @Override
   public String getName() {
@@ -30,7 +30,7 @@ public class AuthorizeStep implements SagaStep<TransferSagaContext> {
       context.getAmountInCents()
     );
 
-    var response = authorizationService.authorize(request);
+    var response = authorizationGateway.authorize(request);
 
     log.info("Authorization response: authorized={}, message={}",
       response.isAuthorized(), response.message());

@@ -1,4 +1,4 @@
-package com.example.demo.application.port.out.service;
+package com.example.demo.application.port.out.gateway;
 
 public record AuthorizationResult(
   boolean isAuthorized,

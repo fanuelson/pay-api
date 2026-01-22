@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NotificationEventListener extends AbstractListener {
+public class NotificationEventListener {
 
   private final SendNotificationUseCase sendNotificationUseCase;
 
@@ -34,7 +34,6 @@ public class NotificationEventListener extends AbstractListener {
   )
   public void handle(@Payload NotificationEvent event, Acknowledgment ack) {
     final var notificationId = event.notificationId();
-    log.info("Received NotificationEvent: [notificationId={}]", notificationId);
     final var command = SendNotificationCommand.of(notificationId);
     sendNotificationUseCase.execute(command);
     ack.acknowledge();

@@ -1,24 +1,24 @@
 package com.example.demo.infra.http.input.controller;
 
 import com.example.demo.application.port.in.CreateNotificationCommand;
-import com.example.demo.application.port.out.service.AuthorizationRequest;
+import com.example.demo.application.port.out.event.NotificationEventPublisher;
+import com.example.demo.application.port.out.gateway.NotificationGateway;
+import com.example.demo.application.port.out.gateway.AuthorizationRequest;
+import com.example.demo.application.port.out.gateway.AuthorizationGateway;
+import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
+import com.example.demo.domain.model.Notification;
+import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
-import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.TransactionRepository;
-import com.example.demo.application.port.out.service.AuthorizationService;
-import com.example.demo.application.port.out.service.LockService;
-import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.domain.vo.TransactionId;
 import com.example.demo.infra.http.input.resources.TransferRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import static java.util.Optional.ofNullable;
 
 @Slf4j
@@ -27,8 +27,8 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 public class TestController {
 
-  private final AuthorizationService authorizationService;
-  private final NotificationService notificationService;
+  private final AuthorizationGateway authorizationService;
+  private final NotificationGateway notificationService;
   private final LockService lockService;
 
   private final TransactionRepository transactionRepository;
@@ -48,7 +48,9 @@ public class TestController {
   @GetMapping("/notify")
   public Object sendNotification() {
     try {
-      final var sent = notificationService.sendNotification(1L, "mail.com", "heeey");
+      final var sent = notificationService.send(
+        Notification.pending(TransactionId.generate(), 1L, "mail.com", NotificationChannel.EMAIL, "heeey")
+      );
       return Map.of("sent", sent);
     } catch (Exception e) {
       log.error("TEST CONTROLLER: Error sending notification", e);

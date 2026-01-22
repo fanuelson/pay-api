@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TransferEventListener extends AbstractListener {
+public class TransferEventListener {
 
   private final ExecuteTransferUseCase executeTransfer;
 

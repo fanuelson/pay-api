@@ -1,4 +1,4 @@
-package com.example.demo.infra.http.output.exception;
+package com.example.demo.application.exception;
 
 import com.example.demo.infra.exception.InfraException;
 
