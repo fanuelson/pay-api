@@ -36,8 +36,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @Override
-  public Transaction update(String id, Transaction transaction) {
-    return repository.findById(id)
+  public Transaction update(TransactionId id, Transaction transaction) {
+    return repository.findById(id.value())
       .map(mapper.updateFrom(transaction))
       .map(repository::save)
       .map(mapper::toDomain)

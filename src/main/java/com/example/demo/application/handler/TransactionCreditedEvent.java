@@ -1,12 +1,15 @@
 package com.example.demo.application.handler;
 
-import com.example.demo.domain.vo.TransactionId;
 import lombok.Getter;
 
 @Getter
 public class TransactionCreditedEvent extends TransactionEvent {
 
-  public TransactionCreditedEvent(String key, TransactionId transactionId) {
-    super(key, transactionId);
+  public TransactionCreditedEvent(TransactionEvent other) {
+    super(other);
+  }
+
+  public static TransactionCreditedEvent from(TransactionEvent other) {
+    return new TransactionCreditedEvent(other);
   }
 }

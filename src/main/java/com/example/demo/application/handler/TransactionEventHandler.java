@@ -5,13 +5,15 @@ import com.example.demo.application.port.out.event.TransactionEventPublisher;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.saga.transfer.step.*;
 import com.example.demo.domain.repository.TransactionAggregateRepository;
+import com.example.demo.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TranferEventHandler {
+public class TransactionEventHandler {
 
+  private final TransactionRepository transactionRepository;
   private final TransactionAggregateRepository transactionAggregateRepository;
   private final TransactionEventPublisher transactionEventPublisher;
 
@@ -26,15 +28,14 @@ public class TranferEventHandler {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     validateStep.execute(context);
-    transactionEventPublisher.publish(new TransactionValidatedEvent(event.getKey(), event.getTransactionId()));
+    TransactionValidatedEvent.from(event).publish(this::publish);
   }
 
   public void handle(TransactionValidatedEvent event) {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     reserveBalanceStep.execute(context);
-    transactionEventPublisher.publish(new TransactionBalanceReservedEvent(event.getKey(), event.getTransactionId()));
-    //TODO credit payee
+    TransactionBalanceReservedEvent.from(event).publish(this::publish);
   }
 
   public void handle(TransactionBalanceReservedEvent event) {
@@ -42,26 +43,46 @@ public class TranferEventHandler {
     final var context = TransferSagaContext.of(transactionAggregate);
     authorizeStep.execute(context);
     final var authorizationCode = context.getTransaction().getAuthorizationCode();
-    transactionEventPublisher.publish(new TransactionAuthorizedEvent(event.getKey(), event.getTransactionId(), authorizationCode));
+    publish(TransactionAuthorizedEvent.from(event).withAuthorizationCode(authorizationCode));
   }
 
   public void handle(TransactionAuthorizedEvent event) {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     creditStep.execute(context);
-    transactionEventPublisher.publish(new TransactionCreditedEvent(event.getKey(), event.getTransactionId()));
+    TransactionCreditedEvent.from(event).publish(this::publish);
   }
 
   public void handle(TransactionCreditedEvent event) {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     completeStep.execute(context);
-    transactionEventPublisher.publish(new TransactionCompletedEvent(event.getKey(), event.getTransactionId()));
+    TransactionCompletedEvent.from(event).publish(this::publish);
   }
 
   public void handle(TransactionCompletedEvent event) {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     notifyStep.execute(context);
+  }
+
+  public void handle(TransactionAuthorizationFailedEvent event) {
+    final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
+    final var context = TransferSagaContext.of(transactionAggregate);
+    reserveBalanceStep.compensate(context, event.getMsg());
+    TransactionFailedEvent.of(event.getKey(), event.getTransactionId(), event.getMsg())
+      .publish(transactionEventPublisher::publish);
+  }
+
+  public void handle(TransactionFailedEvent event) {
+    final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
+    final var context = TransferSagaContext.of(transactionAggregate);
+    final var transaction = context.getTransaction();
+    transaction.failed(event.getCause());
+    transactionRepository.save(transaction);
+  }
+
+  private void publish(TransactionEvent event) {
+    transactionEventPublisher.publish(event);
   }
 }

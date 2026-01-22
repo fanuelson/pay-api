@@ -41,7 +41,7 @@ spring:
         enable.idempotence: true
     listener:
       concurrency: 5
-      ack-mode: manual
+      ack-mode: record
 
 app:
   kafka:
