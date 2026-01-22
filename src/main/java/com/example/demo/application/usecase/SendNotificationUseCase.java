@@ -10,7 +10,6 @@ import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -22,18 +21,23 @@ public class SendNotificationUseCase {
   private final UserRepository userRepository;
 
   public void execute(final SendNotificationCommand command) {
-    notificationRepository
+    Notification notification = notificationRepository
       .findById(command.notificationId())
-      .filter(it -> it.isNot(NotificationStatus.SENT))
-      .ifPresent(this::send);
-  }
-
-  private void send(Notification notification) {
+      .filter(
+        Notification
+          .byIsNot(NotificationStatus.SENT)
+          .and(Notification.byCanRetry())
+      )
+      .orElseThrow();
     try {
-      trySend(notification);
+      notification = send(notification);
+      log.info("Notification sent successfully: id={}, channel={}",
+        notification.getId(), notification.getChannel());
     } catch (Exception ex) {
-      handleFailure(notification, ex);
+      notification = handleFailure(notification, ex);
       throw NotificationException.create(ex);
+    } finally {
+      notificationRepository.update(notification);
     }
   }
 
@@ -41,28 +45,22 @@ public class SendNotificationUseCase {
 //    throw NotificationException.create("Mocked exception");
   }
 
-  private void trySend(Notification notification) {
+  private Notification send(Notification notification) {
     final var user = userRepository
       .findById(notification.getRecipientId())
-      .orElse(null);
-
-    if (isNull(user)) {
-      return;
-    }
+      .orElseThrow();
 
     notificationService.sendNotification(
       user.getId(), user.getEmail(), notification.getMessage()
     );
     throwing();
+
     notification.sent();
-    notificationRepository.update(notification);
-    log.info("Notification sent successfully: id={}, channel={}",
-      notification.getId(), notification.getChannel());
+    return notificationRepository.update(notification);
   }
 
-  private void handleFailure(Notification notification, Exception ex) {
-    notification.failed(ex.getMessage());
-    notificationRepository.update(notification);
+  private Notification handleFailure(Notification notification, Exception ex) {
+    return notification.failed(ex.getMessage());
   }
 
 }

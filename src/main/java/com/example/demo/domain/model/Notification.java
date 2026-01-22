@@ -4,6 +4,7 @@ import com.example.demo.domain.helper.DateTimeHelper;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Data
 @With
@@ -55,15 +56,24 @@ public class Notification {
     return !status.equals(this.status);
   }
 
+  public static Predicate<Notification> byIsNot(NotificationStatus status) {
+    return it -> it.isNot(status);
+  }
+
+  public static Predicate<Notification> byCanRetry() {
+    return Notification::canRetry;
+  }
+
   public void sent() {
     this.status = NotificationStatus.SENT;
     this.sentAt = DateTimeHelper.now();
   }
 
-  public void failed(String reason) {
+  public Notification failed(String reason) {
     this.status = NotificationStatus.FAILED;
     this.errorMessage = reason;
     this.retry = this.retry.incrementAttempts();
+    return this;
   }
 
   public boolean canRetry() {

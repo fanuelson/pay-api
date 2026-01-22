@@ -2,11 +2,10 @@ package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.model.NotificationStatus;
 import com.example.demo.domain.model.NotificationChannel;
+import com.example.demo.domain.model.NotificationStatus;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.jpa.config.JpaConfig;
-import com.example.demo.infra.repository.mapper.NotificationMapper;
 import com.example.demo.infra.repository.mapper.NotificationMapperImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,9 +14,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 
 
 @DataJpaTest
