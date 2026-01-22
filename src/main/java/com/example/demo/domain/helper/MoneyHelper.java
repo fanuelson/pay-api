@@ -1,12 +1,11 @@
 package com.example.demo.domain.helper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MoneyHelper {
 
   private static final long CENTS_PER_UNIT = 100L;
+
+  private MoneyHelper() {
+  }
 
   public static long add(long cents1, long cents2) {
     return cents1 + cents2;

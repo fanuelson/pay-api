@@ -1,7 +1,7 @@
 package com.example.demo.infra.http.output.client;
 
+import com.example.demo.application.exception.NotificationException;
 import com.example.demo.application.port.out.service.NotificationService;
-import com.example.demo.infra.messaging.exception.NotificationException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class NotificationServiceImpl implements NotificationService {
       .toBodilessEntity();
 
     if (response.getStatusCode().isError()) {
-      throw NotificationException.msg(response.getStatusCode().toString());
+      throw NotificationException.create(response.getStatusCode().toString());
     }
 
     log.info("Notification sent successfully to {}", email);

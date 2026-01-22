@@ -52,16 +52,8 @@ public class Notification {
     return channel -> pending(transactionId, recipientId, recipientAddress, channel, msg);
   }
 
-  public boolean isNot(NotificationStatus status) {
-    return !status.equals(this.status);
-  }
-
-  public static Predicate<Notification> byIsNot(NotificationStatus status) {
-    return it -> it.isNot(status);
-  }
-
-  public static Predicate<Notification> byCanRetry() {
-    return Notification::canRetry;
+  public boolean is(NotificationStatus status) {
+    return status.equals(this.status);
   }
 
   public void sent() {
@@ -76,8 +68,8 @@ public class Notification {
     return this;
   }
 
-  public boolean canRetry() {
-    return this.retry.canRetry() && isNot(NotificationStatus.SENT);
+  public boolean hasReachedMaxAttempts() {
+    return this.retry.hasReachedMaxAttempts();
   }
 
 }

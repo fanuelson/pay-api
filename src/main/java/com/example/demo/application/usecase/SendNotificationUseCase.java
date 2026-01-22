@@ -1,6 +1,7 @@
 package com.example.demo.application.usecase;
 
 import com.example.demo.application.exception.NotificationException;
+import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.application.port.in.SendNotificationCommand;
 import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.domain.model.Notification;
@@ -23,12 +24,16 @@ public class SendNotificationUseCase {
   public void execute(final SendNotificationCommand command) {
     Notification notification = notificationRepository
       .findById(command.notificationId())
-      .filter(
-        Notification
-          .byIsNot(NotificationStatus.SENT)
-          .and(Notification.byCanRetry())
-      )
       .orElseThrow();
+
+    if (notification.is(NotificationStatus.SENT)) {
+      return;
+    }
+
+    if (notification.hasReachedMaxAttempts()) {
+      throw NotificationMaxAttemptsReachedException.create();
+    }
+
     try {
       notification = send(notification);
       log.info("Notification sent successfully: id={}, channel={}",
@@ -41,10 +46,6 @@ public class SendNotificationUseCase {
     }
   }
 
-  void throwing() {
-//    throw NotificationException.create("Mocked exception");
-  }
-
   private Notification send(Notification notification) {
     final var user = userRepository
       .findById(notification.getRecipientId())
@@ -53,7 +54,6 @@ public class SendNotificationUseCase {
     notificationService.sendNotification(
       user.getId(), user.getEmail(), notification.getMessage()
     );
-    throwing();
 
     notification.sent();
     return notificationRepository.update(notification);

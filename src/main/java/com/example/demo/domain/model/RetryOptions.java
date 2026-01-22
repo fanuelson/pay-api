@@ -14,7 +14,11 @@ public record RetryOptions(int attempts, int maxAttempts, String cause) {
     return new RetryOptions(this.attempts + 1, maxAttempts, cause);
   }
 
+  public boolean hasReachedMaxAttempts() {
+    return this.attempts >= this.maxAttempts;
+  }
+
   public boolean canRetry() {
-    return this.attempts < this.maxAttempts;
+    return !hasReachedMaxAttempts();
   }
 }

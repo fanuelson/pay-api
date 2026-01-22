@@ -1,10 +1,12 @@
 package com.example.demo.domain.helper;
 
-import static java.util.Objects.isNull;
-
 public class StringHelper {
 
   private StringHelper() {
+  }
+
+  public static boolean isNull(String str) {
+    return str == null;
   }
 
   public static boolean isBlank(final String str) {
@@ -23,4 +25,8 @@ public class StringHelper {
     return joinWith("", strs);
   }
 
+  public static String prependIfMissing(String str, String prefix) {
+    if (str == null) return null;
+    return isBlank(prefix) || str.startsWith(prefix) ? str : prefix + str;
+  }
 }

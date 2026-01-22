@@ -1,5 +1,6 @@
 package com.example.demo.infra.messaging.listener;
 
+import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.application.port.in.SendNotificationCommand;
 import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.usecase.SendNotificationUseCase;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
-import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,7 @@ public class NotificationEventListener {
 
   @RetryableTopic(
     backOff = @BackOff(delayString = "#{@notificationTopicProperties.delay}ms"),
+    exclude = {NotificationMaxAttemptsReachedException.class},
     attempts = "#{@notificationTopicProperties.maxAttempts}",
     numPartitions = "#{@notificationTopicProperties.partitions}",
     listenerContainerFactory = "notificationListenerContainerFactory",
