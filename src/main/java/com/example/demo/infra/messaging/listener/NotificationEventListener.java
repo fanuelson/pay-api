@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NotificationEventListener {
+public class NotificationEventListener extends AbstractListener {
 
   private final SendNotificationUseCase sendNotificationUseCase;
 

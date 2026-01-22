@@ -7,15 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TransferEventListener {
+public class TransferEventListener extends AbstractListener {
 
   private final ExecuteTransferUseCase executeTransfer;
 
@@ -23,17 +21,9 @@ public class TransferEventListener {
     topics = "${app.kafka.topics.transfer-events.name}",
     containerFactory = "transferListenerContainerFactory"
   )
-  public void handle(
-    @Payload TransferEvent event,
-    @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
-    @Header(KafkaHeaders.OFFSET) long offset,
-    Acknowledgment ack
-  ) {
-    log.info("Received TransferEvent: transactionId={}, partition={}, offset={}",
-      event.transactionId(), partition, offset);
-
+  public void handle(@Payload TransferEvent event, Acknowledgment ack) {
     try {
-      final var command = new ExecuteTransferCommand(event.transactionId());
+      final var command = ExecuteTransferCommand.of(event.transactionId());
       executeTransfer.execute(command);
       ack.acknowledge();
     } catch (Exception e) {

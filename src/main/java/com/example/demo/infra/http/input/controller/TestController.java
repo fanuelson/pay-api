@@ -7,7 +7,7 @@ import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.TransactionRepository;
-import com.example.demo.application.port.out.service.TransferAuthorizationGateway;
+import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.application.port.out.service.NotificationService;
 import com.example.demo.domain.vo.TransactionId;
@@ -27,7 +27,7 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 public class TestController {
 
-  private final TransferAuthorizationGateway authorizationService;
+  private final AuthorizationService authorizationService;
   private final NotificationService notificationService;
   private final LockService lockService;
 

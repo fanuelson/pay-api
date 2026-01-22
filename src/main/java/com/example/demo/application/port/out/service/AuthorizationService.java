@@ -1,6 +1,6 @@
 package com.example.demo.application.port.out.service;
 
 
-public interface TransferAuthorizationGateway {
+public interface AuthorizationService {
   AuthorizationResult authorize(AuthorizationRequest request);
 }

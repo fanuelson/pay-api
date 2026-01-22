@@ -1,6 +1,8 @@
 package com.example.demo.infra.messaging;
 
+import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.port.out.event.TransferEvent;
+import com.example.demo.infra.messaging.listener.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +35,11 @@ public class TransferKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, TransferEvent> transferListenerContainerFactory() {
-    return listenerContainerFactory(transferConsumerFactory());
+  public ConcurrentKafkaListenerContainerFactory<String, TransferEvent> transferListenerContainerFactory(
+    LoggingInterceptor<TransferEvent> loggingInterceptor
+  ) {
+    final var listenerContainerFactory = listenerContainerFactory(transferConsumerFactory());
+    listenerContainerFactory.setRecordInterceptor(loggingInterceptor);
+    return listenerContainerFactory;
   }
 }

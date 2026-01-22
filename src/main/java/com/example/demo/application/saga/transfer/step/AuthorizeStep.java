@@ -1,7 +1,7 @@
 package com.example.demo.application.saga.transfer.step;
 
 import com.example.demo.application.port.out.service.AuthorizationRequest;
-import com.example.demo.application.port.out.service.TransferAuthorizationGateway;
+import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.application.saga.SagaStep;
 import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.domain.exception.BusinessException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthorizeStep implements SagaStep<TransferSagaContext> {
 
-  private final TransferAuthorizationGateway authorizationService;
+  private final AuthorizationService authorizationService;
 
   @Override
   public String getName() {

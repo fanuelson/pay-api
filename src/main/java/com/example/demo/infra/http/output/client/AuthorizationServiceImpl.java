@@ -2,7 +2,7 @@ package com.example.demo.infra.http.output.client;
 
 import com.example.demo.application.port.out.service.AuthorizationRequest;
 import com.example.demo.application.port.out.service.AuthorizationResult;
-import com.example.demo.application.port.out.service.TransferAuthorizationGateway;
+import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.infra.http.output.exception.AuthorizationException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -16,7 +16,7 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class AuthorizationServiceImpl implements TransferAuthorizationGateway {
+public class AuthorizationServiceImpl implements AuthorizationService {
 
   @Autowired
   @Qualifier("authorizationRestClient")

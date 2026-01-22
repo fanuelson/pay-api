@@ -1,6 +1,7 @@
 package com.example.demo.infra.messaging;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
+import com.example.demo.infra.messaging.listener.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -35,8 +36,10 @@ public class NotificationKafkaConfig extends KafkaConfig {
 
   @Bean
   public ConcurrentKafkaListenerContainerFactory<String, NotificationEvent>
-  notificationListenerContainerFactory() {
-    return listenerContainerFactory(notificationConsumerFactory());
+  notificationListenerContainerFactory(LoggingInterceptor<NotificationEvent> loggingInterceptor) {
+    final var listenerContainerFactory = listenerContainerFactory(notificationConsumerFactory());
+    listenerContainerFactory.setRecordInterceptor(loggingInterceptor);
+    return listenerContainerFactory;
   }
 
   @Bean
