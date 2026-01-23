@@ -11,7 +11,7 @@ public class PayerCanTransferValidator implements TransferValidator {
 
     if (context.getPayerUser().is(UserType.MERCHANT)) {
       return ValidationResult.invalid(
-        ValidationError.of("TRANSFER_MERCHANT_CANNOT_SEND", "Merchants cannot send transfers", "payerId")
+        ValidationError.of("TRANSFER_MERCHANT_CANNOT_SEND", "Merchants cannot transfer", "payerId")
       );
     }
 

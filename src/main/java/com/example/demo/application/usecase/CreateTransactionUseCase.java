@@ -4,14 +4,9 @@ import com.example.demo.application.handler.TransactionRequestedEvent;
 import com.example.demo.application.port.in.CreateTransactionCommand;
 import com.example.demo.application.port.in.CreateTransactionOutput;
 import com.example.demo.application.port.out.event.TransactionEventPublisher;
-import com.example.demo.application.port.out.event.TransferEvent;
-import com.example.demo.application.port.out.event.TransferEventPublisher;
-import com.example.demo.application.port.out.event.TransferEventType;
-import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.application.validator.CreateTransactionValidator;
 import com.example.demo.domain.model.Transaction;
-import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.domain.repository.TransactionRepository;
-import com.example.demo.domain.vo.TransactionId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,38 +15,17 @@ import org.springframework.stereotype.Service;
 public class CreateTransactionUseCase {
 
   private final TransactionRepository transactionRepository;
-  private final TransferEventPublisher transferEventPublisher;
   private final TransactionEventPublisher transactionEventPublisher;
+  private final CreateTransactionValidator createTransactionValidator;
 
   public CreateTransactionOutput execute(CreateTransactionCommand command) {
-    var transactionId = TransactionId.generate();
-
-    var transaction = Transaction.builder()
-      .id(transactionId)
-      .payerId(command.payerId())
-      .payeeId(command.payeeId())
-      .status(TransactionStatus.PENDING)
-      .amountInCents(command.amountInCents())
-      .createdAt(DateTimeHelper.now())
-      .build();
-
+    createTransactionValidator.validate(command);
+    var transaction = Transaction.pending(command.payerId(), command.payeeId(), command.amountInCents());
     transactionRepository.save(transaction);
+    TransactionRequestedEvent
+      .of(command.payerId().toString(), transaction.getId())
+      .publish(transactionEventPublisher::publish);
 
-    var event = new TransferEvent(
-      transactionId,
-      command.payerId(),
-      command.payeeId(),
-      command.amountInCents(),
-      TransactionStatus.PENDING.name(),
-      TransferEventType.REQUESTED,
-      null
-    );
-
-//    transferEventPublisher.publish(event);
-
-    final var requestedEvent = new TransactionRequestedEvent(command.payerId().toString(), transactionId);
-    transactionEventPublisher.publish(requestedEvent);
-
-    return CreateTransactionOutput.of(transactionId);
+    return CreateTransactionOutput.of(transaction.getId());
   }
 }

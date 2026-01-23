@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -39,6 +37,10 @@ public class Transaction {
     this.createdAt = DateTimeHelper.now();
 
     validate();
+  }
+
+  public static Transaction pending(Long payerId, Long payeeId, Long amountInCents) {
+    return new Transaction(payerId, payeeId, amountInCents);
   }
 
   private void validate() {
