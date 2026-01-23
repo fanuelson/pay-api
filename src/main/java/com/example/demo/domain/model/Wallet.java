@@ -68,7 +68,7 @@ public class Wallet {
 
     if (balanceInCents < amountInCents) {
       throw new IllegalArgumentException(
-        "Saldo insuficiente. Saldo atual: " + getBalanceInReais() +
+        "Saldo insuficiente. Saldo atual: " + getBalanceFormatted() +
           ", Valor solicitado: " + formatCentsToReais(amountInCents)
       );
     }
@@ -90,7 +90,7 @@ public class Wallet {
     return this.balanceInCents < amountInCents;
   }
 
-  public String getBalanceInReais() {
+  public String getBalanceFormatted() {
     return formatCentsToReais(this.balanceInCents);
   }
 

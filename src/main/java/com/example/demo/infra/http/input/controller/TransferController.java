@@ -6,6 +6,7 @@ import com.example.demo.infra.http.input.resources.TransferRequest;
 import com.example.demo.infra.http.input.resources.TransferResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class TransferController {
   private final CreateTransactionUseCase createTransactionUseCase;
 
   @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   public TransferResponse create(@Valid @RequestBody TransferRequest transferRequest) {
     final var command = CreateTransactionCommand.of(
       transferRequest.payerId(),
