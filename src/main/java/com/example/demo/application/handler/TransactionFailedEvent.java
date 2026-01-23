@@ -16,4 +16,8 @@ public class TransactionFailedEvent extends TransactionEvent {
   public static TransactionFailedEvent of(String key, TransactionId transactionId, String cause) {
     return new TransactionFailedEvent(key, transactionId, cause);
   }
+
+  public static TransactionFailedEvent from(TransactionEvent other, String cause) {
+    return new TransactionFailedEvent(other.getKey(), other.getTransactionId(), cause);
+  }
 }

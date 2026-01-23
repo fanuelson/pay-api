@@ -22,12 +22,8 @@ public class TransferRequestedConsumer {
     containerFactory = "transferListenerContainerFactory"
   )
   public void handle(@Payload TransferEvent event, Acknowledgment ack) {
-    try {
-      final var command = ExecuteTransferCommand.of(event.transactionId());
-      executeTransfer.execute(command);
-      ack.acknowledge();
-    } catch (Exception e) {
-      log.error("Error processing TransferEvent: transactionId={}", event.transactionId(), e);
-    }
+    final var command = ExecuteTransferCommand.of(event.transactionId());
+    executeTransfer.execute(command);
+    ack.acknowledge();
   }
 }

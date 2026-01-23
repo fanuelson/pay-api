@@ -22,7 +22,7 @@ public class TransactionAggregateRepositoryImpl implements TransactionAggregateR
   public TransactionAggregate findById(TransactionId transactionId) {
 
     var transaction = transactionRepository.findById(transactionId)
-      .orElseThrow(() -> new ElementNotFoundException("Transaction not found"));
+      .orElseThrow(() -> new ElementNotFoundException("Transaction not found with id: " + transactionId));
 
     var payerId = transaction.getPayerId();
     var payeeId = transaction.getPayeeId();

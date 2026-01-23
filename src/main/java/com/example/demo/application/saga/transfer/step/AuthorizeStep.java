@@ -39,7 +39,7 @@ public class AuthorizeStep implements SagaStep<TransferSagaContext> {
       throw new BusinessException(response.message());
     }
 
-    context.getTransaction().authorized(response.authorizationCode());
+    context.getTransactionAggregate().authorize(response.authorizationCode());
   }
 
   @Override

@@ -1,6 +1,7 @@
 package com.example.demo.domain.model;
 
 import com.example.demo.domain.helper.DateTimeHelper;
+import com.example.demo.domain.vo.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class User {
 
-    private Long id;
+    private UserId id;
     private String fullName;
     private String document;     // CPF ou CNPJ
     private String email;

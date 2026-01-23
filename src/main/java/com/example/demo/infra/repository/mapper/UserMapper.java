@@ -12,8 +12,12 @@ import java.util.function.UnaryOperator;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+  @Mapping(source = "id", target = "id.value")
   User toDomain(UserEntity entity);
+
+  @Mapping(source = "id.value", target = "id")
   UserEntity toEntity(User domain);
+
   List<User> toDomainList(List<UserEntity> entities);
 
   @Mapping(target = "id", ignore = true)

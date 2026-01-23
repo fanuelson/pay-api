@@ -27,11 +27,11 @@ public class TransferSagaContext {
   }
 
   public Long getPayerId() {
-    return transactionAggregate.getPayer().getId();
+    return transactionAggregate.getPayer().getId().asLong();
   }
 
   public Long getPayeeId() {
-    return transactionAggregate.getPayee().getId();
+    return transactionAggregate.getPayee().getId().asLong();
   }
 
   public Long getAmountInCents() {

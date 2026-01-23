@@ -15,11 +15,6 @@ public abstract class TransactionEvent {
     this.transactionId = transactionId;
   }
 
-  protected TransactionEvent(TransactionEvent other) {
-    this.key = other.getKey();
-    this.transactionId = other.getTransactionId();
-  }
-
   public void publish(Consumer<TransactionEvent> publisher) {
     publisher.accept(this);
   }
