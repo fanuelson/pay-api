@@ -5,11 +5,11 @@ import java.util.Objects;
 
 @Data
 public abstract class KafkaTopicProperties {
-  private String name = null;
-  private String retryName = null;
+  private String name;
+  private String retryName;
+  private String dltName;
   private int maxAttempts = 3;
   private int delay = 1000;
-  private String dltName;
   private int partitions = 1;
   private short replicas = 1;
 

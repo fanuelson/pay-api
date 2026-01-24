@@ -1,6 +1,8 @@
 package com.example.demo.domain.aggregate;
 
-import com.example.demo.domain.event.*;
+import com.example.demo.domain.event.TransactionEventKey;
+import com.example.demo.domain.event.TransactionEventType;
+import com.example.demo.domain.event.TransferEvent;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
@@ -22,12 +24,12 @@ public class TransactionAggregate {
   private Wallet payerWallet;
   private Wallet payeeWallet;
 
-  private Deque<TransactionEvent> events;
+  private Deque<TransferEvent> events;
 
   public Wallet reservePayerBalance() {
     final var wallet = getPayerWallet();
     wallet.debit(transaction.getAmountInCents());
-    addEvent(TransactionBalanceReservedEvent.of(payer.getId().value(), transactionId));
+    addEvent(TransactionEventType.BALANCE_RESERVED);
     return wallet;
   }
 
@@ -40,43 +42,51 @@ public class TransactionAggregate {
   public Wallet creditPayee() {
     var wallet = getPayeeWallet();
     wallet.credit(transaction.getAmountInCents());
-    addEvent(TransactionCreditedEvent.of(payer.getId().value(), transactionId));
+    addEvent(TransactionEventType.CREDITED);
     return wallet;
   }
 
   public Transaction complete() {
     transaction.completed();
-    addEvent(TransactionCompletedEvent.of(payer.getId().value(), transactionId));
+    addEvent(TransactionEventType.COMPLETED);
     return transaction;
   }
 
   public Transaction fail(String reason) {
     transaction.failed(reason);
-    addEvent(TransactionFailedEvent.of(getPayer().getId().value(), transactionId, reason));
+    addEvent(TransferEvent.of(getKey(), TransactionEventType.FAILED, transactionId, null, reason));
     return transaction;
   }
 
   public Transaction authorizationFail(String reason) {
     transaction.failed(reason);
-    addEvent(TransactionAuthorizationFailedEvent.of(getPayer().getId().value(), transactionId, reason));
+    addEvent(TransferEvent.of(getKey(), TransactionEventType.AUTHORIZATION_FAILED, transactionId, null, reason));
     return transaction;
   }
 
   public Transaction authorize(String authorizationCode) {
     transaction.authorized(authorizationCode);
-    addEvent(TransactionAuthorizedEvent.of(payer.getId().value(), transactionId, authorizationCode));
+    addEvent(TransferEvent.of(getKey(), TransactionEventType.AUTHORIZED, transactionId, authorizationCode, null));
     return transaction;
   }
 
-  public Deque<TransactionEvent> getEvents() {
+  public Deque<TransferEvent> getEvents() {
     return requireNonNullElse(events, new LinkedList<>());
   }
 
-  private void addEvent(TransactionEvent event) {
+  private TransactionEventKey getKey() {
+    return TransactionEventKey.of(payer.getId().value());
+  }
+
+  private void addEvent(TransactionEventType type) {
+    addEvent(TransferEvent.of(getKey(), type, transactionId));
+  }
+
+  private void addEvent(TransferEvent event) {
     getEvents().push(event);
   }
 
-  private TransactionEvent getLastEvent() {
+  private TransferEvent getLastEvent() {
     return getEvents().peek();
   }
 }

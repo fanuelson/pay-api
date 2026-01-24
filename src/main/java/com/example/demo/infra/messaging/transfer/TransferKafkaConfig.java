@@ -1,9 +1,9 @@
-package com.example.demo.infra.messaging.transaction;
+package com.example.demo.infra.messaging.transfer;
 
-import com.example.demo.domain.event.TransactionEvent;
+import com.example.demo.domain.event.TransferEvent;
 import com.example.demo.infra.messaging.KafkaConfig;
-import com.example.demo.infra.messaging.LoggingInterceptor;
 import com.example.demo.infra.messaging.KafkaProducerListener;
+import com.example.demo.infra.messaging.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -18,40 +18,41 @@ import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
 @RequiredArgsConstructor
-public class TransactionKafkaConfig extends KafkaConfig {
+public class TransferKafkaConfig extends KafkaConfig {
 
   private final KafkaProperties properties;
 
   @Bean
-  public ProducerFactory<String, TransactionEvent> transactionProducerFactory() {
+  public ProducerFactory<String, TransferEvent> transferProducerFactory() {
     return producerFactory(properties);
   }
 
   @Bean
-  public KafkaTemplate<String, TransactionEvent> transactionKafkaTemplate(
-    KafkaProducerListener<TransactionEvent> producerListener
+  public KafkaTemplate<String, TransferEvent> transferKafkaTemplate(
+    KafkaProducerListener<TransferEvent> producerListener
   ) {
-    final var template = kafkaTemplate(transactionProducerFactory());
+    final var template = kafkaTemplate(transferProducerFactory());
     template.setProducerListener(producerListener);
     return template;
   }
 
   @Bean
-  public ConsumerFactory<String, TransactionEvent> transactionConsumerFactory() {
-    return consumerFactory(properties, TransactionEvent.class);
+  public ConsumerFactory<String, TransferEvent> transferConsumerFactory() {
+    return consumerFactory(properties, TransferEvent.class);
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, TransactionEvent> transactionListenerContainerFactory(
-    LoggingInterceptor<TransactionEvent> loggingInterceptor
+  public ConcurrentKafkaListenerContainerFactory<String, TransferEvent> transferListenerContainerFactory(
+    LoggingInterceptor<TransferEvent> loggingInterceptor
   ) {
-    final var listenerContainerFactory = listenerContainerFactory(transactionConsumerFactory());
+    final var listenerContainerFactory = listenerContainerFactory(transferConsumerFactory());
     listenerContainerFactory.setRecordInterceptor(loggingInterceptor);
+    listenerContainerFactory.setConcurrency(5);
     return listenerContainerFactory;
   }
 
   @Bean
-  public NewTopic transactionEventTopic(TransactionTopicProperties topicProperties) {
+  public NewTopic transferEventTopic(TransferTopicProperties topicProperties) {
     return TopicBuilder.name(topicProperties.getName())
       .partitions(topicProperties.getPartitions())
       .replicas(topicProperties.getReplicas())
@@ -60,8 +61,16 @@ public class TransactionKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public NewTopic transactionEventRetryTopic(TransactionTopicProperties topicProperties) {
+  public NewTopic transferEventRetryTopic(TransferTopicProperties topicProperties) {
     return TopicBuilder.name(topicProperties.getRetryName())
+      .partitions(topicProperties.getPartitions())
+      .replicas(topicProperties.getReplicas())
+      .build();
+  }
+
+  @Bean
+  public NewTopic transferEventDltTopic(TransferTopicProperties topicProperties) {
+    return TopicBuilder.name(topicProperties.getDltName())
       .partitions(topicProperties.getPartitions())
       .replicas(topicProperties.getReplicas())
       .build();

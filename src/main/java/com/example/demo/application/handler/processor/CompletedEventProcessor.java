@@ -1,49 +1,45 @@
-package com.example.demo.application.saga.transfer.step;
+package com.example.demo.application.handler.processor;
 
 import com.example.demo.application.port.in.CreateNotificationCommand;
-import com.example.demo.application.saga.SagaStep;
-import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
+import com.example.demo.domain.event.TransactionEventType;
+import com.example.demo.domain.event.TransferEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NotifyStep implements SagaStep<TransferSagaContext> {
+public class CompletedEventProcessor implements TransferEventProcessor {
 
   private final CreateNotificationUseCase createNotificationUseCase;
 
   @Override
-  public String getName() {
-    return "Notify";
+  public TransactionEventType getEventType() {
+    return TransactionEventType.COMPLETED;
   }
 
   @Override
-  public void execute(TransferSagaContext context) {
-    var transaction = context.getTransaction();
+  public Optional<TransferEvent> process(TransferProcessorContext context) {
     try {
       createNotificationUseCase.execute(CreateNotificationCommand.of(
-        transaction.getId(),
+        context.getTransaction().getId(),
         context.getPayerId(),
         "Transferência de R$ " + formatAmount(context.getAmountInCents()) + " realizada com sucesso"
       ));
 
       createNotificationUseCase.execute(CreateNotificationCommand.of(
-        transaction.getId(),
+        context.getTransaction().getId(),
         context.getPayeeId(),
         "Você recebeu R$ " + formatAmount(context.getAmountInCents())
       ));
     } catch (Exception e) {
-      log.warn("Not throwing to not call compensate");
-      log.error("Error creating notification", e);
+      log.error("Error sending notification for transactionId={}", context.getTransactionId(), e);
     }
 
-  }
-
-  @Override
-  public void compensate(TransferSagaContext context, String cause) {
+    return Optional.empty();
   }
 
   private String formatAmount(Long cents) {

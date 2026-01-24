@@ -1,11 +1,11 @@
-package com.example.demo.infra.messaging.transaction;
+package com.example.demo.infra.messaging.transfer;
 
 import com.example.demo.infra.messaging.KafkaTopicProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "app.kafka.topics.transaction-events")
-public class TransactionTopicProperties extends KafkaTopicProperties {
+@ConfigurationProperties(prefix = "app.kafka.topics.transfer-events")
+public class TransferTopicProperties extends KafkaTopicProperties {
 
 }

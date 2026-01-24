@@ -9,5 +9,7 @@ public interface WalletRepository {
   Wallet update(Long id, Wallet wallet);
   Optional<Wallet> findById(Long id);
   Optional<Wallet> findByUserId(Long userId);
+
+  Wallet updateTest(Long payerId, Long id, Wallet wallet);
 }
 

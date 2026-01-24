@@ -1,6 +1,6 @@
 spring:
   jpa:
-    show-sql: false
+    show-sql: true
 
 app:
   kafka:
@@ -11,9 +11,11 @@ app:
         partitions: 4
         maxAttempts: 5
         delay: 5000
-      transaction-events:
-        name: transaction-events
-        maxAttempts: 1
+      transfer-events:
+        name: transfer-events
+        delay: 3000
+        maxAttempts: 5
+        partitions: 5
 
 resilience4j:
   circuitbreaker:
@@ -39,7 +41,7 @@ resilience4j:
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
         permittedNumberOfCallsInHalfOpenState: 3
-        waitDurationInOpenState: 30s
+        waitDurationInOpenState: 5s
         failureRateThreshold: 50  # 50% de falhas abre o circuito
         slowCallDurationThreshold: 5s
         slowCallRateThreshold: 50
@@ -67,4 +69,5 @@ logging:
     com.example.demo: DEBUG
     org.springframework.web: DEBUG
     io.github.resilience4j: DEBUG
+    org.hibernate.SQL: ERROR
     org.apache.kafka.common.config: WARN

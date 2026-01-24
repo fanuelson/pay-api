@@ -14,7 +14,7 @@ import static java.util.Optional.of;
 
 @Slf4j
 @Repository
-@Transactional
+//@Transactional
 @RequiredArgsConstructor
 public class WalletRepositoryImpl implements WalletRepository {
 
@@ -34,6 +34,30 @@ public class WalletRepositoryImpl implements WalletRepository {
   public Wallet update(Long id, Wallet wallet) {
     return repository.findById(id)
       .map(existing -> mapper.updateEntity(existing, wallet))
+      .map(repository::save)
+      .map(mapper::toDomain)
+      .orElseThrow(() -> {
+        log.error("Wallet not found for update: {}", id);
+        return new ElementNotFoundException("Wallet with id=[" + id + "] not found");
+      });
+  }
+
+  public Wallet updateTest(Long payerId, Long id, Wallet wallet) {
+    final var entity = repository.findById(id);
+    log.info("FANU THREAD: [{}]", Thread.currentThread().getName());
+    if(payerId == 4) {
+      try{
+        log.info("FANU SLEEPING: wallet [{}]", wallet);
+        log.info("FANU SLEEPING: entity [{}]", entity.map(it -> it.toString()).orElse(null));
+        Thread.sleep(1000);
+      } catch (Exception e) {
+        log.error("FANU ERROR THREAD SLEEP", e);
+      }
+      log.info("FANU SLEEPING END: wallet [{}]", wallet);
+      log.info("FANU SLEEPING END: entity [{}]", entity.map(it -> it.toString()).orElse(null));
+    }
+    return entity
+      .map(mapper.updateFrom(wallet))
       .map(repository::save)
       .map(mapper::toDomain)
       .orElseThrow(() -> {
