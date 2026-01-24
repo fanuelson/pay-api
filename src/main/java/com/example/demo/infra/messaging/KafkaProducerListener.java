@@ -1,4 +1,4 @@
-package com.example.demo.infra.messaging.publisher;
+package com.example.demo.infra.messaging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;

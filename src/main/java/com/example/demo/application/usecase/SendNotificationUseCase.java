@@ -1,7 +1,6 @@
 package com.example.demo.application.usecase;
 
 import com.example.demo.application.exception.NotificationException;
-import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.application.port.in.SendNotificationCommand;
 import com.example.demo.application.port.out.gateway.NotificationGateway;
 import com.example.demo.domain.model.Notification;
@@ -26,10 +25,6 @@ public class SendNotificationUseCase {
 
     if (notification.is(NotificationStatus.SENT)) {
       return;
-    }
-
-    if (notification.hasReachedMaxAttempts()) {
-      throw NotificationMaxAttemptsReachedException.create();
     }
 
     try {

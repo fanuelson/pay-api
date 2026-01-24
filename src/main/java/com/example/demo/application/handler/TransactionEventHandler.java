@@ -6,6 +6,7 @@ import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.saga.transfer.step.AuthorizeStep;
 import com.example.demo.application.saga.transfer.step.NotifyStep;
 import com.example.demo.application.saga.transfer.step.ValidateStep;
+import com.example.demo.domain.event.*;
 import com.example.demo.domain.repository.TransactionAggregateRepository;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.domain.repository.WalletRepository;
@@ -40,6 +41,10 @@ public class TransactionEventHandler {
   }
 
   public void handle(TransactionBalanceReservedEvent event) {
+    TransactionAuthorizationRequestedEvent.from(event).publish(this::publish);
+  }
+
+  public void handle(TransactionAuthorizationRequestedEvent event) {
     final var transactionAggregate = transactionAggregateRepository.findById(event.getTransactionId());
     final var context = TransferSagaContext.of(transactionAggregate);
     authorizeStep.execute(context);
@@ -47,6 +52,7 @@ public class TransactionEventHandler {
     final var authorizationCode = context.getTransaction().getAuthorizationCode();
     TransactionAuthorizedEvent.from(event).withAuthorizationCode(authorizationCode).publish(this::publish);
   }
+
 
   public void handle(TransactionAuthorizedEvent event) {
     final var transaction = transactionAggregateRepository.findById(event.getTransactionId());

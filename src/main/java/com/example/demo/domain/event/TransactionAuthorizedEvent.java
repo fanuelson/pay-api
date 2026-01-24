@@ -1,10 +1,10 @@
-package com.example.demo.application.handler;
+package com.example.demo.domain.event;
 
 import com.example.demo.domain.vo.TransactionId;
 import lombok.Getter;
 
 @Getter
-public class TransactionAuthorizedEvent extends TransactionEvent {
+public class TransactionAuthorizedEvent extends TransactionAuthorizationEvent {
   private final String authorizationCode;
 
   public TransactionAuthorizedEvent(String key, TransactionId transactionId, String authorizationCode) {

@@ -74,21 +74,10 @@ public class Transaction {
     this.completedAt = DateTimeHelper.now();
   }
 
-  public void reverse(String reason) {
-    if (isNotCompleted()) {
-      throw new IllegalStateException("Apenas transações COMPLETED podem ser revertidas");
-    }
-    this.status = TransactionStatus.REVERSED;
-    this.errorMessage = reason;
-  }
-
   public boolean isNotAuthorized() {
     return status != TransactionStatus.AUTHORIZED;
   }
 
-  public boolean isNotCompleted() {
-    return status != TransactionStatus.COMPLETED;
-  }
 
   public boolean isNotPending() {
     return status != TransactionStatus.PENDING;

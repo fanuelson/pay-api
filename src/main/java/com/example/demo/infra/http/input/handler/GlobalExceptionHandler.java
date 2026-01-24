@@ -20,6 +20,13 @@ public class GlobalExceptionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+    final var status = HttpStatus.INTERNAL_SERVER_ERROR;
+    final var res = ErrorResponse.of(status.toString(), ex.getClass().getName(), ex.getMessage());
+    return ResponseEntity.status(status.value()).body(res);
+  }
+
   @ExceptionHandler(InfraException.class)
   public ResponseEntity<ErrorResponse> handleException(InfraException ex) {
     final var status = HttpStatus.INTERNAL_SERVER_ERROR;

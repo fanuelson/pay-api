@@ -1,4 +1,4 @@
-package com.example.demo.infra.messaging.consumer;
+package com.example.demo.infra.messaging.notification;
 
 import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.application.port.in.SendNotificationCommand;

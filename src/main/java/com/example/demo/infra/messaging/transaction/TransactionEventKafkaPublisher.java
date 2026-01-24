@@ -1,7 +1,8 @@
-package com.example.demo.infra.messaging.publisher;
+package com.example.demo.infra.messaging.transaction;
 
-import com.example.demo.application.handler.TransactionEvent;
 import com.example.demo.application.port.out.event.TransactionEventPublisher;
+import com.example.demo.domain.event.TransactionEvent;
+import com.example.demo.domain.event.TransactionEventRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,8 +23,12 @@ public class TransactionEventKafkaPublisher implements TransactionEventPublisher
 
   @Override
   public void publish(TransactionEvent event) {
-    log.debug("Publishing TransactionEvent: transactionId={}", event.getTransactionId());
     kafkaTemplate.send(topic, event.getKey(), event);
+  }
+
+  @Override
+  public void publish(TransactionEventRecord event) {
+    kafkaTemplate.send(topic, event.key().key(), event.event());
   }
 
 }

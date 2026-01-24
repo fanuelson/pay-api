@@ -1,17 +1,12 @@
 package com.example.demo.infra.messaging;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import java.util.Objects;
 
 @Data
-@Configuration
-@ConfigurationProperties(prefix = "app.kafka.topics.notification-events")
-public class NotificationTopicProperties {
-
-  private String name;
-  private String retryName;
+public abstract class KafkaTopicProperties {
+  private String name = null;
+  private String retryName = null;
   private int maxAttempts = 3;
   private int delay = 1000;
   private String dltName;

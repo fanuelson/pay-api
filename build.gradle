@@ -38,6 +38,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	// DB
 	implementation 'org.springframework.boot:spring-boot-h2console'

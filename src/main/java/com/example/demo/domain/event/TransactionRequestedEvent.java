@@ -1,4 +1,4 @@
-package com.example.demo.application.handler;
+package com.example.demo.domain.event;
 
 import com.example.demo.domain.vo.TransactionId;
 import lombok.Getter;

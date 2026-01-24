@@ -1,8 +1,9 @@
-package com.example.demo.infra.messaging;
+package com.example.demo.infra.messaging.transaction;
 
-import com.example.demo.application.handler.TransactionEvent;
-import com.example.demo.infra.messaging.consumer.LoggingInterceptor;
-import com.example.demo.infra.messaging.publisher.KafkaProducerListener;
+import com.example.demo.domain.event.TransactionEvent;
+import com.example.demo.infra.messaging.KafkaConfig;
+import com.example.demo.infra.messaging.LoggingInterceptor;
+import com.example.demo.infra.messaging.KafkaProducerListener;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -50,17 +51,19 @@ public class TransactionKafkaConfig extends KafkaConfig {
   }
 
   @Bean
-  public NewTopic transactionEventTopic() {
-    return TopicBuilder.name("transaction-events")
-      .partitions(1)
-      .replicas(1)
+  public NewTopic transactionEventTopic(TransactionTopicProperties topicProperties) {
+    return TopicBuilder.name(topicProperties.getName())
+      .partitions(topicProperties.getPartitions())
+      .replicas(topicProperties.getReplicas())
       .build();
+
   }
+
   @Bean
-  public NewTopic transactionEventRetryTopic() {
-    return TopicBuilder.name("transaction-events-retry")
-      .partitions(1)
-      .replicas(1)
+  public NewTopic transactionEventRetryTopic(TransactionTopicProperties topicProperties) {
+    return TopicBuilder.name(topicProperties.getRetryName())
+      .partitions(topicProperties.getPartitions())
+      .replicas(topicProperties.getReplicas())
       .build();
   }
 }

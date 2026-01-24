@@ -1,4 +1,4 @@
-package com.example.demo.infra.messaging.publisher;
+package com.example.demo.infra.messaging.notification;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;

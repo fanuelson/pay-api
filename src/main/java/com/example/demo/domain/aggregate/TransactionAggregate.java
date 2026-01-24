@@ -1,6 +1,6 @@
 package com.example.demo.domain.aggregate;
 
-import com.example.demo.application.handler.*;
+import com.example.demo.domain.event.*;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
@@ -56,6 +56,12 @@ public class TransactionAggregate {
     return transaction;
   }
 
+  public Transaction authorizationFail(String reason) {
+    transaction.failed(reason);
+    addEvent(TransactionAuthorizationFailedEvent.of(getPayer().getId().value(), transactionId, reason));
+    return transaction;
+  }
+
   public Transaction authorize(String authorizationCode) {
     transaction.authorized(authorizationCode);
     addEvent(TransactionAuthorizedEvent.of(payer.getId().value(), transactionId, authorizationCode));
@@ -70,4 +76,7 @@ public class TransactionAggregate {
     getEvents().push(event);
   }
 
+  private TransactionEvent getLastEvent() {
+    return getEvents().peek();
+  }
 }

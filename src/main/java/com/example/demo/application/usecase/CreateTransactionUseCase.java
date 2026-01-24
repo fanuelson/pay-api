@@ -1,6 +1,6 @@
 package com.example.demo.application.usecase;
 
-import com.example.demo.application.handler.TransactionRequestedEvent;
+import com.example.demo.domain.event.TransactionRequestedEvent;
 import com.example.demo.application.port.in.CreateTransactionCommand;
 import com.example.demo.application.port.in.CreateTransactionOutput;
 import com.example.demo.application.port.out.event.TransactionEventPublisher;

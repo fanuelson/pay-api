@@ -1,6 +1,7 @@
-package com.example.demo.infra.messaging.consumer;
+package com.example.demo.infra.messaging.transaction;
 
-import com.example.demo.application.handler.*;
+import com.example.demo.application.handler.TransactionEventHandler;
+import com.example.demo.domain.event.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.*;
@@ -15,13 +16,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @RetryableTopic(
-  backOff = @BackOff(delay = 2_000),
-  attempts = "5",
+  backOff = @BackOff(delayString = "#{@transactionTopicProperties.delay}ms"),
+  attempts = "#{@transactionTopicProperties.maxAttempts}",
   listenerContainerFactory = "transactionListenerContainerFactory",
-  kafkaTemplate = "transactionKafkaTemplate", dltStrategy = DltStrategy.FAIL_ON_ERROR
+  kafkaTemplate = "transactionKafkaTemplate",
+  dltStrategy = DltStrategy.FAIL_ON_ERROR
 )
 @KafkaListener(
-  topics = "${app.kafka.topics.transaction-events.name}",
+  topics = "#{@transactionTopicProperties.name}",
   containerFactory = "transactionListenerContainerFactory"
 )
 public class TransactionEventConsumer {
@@ -42,6 +44,12 @@ public class TransactionEventConsumer {
 
   @KafkaHandler
   public void handle(@Payload TransactionBalanceReservedEvent event, Acknowledgment ack) {
+    transactionEventHandler.handle(event);
+    ack.acknowledge();
+  }
+
+  @KafkaHandler
+  public void handle(@Payload TransactionAuthorizationRequestedEvent event, Acknowledgment ack) {
     transactionEventHandler.handle(event);
     ack.acknowledge();
   }
@@ -70,15 +78,21 @@ public class TransactionEventConsumer {
     ack.acknowledge();
   }
 
+
+  @KafkaHandler(isDefault = true)
+  public void onDefault(Object unknown) {
+    log.warn("Event without handler: [{}]", unknown);
+  }
+
   @DltHandler
   public void dlt(
     @Payload TransactionEvent event,
     @Header(KafkaHeaders.EXCEPTION_MESSAGE) String errorMessage,
     Acknowledgment ack
   ) {
-    if (event instanceof TransactionBalanceReservedEvent) {
-      final var authorizationFailedEvent = TransactionAuthorizationFailedEvent.from(event).withMsg(errorMessage);
-      transactionEventHandler.handle(authorizationFailedEvent);
+    log.warn("FANU AQUI TAMBÉM [{}]", event);
+    if (event instanceof TransactionAuthorizationRequestedEvent) {
+      log.warn("FANU NOTHING");
     } else {
       final var failedEvent = TransactionFailedEvent.from(event, errorMessage);
       transactionEventHandler.handle(failedEvent);
@@ -86,9 +100,5 @@ public class TransactionEventConsumer {
     ack.acknowledge();
   }
 
-  @KafkaHandler(isDefault = true)
-  public void onDefault(Object unknown) {
-    log.warn("Event without handler: [{}]", unknown);
-  }
 
 }

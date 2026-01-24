@@ -48,8 +48,6 @@ app:
     topics:
       transaction-events:
         name: transaction-events
-      transfer-events:
-        name: transfer-events
       notification-events:
         name: notification-events
         retryName: notification-events-retry
@@ -175,5 +173,5 @@ logging:
     root: INFO
     com.example.demo: DEBUG
     org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: ERROR
     io.github.resilience4j: INFO

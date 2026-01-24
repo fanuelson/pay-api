@@ -6,14 +6,27 @@ import jakarta.validation.constraints.NotNull;
 public record TransferRequest(
 
   @NotNull
-  Long payerId,
+  Long payer,
 
   @NotNull
-  Long payeeId,
+  Long payee,
 
   @NotNull
   @Min(1)
-  Long amountInCents
+  Long amount
 
 ) {
+
+  public Long payerId() {
+    return payer;
+  }
+
+  public Long payeeId() {
+    return payee;
+  }
+
+  public Long amountInCents() {
+    return amount;
+//    return Long.valueOf(String.valueOf(amount() * 100));
+  }
 }

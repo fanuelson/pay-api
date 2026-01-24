@@ -1,8 +1,9 @@
-package com.example.demo.infra.messaging;
+package com.example.demo.infra.messaging.notification;
 
 import com.example.demo.application.port.out.event.NotificationEvent;
-import com.example.demo.infra.messaging.consumer.LoggingInterceptor;
-import com.example.demo.infra.messaging.publisher.KafkaProducerListener;
+import com.example.demo.infra.messaging.KafkaConfig;
+import com.example.demo.infra.messaging.LoggingInterceptor;
+import com.example.demo.infra.messaging.KafkaProducerListener;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;

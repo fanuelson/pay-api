@@ -1,5 +1,6 @@
 package com.example.demo.domain.model;
 
+import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.domain.helper.DateTimeHelper;
 import com.example.demo.domain.vo.NotificationId;
 import com.example.demo.domain.vo.TransactionId;
@@ -68,6 +69,9 @@ public class Notification {
   }
 
   public void increaseAttempts() {
+    if (hasReachedMaxAttempts()) {
+      throw NotificationMaxAttemptsReachedException.create();
+    }
     this.retry = this.retry.incrementAttempts();
   }
 
