@@ -25,8 +25,10 @@ public class AuthorizationFailedEventProcessor implements TransferEventProcessor
     log.info("Compensating balance for transactionId={}, cause={}",
       context.getTransactionId(), context.getCause());
 
-    final var wallet = context.aggregate().creditPayer();
-    walletRepository.update(wallet.getId(), wallet);
+    walletRepository.credit(
+      context.getPayerWallet(),
+      context.getAmountInCents()
+    );
 
     return Optional.of(context.event().to(TransactionEventType.FAILED));
   }

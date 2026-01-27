@@ -20,8 +20,10 @@ public class ValidatedEventProcessor implements TransferEventProcessor {
 
   @Override
   public Optional<TransferEvent> process(TransferProcessorContext context) {
-    final var wallet = context.aggregate().reservePayerBalance();
-    walletRepository.update(wallet.getId(), wallet);
+    walletRepository.debit(
+      context.getPayerWallet().getId(),
+      context.getAmountInCents()
+    );
 
     return Optional.of(context.event().to(TransactionEventType.BALANCE_RESERVED));
   }

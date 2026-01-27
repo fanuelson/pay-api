@@ -1,11 +1,11 @@
 package com.example.demo.domain.vo;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public record NotificationId(String value) {
 
   public NotificationId {
-    Objects.requireNonNull(value);
+    requireNonNull(value);
   }
 
   public static NotificationId of(String value) {

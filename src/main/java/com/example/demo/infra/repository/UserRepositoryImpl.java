@@ -3,6 +3,7 @@ package com.example.demo.infra.repository;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.repository.UserRepository;
+import com.example.demo.domain.vo.UserId;
 import com.example.demo.infra.repository.jpa.UserJpaRepository;
 import com.example.demo.infra.repository.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findById(Long id) {
-    return repository.findById(id).map(mapper::toDomain);
+  public Optional<User> findById(UserId id) {
+    return repository.findById(id.asLong()).map(mapper::toDomain);
   }
 
   @Override

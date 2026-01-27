@@ -2,6 +2,7 @@ package com.example.demo.domain.validation;
 
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.model.Wallet;
+import com.example.demo.domain.vo.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransferContext {
 
-  private Long payerId;
-  private Long payeeId;
+  private UserId payerId;
+  private UserId payeeId;
   private Long amountInCents;
   private User payerUser;
   private User payeeUser;

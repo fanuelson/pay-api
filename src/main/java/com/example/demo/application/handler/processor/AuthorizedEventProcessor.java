@@ -20,8 +20,10 @@ public class AuthorizedEventProcessor implements TransferEventProcessor {
 
   @Override
   public Optional<TransferEvent> process(TransferProcessorContext context) {
-    final var wallet = context.aggregate().creditPayee();
-    walletRepository.update(wallet.getId(), wallet);
+    walletRepository.credit(
+      context.getPayeeWallet().getId(),
+      context.getAmountInCents()
+    );
 
     return Optional.of(context.event().to(TransactionEventType.CREDITED));
   }

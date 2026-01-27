@@ -13,7 +13,10 @@ import java.util.function.UnaryOperator;
 @Mapper(componentModel = "spring")
 public interface WalletMapper {
 
+  @Mapping(source = "id", target = "id.value")
   Wallet toDomain(WalletEntity entity);
+
+  @Mapping(source = "id.value", target = "id")
   WalletEntity toEntity(Wallet domain);
   List<Wallet> toDomainList(List<WalletEntity> entities);
 

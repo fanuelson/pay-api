@@ -2,6 +2,7 @@ package com.example.demo.domain.model;
 
 import com.example.demo.domain.helper.DateTimeHelper;
 import com.example.demo.domain.vo.TransactionId;
+import com.example.demo.domain.vo.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 public class Transaction {
 
   private TransactionId id;
-  private Long payerId;
-  private Long payeeId;
+  private UserId payerId;
+  private UserId payeeId;
   private Long amountInCents;
   private TransactionStatus status;
   private String authorizationCode;
@@ -25,8 +26,8 @@ public class Transaction {
   private LocalDateTime completedAt;
 
   public Transaction(
-    Long payerId,
-    Long payeeId,
+    UserId payerId,
+    UserId payeeId,
     Long amountInCents
   ) {
     this.id = TransactionId.generate();
@@ -39,7 +40,7 @@ public class Transaction {
     validate();
   }
 
-  public static Transaction pending(Long payerId, Long payeeId, Long amountInCents) {
+  public static Transaction pending(UserId payerId, UserId payeeId, Long amountInCents) {
     return new Transaction(payerId, payeeId, amountInCents);
   }
 

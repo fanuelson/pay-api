@@ -1,8 +1,10 @@
 package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
+import com.example.demo.domain.exception.InsufficientBalanceException;
 import com.example.demo.domain.model.Wallet;
 import com.example.demo.domain.repository.WalletRepository;
+import com.example.demo.domain.vo.WalletId;
 import com.example.demo.infra.repository.jpa.WalletJpaRepository;
 import com.example.demo.infra.repository.mapper.WalletMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import static java.util.Optional.of;
 
 @Slf4j
 @Repository
-//@Transactional
+@Transactional
 @RequiredArgsConstructor
 public class WalletRepositoryImpl implements WalletRepository {
 
@@ -31,8 +33,8 @@ public class WalletRepositoryImpl implements WalletRepository {
   }
 
   @Override
-  public Wallet update(Long id, Wallet wallet) {
-    return repository.findById(id)
+  public Wallet update(WalletId id, Wallet wallet) {
+    return repository.findById(id.asLong())
       .map(existing -> mapper.updateEntity(existing, wallet))
       .map(repository::save)
       .map(mapper::toDomain)
@@ -42,38 +44,35 @@ public class WalletRepositoryImpl implements WalletRepository {
       });
   }
 
-  public Wallet updateTest(Long payerId, Long id, Wallet wallet) {
-    final var entity = repository.findById(id);
-    log.info("FANU THREAD: [{}]", Thread.currentThread().getName());
-    if(payerId == 4) {
-      try{
-        log.info("FANU SLEEPING: wallet [{}]", wallet);
-        log.info("FANU SLEEPING: entity [{}]", entity.map(it -> it.toString()).orElse(null));
-        Thread.sleep(1000);
-      } catch (Exception e) {
-        log.error("FANU ERROR THREAD SLEEP", e);
-      }
-      log.info("FANU SLEEPING END: wallet [{}]", wallet);
-      log.info("FANU SLEEPING END: entity [{}]", entity.map(it -> it.toString()).orElse(null));
+  @Override
+  public void credit(WalletId id, Long amountInCents) {
+    int updated = repository.creditBalance(id.asLong(), amountInCents);
+    if (updated == 0) {
+      throw new ElementNotFoundException("Wallet with id=[" + id + "] not found");
     }
-    return entity
-      .map(mapper.updateFrom(wallet))
-      .map(repository::save)
-      .map(mapper::toDomain)
-      .orElseThrow(() -> {
-        log.error("Wallet not found for update: {}", id);
-        return new ElementNotFoundException("Wallet with id=[" + id + "] not found");
-      });
+    log.debug("Credited {} cents to wallet {}", amountInCents, id);
   }
 
   @Override
-  public Optional<Wallet> findById(Long id) {
-    return repository.findById(id).map(mapper::toDomain);
+  public void debit(WalletId id, Long amountInCents) {
+    int updated = repository.debitBalance(id.asLong(), amountInCents);
+    if (updated == 0) {
+      var wallet = repository.findById(id.asLong());
+      if (wallet.isEmpty()) {
+        throw new ElementNotFoundException("Wallet with id=[" + id + "] not found");
+      }
+      throw new InsufficientBalanceException("Insufficient balance in wallet id=[" + id + "]");
+    }
+    log.debug("Debited {} cents from wallet {}", amountInCents, id);
+  }
+
+  @Override
+  public Optional<Wallet> findById(WalletId id) {
+    return repository.findById(id.asLong()).map(mapper::toDomain);
   }
 
   @Override
   public Optional<Wallet> findByUserId(Long userId) {
     return repository.findByUserId(userId).map(mapper::toDomain);
   }
-
 }
