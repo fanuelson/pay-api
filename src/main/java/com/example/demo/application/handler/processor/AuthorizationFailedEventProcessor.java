@@ -26,7 +26,7 @@ public class AuthorizationFailedEventProcessor implements TransferEventProcessor
       context.getTransactionId(), context.getCause());
 
     walletRepository.credit(
-      context.getPayerWallet(),
+      context.getPayerWallet().getId(),
       context.getAmountInCents()
     );
 

@@ -40,9 +40,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-	// DB
+//	// DB
 	implementation 'org.springframework.boot:spring-boot-h2console'
 	runtimeOnly 'com.h2database:h2'
+
+	// MySQL
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// Resilience4j - Circuit Breaker + Retry
 	implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")

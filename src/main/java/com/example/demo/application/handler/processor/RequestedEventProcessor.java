@@ -5,6 +5,7 @@ import com.example.demo.domain.event.TransferEvent;
 import com.example.demo.domain.exception.BusinessValidationException;
 import com.example.demo.domain.validation.TransferContext;
 import com.example.demo.domain.validation.TransferValidator;
+import com.example.demo.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -24,8 +25,8 @@ public class RequestedEventProcessor implements TransferEventProcessor {
   @Override
   public Optional<TransferEvent> process(TransferProcessorContext context) {
     final var transferContext = new TransferContext(
-      context.getPayerId(),
-      context.getPayeeId(),
+      UserId.of(context.getPayerId()),
+      UserId.of(context.getPayeeId()),
       context.getAmountInCents(),
       context.getPayer(),
       context.getPayee(),

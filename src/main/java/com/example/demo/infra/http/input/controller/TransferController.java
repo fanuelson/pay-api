@@ -2,6 +2,7 @@ package com.example.demo.infra.http.input.controller;
 
 import com.example.demo.application.port.in.CreateTransactionCommand;
 import com.example.demo.application.usecase.CreateTransactionUseCase;
+import com.example.demo.domain.vo.UserId;
 import com.example.demo.infra.http.input.resources.ListTransferRequest;
 import com.example.demo.infra.http.input.resources.TransferRequest;
 import com.example.demo.infra.http.input.resources.TransferResponse;
@@ -22,8 +23,8 @@ public class TransferController {
   @ResponseStatus(HttpStatus.CREATED)
   public TransferResponse create(@Valid @RequestBody TransferRequest request) {
     final var command = CreateTransactionCommand.of(
-      request.payerId(),
-      request.payeeId(),
+      UserId.of(request.payerId()),
+      UserId.of(request.payeeId()),
       request.amountInCents()
     );
     final var output = createTransactionUseCase.execute(command);
@@ -37,8 +38,8 @@ public class TransferController {
       .stream()
       .map(it ->
         CreateTransactionCommand.of(
-          it.payerId(),
-          it.payeeId(),
+          UserId.of(it.payerId()),
+          UserId.of(it.payeeId()),
           it.amountInCents()
         )
       )

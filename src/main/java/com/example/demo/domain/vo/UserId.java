@@ -12,6 +12,10 @@ public record UserId(String value) {
     return new UserId(value);
   }
 
+  public static UserId of(Long value) {
+    return new UserId(value.toString());
+  }
+
   public Long asLong() {
     return Long.valueOf(value);
   }

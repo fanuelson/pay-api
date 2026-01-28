@@ -4,6 +4,7 @@ import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.exception.InsufficientBalanceException;
 import com.example.demo.domain.model.Wallet;
 import com.example.demo.domain.repository.WalletRepository;
+import com.example.demo.domain.vo.UserId;
 import com.example.demo.domain.vo.WalletId;
 import com.example.demo.infra.repository.jpa.WalletJpaRepository;
 import com.example.demo.infra.repository.mapper.WalletMapper;
@@ -72,7 +73,7 @@ public class WalletRepositoryImpl implements WalletRepository {
   }
 
   @Override
-  public Optional<Wallet> findByUserId(Long userId) {
-    return repository.findByUserId(userId).map(mapper::toDomain);
+  public Optional<Wallet> findByUserId(UserId userId) {
+    return repository.findByUserId(userId.asLong()).map(mapper::toDomain);
   }
 }

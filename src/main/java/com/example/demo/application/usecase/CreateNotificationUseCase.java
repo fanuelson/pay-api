@@ -27,7 +27,7 @@ public class CreateNotificationUseCase {
       .map(
         Notification.fromChannel(
           command.transactionId(),
-          command.userId(),
+          command.userId().asLong(),
           user.getEmail(),
           command.msg()
         )

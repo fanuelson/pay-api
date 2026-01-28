@@ -13,6 +13,7 @@ import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.domain.vo.TransactionId;
+import com.example.demo.domain.vo.UserId;
 import com.example.demo.infra.http.input.resources.TransferRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,8 +83,8 @@ public class TestController {
     final var t = transactionRepository.save(
       Transaction.builder()
         .id(TransactionId.of(transactionId))
-        .payerId(request.payerId())
-        .payeeId(request.payeeId())
+        .payerId(UserId.of(request.payerId()))
+        .payeeId(UserId.of(request.payeeId()))
         .amountInCents(request.amountInCents())
         .status(TransactionStatus.PENDING)
         .build()
