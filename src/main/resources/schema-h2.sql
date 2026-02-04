@@ -63,7 +63,6 @@ CREATE INDEX idx_transaction_created_at ON transactions (created_at);
 CREATE TABLE notifications
 (
     id                BIGINT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id    VARCHAR(36) NOT NULL,
     recipient_id      BIGINT      NOT NULL,
     recipient_address VARCHAR     NOT NULL,
     channel           VARCHAR(200) NOT NULL,
@@ -76,10 +75,8 @@ CREATE TABLE notifications
     updated_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sent_at           TIMESTAMP,
 
-    CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
     CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id)
 );
 
-CREATE INDEX idx_notification_transaction ON notifications (transaction_id);
 CREATE INDEX idx_notification_recipient ON notifications (recipient_id);
 CREATE INDEX idx_notification_status_attempts ON notifications (status, attempts);

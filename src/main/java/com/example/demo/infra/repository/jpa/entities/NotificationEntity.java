@@ -1,8 +1,8 @@
 package com.example.demo.infra.repository.jpa.entities;
 
+import com.example.demo.domain.helper.DateTimeHelper;
 import com.example.demo.domain.model.NotificationChannel;
 import com.example.demo.domain.model.NotificationStatus;
-import com.example.demo.domain.helper.DateTimeHelper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,9 +30,6 @@ public class NotificationEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @Column(name = "transaction_id", nullable = false, length = 36)
-  private String transactionId;
 
   @Column(name = "recipient_id", nullable = false)
   private Long recipientId;

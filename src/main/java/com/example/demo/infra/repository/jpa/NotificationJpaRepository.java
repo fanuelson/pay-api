@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public interface NotificationJpaRepository extends JpaRepository<NotificationEntity, Long> {
 
-  List<NotificationEntity> findByTransactionIdOrderByCreatedAtDesc(String transactionId);
 
   @Query("""
             SELECT n FROM NotificationEntity n

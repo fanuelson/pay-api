@@ -37,12 +37,6 @@ public class NotificationRepositoryTest {
   }
 
   @Test
-  void shouldExecuteFindByTransactionIdAndResultEmpty() {
-    final var value = repository.findByTransactionId(TransactionId.of("any"));
-    assertTrue(value.isEmpty());
-  }
-
-  @Test
   void shouldExecuteFindPendingNotificationsAndResultEmpty() {
     final var value = repository.findPendingNotifications(10);
     assertTrue(value.isEmpty());
@@ -118,7 +112,6 @@ public class NotificationRepositoryTest {
 
   private Notification createNotification(final NotificationStatus status) {
     return Notification.builder()
-      .transactionId(TransactionId.of("t1"))
       .recipientId(10L)
       .recipientAddress("test@mail.com")
       .channel(NotificationChannel.EMAIL)

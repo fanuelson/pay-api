@@ -25,13 +25,11 @@ public class CompletedEventProcessor implements TransferEventProcessor {
   public Optional<TransferEvent> process(TransferProcessorContext context) {
     try {
       createNotificationUseCase.execute(CreateNotificationCommand.of(
-        context.getTransaction().getId(),
         context.getPayerId(),
         "Transferência de R$ " + formatAmount(context.getAmountInCents()) + " realizada com sucesso"
       ));
 
       createNotificationUseCase.execute(CreateNotificationCommand.of(
-        context.getTransaction().getId(),
         context.getPayeeId(),
         "Você recebeu R$ " + formatAmount(context.getAmountInCents())
       ));

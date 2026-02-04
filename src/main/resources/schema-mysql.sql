@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS transactions
 CREATE TABLE IF NOT EXISTS notifications
 (
     id                BIGINT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id    VARCHAR(36)  NOT NULL,
     recipient_id      BIGINT       NOT NULL,
     recipient_address VARCHAR(255) NOT NULL,
     channel           VARCHAR(20)  NOT NULL,
@@ -77,10 +76,8 @@ CREATE TABLE IF NOT EXISTS notifications
     updated_at        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     sent_at           TIMESTAMP,
 
-    CONSTRAINT fk_notification_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
     CONSTRAINT fk_notification_recipient FOREIGN KEY (recipient_id) REFERENCES users (id),
 
-    INDEX idx_notification_transaction (transaction_id),
     INDEX idx_notification_recipient (recipient_id),
     INDEX idx_notification_status_attempts (status, attempts)
 );

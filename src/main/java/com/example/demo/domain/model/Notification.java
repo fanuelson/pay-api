@@ -3,7 +3,6 @@ package com.example.demo.domain.model;
 import com.example.demo.application.exception.NotificationMaxAttemptsReachedException;
 import com.example.demo.domain.helper.DateTimeHelper;
 import com.example.demo.domain.vo.NotificationId;
-import com.example.demo.domain.vo.TransactionId;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -16,7 +15,6 @@ import java.util.function.Function;
 public class Notification {
 
   private NotificationId id;
-  private TransactionId transactionId;
   private Long recipientId;
   private String recipientAddress;
   private NotificationChannel channel;          // EMAIL, SMS
@@ -29,14 +27,12 @@ public class Notification {
   private LocalDateTime sentAt;
 
   public static Notification pending(
-    TransactionId transactionId,
     Long recipientId,
     String recipientAddress,
     NotificationChannel channel,
     String msg
   ) {
     return Notification.builder()
-      .transactionId(transactionId)
       .recipientId(recipientId)
       .recipientAddress(recipientAddress)
       .channel(channel)
@@ -48,10 +44,9 @@ public class Notification {
       .build();
   }
 
-  public static Function<NotificationChannel, Notification> fromChannel(
-    TransactionId transactionId, Long recipientId, String recipientAddress, String msg
+  public static Function<NotificationChannel, Notification> fromChannel(Long recipientId, String recipientAddress, String msg
   ) {
-    return channel -> pending(transactionId, recipientId, recipientAddress, channel, msg);
+    return channel -> pending(recipientId, recipientAddress, channel, msg);
   }
 
   public boolean is(NotificationStatus status) {

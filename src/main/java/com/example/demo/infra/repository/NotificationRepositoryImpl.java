@@ -4,7 +4,6 @@ import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.model.Notification;
 import com.example.demo.domain.repository.NotificationRepository;
 import com.example.demo.domain.vo.NotificationId;
-import com.example.demo.domain.vo.TransactionId;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.mapper.NotificationMapper;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +47,6 @@ public class NotificationRepositoryImpl implements NotificationRepository {
   @Override
   public Optional<Notification> findById(NotificationId id) {
     return repository.findById(Long.valueOf(id.value())).map(mapper::toDomain);
-  }
-
-  @Override
-  public List<Notification> findByTransactionId(TransactionId transactionId) {
-    return mapper.toDomainList(repository.findByTransactionIdOrderByCreatedAtDesc(transactionId.value()));
   }
 
   @Override

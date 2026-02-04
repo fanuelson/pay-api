@@ -27,6 +27,5 @@ public record TransferRequest(
 
   public Long amountInCents() {
     return amount;
-//    return Long.valueOf(String.valueOf(amount() * 100));
   }
 }

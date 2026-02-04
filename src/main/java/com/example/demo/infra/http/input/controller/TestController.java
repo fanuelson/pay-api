@@ -2,9 +2,9 @@ package com.example.demo.infra.http.input.controller;
 
 import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.application.port.out.event.NotificationEventPublisher;
-import com.example.demo.application.port.out.gateway.NotificationGateway;
-import com.example.demo.application.port.out.gateway.AuthorizationRequest;
 import com.example.demo.application.port.out.gateway.AuthorizationGateway;
+import com.example.demo.application.port.out.gateway.AuthorizationRequest;
+import com.example.demo.application.port.out.gateway.NotificationGateway;
 import com.example.demo.application.port.out.service.LockService;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
 import com.example.demo.domain.model.Notification;
@@ -50,7 +50,7 @@ public class TestController {
   public Object sendNotification() {
     try {
       final var sent = notificationService.send(
-        Notification.pending(TransactionId.generate(), 1L, "mail.com", NotificationChannel.EMAIL, "heeey")
+        Notification.pending(1L, "mail.com", NotificationChannel.EMAIL, "heeey")
       );
       return Map.of("sent", sent);
     } catch (Exception e) {
@@ -90,7 +90,7 @@ public class TestController {
         .build()
     );
     final var recipientId = request.payerId();
-    createNotificationUseCase.execute(CreateNotificationCommand.of(t.getId(), recipientId, "heeey"));
+    createNotificationUseCase.execute(CreateNotificationCommand.of(recipientId, "heeey"));
     return "ok";
   }
 
