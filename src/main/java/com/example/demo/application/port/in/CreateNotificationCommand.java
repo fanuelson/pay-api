@@ -1,6 +1,6 @@
 package com.example.demo.application.port.in;
 
-import com.example.demo.domain.vo.UserId;
+import com.example.demo.domain.user.model.UserId;
 
 public record CreateNotificationCommand(
   UserId userId,

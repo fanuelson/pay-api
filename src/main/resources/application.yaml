@@ -3,18 +3,15 @@ spring:
     name: demo
   main:
     banner-mode: off
-  # Datasource Configuration
-  datasource:
-    url: jdbc:mysql://localhost:3306/pay-api-db?createDatabaseIfNotExist=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password:
 
+  datasource:
+    url: jdbc:h2:mem:pay-db;INIT=CREATE SCHEMA IF NOT EXISTS app
+    driver-class-name: org.h2.Driver
+    username: sa
   sql:
     init:
-      platform: mysql
+      platform: h2
       mode: always
-  # JPA Configuration
   jpa:
     show-sql: true
     hibernate:
@@ -25,6 +22,7 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 6000ms
+
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
@@ -32,7 +30,6 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: false
       isolation-level: read_committed
-
     producer:
       acks: all
       retries: 3
@@ -45,13 +42,13 @@ spring:
 app:
   kafka:
     topics:
-      transfer-events:
-        name: transfer-events
-      notification-events:
-        name: notification-events
-        retryName: notification-events-retry
+      notification-requested:
+        name: notification-requested
+        maxAttempts: 2
+        delay: 5000
         partitions: 5
-        maxAttempts: 10
+      notification-sent:
+        name: notification-sent
 
 external:
   authorization:
@@ -60,12 +57,21 @@ external:
     url: https://util.devi.tools/api/v1
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,metrics
   endpoint:
     health:
-      show-details: always  # ← Mostra detalhes sempre
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
   health:
     circuitbreakers:
-      enabled: true  # ← Habilita health dos CBs
+      enabled: true
 
 
 # Resilience4j - Circuit Breaker Configuration
@@ -83,8 +89,6 @@ resilience4j:
         eventConsumerBufferSize: 10
         recordExceptions:
           - java.lang.Exception
-#        ignoreExceptions:
-#          - com.example.demo.domain.exception.FieldValidationException
 
     instances:
       # Authorization Service - Mais restritivo (crítico)

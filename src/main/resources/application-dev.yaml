@@ -5,17 +5,14 @@ spring:
 app:
   kafka:
     topics:
-      notification-events:
-        name: notification-events
-        retryName: notification-events-retry
+      notification-requested:
+        name: notification-requested
         partitions: 4
-        maxAttempts: 5
+        maxAttempts: 2
         delay: 5000
-      transfer-events:
-        name: transfer-events
-        delay: 3000
-        maxAttempts: 5
-        partitions: 5
+      notification-sent:
+        name: notification-sent
+        partitions: 4
 
 resilience4j:
   circuitbreaker:
@@ -31,6 +28,7 @@ resilience4j:
         eventConsumerBufferSize: 10
         recordExceptions:
           - java.lang.Exception
+
     #        ignoreExceptions:
     #          - com.example.demo.domain.exception.FieldValidationException
 

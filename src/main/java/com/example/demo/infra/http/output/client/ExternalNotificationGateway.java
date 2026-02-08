@@ -3,7 +3,7 @@ package com.example.demo.infra.http.output.client;
 import com.example.demo.application.exception.NotificationException;
 import com.example.demo.application.port.out.gateway.NotificationGateway;
 import com.example.demo.application.port.out.gateway.NotificationResult;
-import com.example.demo.domain.model.Notification;
+import com.example.demo.domain.notification.model.Notification;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

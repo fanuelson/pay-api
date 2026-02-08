@@ -1,12 +1,12 @@
 package com.example.demo.domain.exception;
 
-import com.example.demo.domain.validation.ValidationError;
+import com.example.demo.domain.transaction.validation.ValidationError;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.demo.domain.helper.StringHelper.join;
+import static com.example.demo.application.helper.StringHelper.join;
 
 @Getter
 public class BusinessValidationException extends BusinessException {

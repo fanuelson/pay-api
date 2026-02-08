@@ -1,6 +1,6 @@
 package com.example.demo.application.exception;
 
-import static com.example.demo.domain.helper.StringHelper.prependIfMissing;
+import static com.example.demo.application.helper.StringHelper.prependIfMissing;
 
 public class NotificationException extends ApplicationException {
   protected NotificationException(String msg, Throwable throwable) {
