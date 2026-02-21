@@ -39,6 +39,7 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 //	// DB
@@ -80,6 +81,7 @@ dependencies {
 
 	// Kafka
 	testImplementation 'org.testcontainers:testcontainers-kafka:2.0.2'
+	testImplementation 'org.testcontainers:testcontainers-mongodb:2.0.2'
 	testImplementation("org.springframework.kafka:spring-kafka-test")
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

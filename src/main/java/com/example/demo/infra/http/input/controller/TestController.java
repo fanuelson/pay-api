@@ -1,16 +1,20 @@
 package com.example.demo.infra.http.input.controller;
 
-import com.example.demo.application.port.in.CreateNotificationCommand;
-import com.example.demo.application.port.out.gateway.AuthorizationGateway;
-import com.example.demo.application.port.out.gateway.AuthorizationRequest;
-import com.example.demo.application.port.out.gateway.NotificationGateway;
-import com.example.demo.application.usecase.CreateNotificationUseCase;
+import com.example.demo.application.authorization.AuthorizationGateway;
+import com.example.demo.application.authorization.AuthorizationRequest;
+import com.example.demo.application.notification.event.CreateNotificationEvent;
+import com.example.demo.application.notification.CreateNotificationUseCase;
+import com.example.demo.application.notification.NotificationGateway;
 import com.example.demo.domain.notification.model.Notification;
 import com.example.demo.domain.notification.model.NotificationChannel;
 import com.example.demo.domain.transaction.model.TransactionId;
+import com.example.demo.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import static java.util.Optional.ofNullable;
 
@@ -22,7 +26,7 @@ public class TestController {
 
   private final AuthorizationGateway authorizationService;
   private final NotificationGateway notificationService;
-  private final CreateNotificationUseCase createNotificationUseCase;
+  private final CreateNotificationUseCase notificationEngine;
 
   @GetMapping("/authorize")
   public Map<String, Object> authorize() {
@@ -45,7 +49,7 @@ public class TestController {
 
   @PostMapping("notify-event")
   public String notifyEvent() {
-    createNotificationUseCase.execute(CreateNotificationCommand.of(5L, "heeey"));
+    notificationEngine.handle(CreateNotificationEvent.of(UserId.of(5L), "heeey"));
     return "ok";
   }
 

@@ -28,7 +28,7 @@ public abstract class KafkaConfig {
   protected <T> ConsumerFactory<String, T> consumerFactory(KafkaProperties properties, Class<T> type) {
     final var deserializer = new JacksonJsonDeserializer<>(type);
     deserializer.setUseTypeHeaders(true);
-    deserializer.addTrustedPackages(type.getPackageName());
+    deserializer.addTrustedPackages("*");
     return new DefaultKafkaConsumerFactory<>(
       properties.buildConsumerProperties(),
       new StringDeserializer(),

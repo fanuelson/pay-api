@@ -1,18 +1,21 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.application.port.out.gateway.AuthorizationRequest;
-import com.example.demo.application.port.out.gateway.AuthorizationResult;
-import com.example.demo.application.port.out.gateway.AuthorizationGateway;
-import com.example.demo.application.exception.AuthorizationException;
-import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Objects.isNull;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import java.util.UUID;
-import static java.util.Objects.isNull;
+
+import com.example.demo.application.authorization.AuthorizationException;
+import com.example.demo.application.authorization.AuthorizationGateway;
+import com.example.demo.application.authorization.AuthorizationRequest;
+import com.example.demo.application.authorization.AuthorizationResult;
+import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -37,6 +40,7 @@ public class ExternalAuthorizationGateway implements AuthorizationGateway {
     return AuthorizationResult.authorized(generateAuthorizationCode());
   }
 
+  @SuppressWarnings("unused")
   private AuthorizationResult fallback(AuthorizationRequest request, Exception ex) {
     log.warn("Authorization fallback called, reason = {}", ex.getMessage());
     throw AuthorizationException.of(ex);

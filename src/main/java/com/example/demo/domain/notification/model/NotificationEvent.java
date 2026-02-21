@@ -2,8 +2,10 @@ package com.example.demo.domain.notification.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.With;
 import java.time.LocalDateTime;
 
+@With
 @Getter
 @RequiredArgsConstructor
 public class NotificationEvent {

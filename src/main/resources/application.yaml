@@ -18,6 +18,8 @@ spring:
       ddl-auto: none
 
   data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/pay-db}
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
@@ -49,6 +51,12 @@ app:
         partitions: 5
       notification-sent:
         name: notification-sent
+      transaction.created:
+        name: transaction.created
+      transaction.authorized:
+        name: transaction.authorized
+      transaction.transferred:
+        name: transaction.transferred
 
 external:
   authorization:

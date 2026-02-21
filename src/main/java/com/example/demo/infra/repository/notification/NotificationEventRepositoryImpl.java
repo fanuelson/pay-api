@@ -1,14 +1,17 @@
 package com.example.demo.infra.repository.notification;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
 import com.example.demo.domain.notification.model.NotificationEvent;
 import com.example.demo.domain.notification.model.NotificationId;
 import com.example.demo.domain.notification.repository.NotificationEventRepository;
 import com.example.demo.infra.repository.notification.jpa.NotificationEventJpaRepository;
 import com.example.demo.infra.repository.notification.mapper.NotificationEventMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -27,6 +30,7 @@ public class NotificationEventRepositoryImpl implements NotificationEventReposit
       .orElseThrow();
   }
 
+  @Override
   public Optional<NotificationEvent> findByNotificationId(NotificationId notificationId) {
     return repository.findByNotificationId(Long.valueOf(notificationId.value()))
       .map(mapper::toDomain);

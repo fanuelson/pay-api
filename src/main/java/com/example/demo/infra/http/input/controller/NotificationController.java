@@ -1,6 +1,6 @@
 package com.example.demo.infra.http.input.controller;
 
-import com.example.demo.application.port.out.gateway.NotificationGateway;
+import com.example.demo.application.notification.NotificationGateway;
 import com.example.demo.domain.notification.model.Notification;
 import com.example.demo.domain.notification.model.NotificationChannel;
 import com.example.demo.infra.http.input.resources.SendNotificationRequest;

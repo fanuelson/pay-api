@@ -23,7 +23,7 @@ CREATE TABLE wallets
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id          BIGINT    NOT NULL UNIQUE,
     balance_in_cents BIGINT    NOT NULL DEFAULT 0,
-    version          INT       NOT NULL DEFAULT 0,
+    version          BIGINT       NOT NULL DEFAULT 0,
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -40,24 +40,15 @@ CREATE TABLE transactions
     payer_id           BIGINT      NOT NULL,
     payee_id           BIGINT      NOT NULL,
     amount_in_cents    BIGINT      NOT NULL,
-    status             VARCHAR(20) NOT NULL,
-    authorization_code VARCHAR(255),
-    error_message      TEXT,
-    created_at         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    completed_at       TIMESTAMP,
 
     CONSTRAINT fk_transaction_payer FOREIGN KEY (payer_id) REFERENCES users (id),
     CONSTRAINT fk_transaction_payee FOREIGN KEY (payee_id) REFERENCES users (id),
     CONSTRAINT chk_amount CHECK (amount_in_cents > 0),
-    CONSTRAINT chk_different_users CHECK (payer_id != payee_id
-) ,
-    CONSTRAINT chk_status CHECK (status IN ('PENDING', 'AUTHORIZED', 'COMPLETED', 'FAILED', 'REVERSED'))
+    CONSTRAINT chk_different_users CHECK (payer_id != payee_id)
 );
 
 CREATE INDEX idx_transaction_payer ON transactions (payer_id);
 CREATE INDEX idx_transaction_payee ON transactions (payee_id);
-CREATE INDEX idx_transaction_status ON transactions (status);
-CREATE INDEX idx_transaction_created_at ON transactions (created_at);
 
 -- Tabela de Notificações
 CREATE TABLE notifications

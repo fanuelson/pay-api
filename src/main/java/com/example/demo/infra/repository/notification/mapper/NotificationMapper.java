@@ -1,13 +1,15 @@
 package com.example.demo.infra.repository.notification.mapper;
 
 
-import com.example.demo.domain.notification.model.Notification;
-import com.example.demo.infra.repository.notification.jpa.entities.NotificationEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import com.example.demo.domain.notification.model.Notification;
+import com.example.demo.infra.repository.notification.jpa.entities.NotificationEntity;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface NotificationMapper {
 
 

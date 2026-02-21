@@ -1,17 +1,20 @@
 package com.example.demo.infra.http.output.client;
 
-import com.example.demo.application.exception.NotificationException;
-import com.example.demo.application.port.out.gateway.NotificationGateway;
-import com.example.demo.application.port.out.gateway.NotificationResult;
-import com.example.demo.domain.notification.model.Notification;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import java.util.Map;
+
+import com.example.demo.application.notification.NotificationException;
+import com.example.demo.application.notification.NotificationGateway;
+import com.example.demo.application.notification.NotificationResult;
+import com.example.demo.domain.notification.model.Notification;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -46,7 +49,8 @@ public class ExternalNotificationGateway implements NotificationGateway {
     return NotificationResult.success();
   }
 
-  private NotificationResult fallback(Notification notification, Exception ex) throws Exception {
+  @SuppressWarnings("unused")
+  private NotificationResult fallback(Notification notification, Exception ex)  {
     log.warn("Notification fallback called, reason = {}", ex.getMessage());
     throw NotificationException.of(ex);
   }
