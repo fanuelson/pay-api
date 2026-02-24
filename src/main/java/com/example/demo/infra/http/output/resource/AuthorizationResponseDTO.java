@@ -28,6 +28,10 @@ public class AuthorizationResponseDTO {
     return "success".equals(status) && nonNull(data) && data.getAuthorization();
   }
 
+  public boolean isUnauthorized() {
+    return !isAuthorized();
+  }
+
   @Value
   public static class AuthorizationData {
     @JsonProperty("authorization")

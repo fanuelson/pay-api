@@ -1,5 +1,6 @@
 package com.example.demo.application.validation;
 
+import com.example.demo.application.chain.transfer.TransferContext;
 import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class PayerExistsValidator implements TransferValidator {
   public ValidationResult validate(final TransferContext context) {
     var errors = new ArrayList<ValidationError>();
     userRepository.findById(context.getPayerId()).ifPresentOrElse(
-      context::setPayerUser,
+      context::setPayer,
       () -> errors.add(ValidationError.of("TRANSFER_PAYER_NOT_FOUND", "Payer not found", "payerId"))
     );
     return ValidationResult.of(errors);

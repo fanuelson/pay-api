@@ -1,5 +1,7 @@
 package com.example.demo.application.validation;
 
+import com.example.demo.application.chain.transfer.TransferContext;
+
 public class SelfTransferValidator implements TransferValidator {
 
   @Override

@@ -35,6 +35,9 @@ public class WalletEntity {
   @Column(name = "balance_in_cents", nullable = false)
   private Long balanceInCents;
 
+  @Column(name = "reserved_balance_in_cents", nullable = false)
+  private Long reservedBalanceInCents;
+
   @Version
   @Column(name = "version", nullable = false)
   private int version;

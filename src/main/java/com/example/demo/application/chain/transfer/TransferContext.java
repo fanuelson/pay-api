@@ -1,4 +1,4 @@
-package com.example.demo.application.saga.transfer;
+package com.example.demo.application.chain.transfer;
 
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.User;
@@ -8,16 +8,23 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TransferSagaContext {
+public class TransferContext {
 
   private String transactionId;
   private Long payerId;
   private Long payeeId;
   private Long amountInCents;
-
   private Transaction transaction;
   private User payer;
   private User payee;
   private Wallet payerWallet;
   private Wallet payeeWallet;
+
+  public boolean hasPayerData() {
+    return payer != null && payerWallet != null;
+  }
+
+  public boolean hasPayeeData() {
+    return payee != null && payeeWallet != null;
+  }
 }

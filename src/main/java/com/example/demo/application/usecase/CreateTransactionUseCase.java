@@ -40,6 +40,7 @@ public class CreateTransactionUseCase {
         command.getPayeeId(),
         command.getAmountInCents(),
         TransactionStatus.PENDING.name(),
+        null,
         null
     );
 

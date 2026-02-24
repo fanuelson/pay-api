@@ -11,4 +11,8 @@ public class AuthorizationException extends InfraException {
   public static AuthorizationException of(Throwable t) {
     return new AuthorizationException("Authorization failed: " + t.getMessage(), t);
   }
+
+  public static AuthorizationException of(String msg) {
+    return new AuthorizationException("Authorization failed: " + msg, null);
+  }
 }

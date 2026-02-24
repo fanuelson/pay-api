@@ -13,12 +13,12 @@ public class AuthorizationResponse {
     return new AuthorizationResponse(true, code, "Transação autorizada");
   }
 
-  public static AuthorizationResponse unavailable() {
-    return new AuthorizationResponse(false, null, "Authorization service is temporarily unavailable");
-  }
-
   public static AuthorizationResponse denied() {
     return new AuthorizationResponse(false, null, "Authorization service denied the transfer");
+  }
+
+  public boolean isUnauthorized() {
+    return !isAuthorized;
   }
 
 }

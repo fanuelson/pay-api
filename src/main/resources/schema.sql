@@ -1,14 +1,14 @@
 -- Tabela de Usuários
 CREATE TABLE users
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    full_name  VARCHAR(255) NOT NULL,
-    document   VARCHAR(14)  NOT NULL UNIQUE,
-    email      VARCHAR(255) NOT NULL UNIQUE,
+    id                            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    full_name                     VARCHAR(255) NOT NULL,
+    document                      VARCHAR(14)  NOT NULL UNIQUE,
+    email                         VARCHAR(255) NOT NULL UNIQUE,
     enabled_notification_channels VARCHAR(255) NOT NULL DEFAULT 'EMAIL',
-    user_type  VARCHAR(20)  NOT NULL,
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    user_type                     VARCHAR(20)  NOT NULL,
+    created_at                    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_user_type CHECK (user_type IN ('COMMON', 'MERCHANT'))
 );
@@ -20,12 +20,13 @@ CREATE INDEX idx_user_email ON users (email);
 -- Tabela de Carteiras
 CREATE TABLE wallets
 (
-    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id          BIGINT    NOT NULL UNIQUE,
-    balance_in_cents BIGINT    NOT NULL DEFAULT 0,
-    version          INT       NOT NULL DEFAULT 0,
-    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id                   BIGINT    NOT NULL UNIQUE,
+    balance_in_cents          BIGINT    NOT NULL DEFAULT 0,
+    reserved_balance_in_cents BIGINT    NOT NULL DEFAULT 0,
+    version                   INT       NOT NULL DEFAULT 0,
+    created_at                TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_wallet_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT chk_balance CHECK (balance_in_cents >= 0)
@@ -49,7 +50,8 @@ CREATE TABLE transactions
     CONSTRAINT fk_transaction_payer FOREIGN KEY (payer_id) REFERENCES users (id),
     CONSTRAINT fk_transaction_payee FOREIGN KEY (payee_id) REFERENCES users (id),
     CONSTRAINT chk_amount CHECK (amount_in_cents > 0),
-    CONSTRAINT chk_different_users CHECK (payer_id != payee_id),
+    CONSTRAINT chk_different_users CHECK (payer_id != payee_id
+) ,
     CONSTRAINT chk_status CHECK (status IN ('PENDING', 'AUTHORIZED', 'COMPLETED', 'FAILED', 'REVERSED'))
 );
 

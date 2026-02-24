@@ -12,7 +12,7 @@ public class CreateTransactionCommand {
   private final Long payeeId;
   private final Long amountInCents;
 
-  public static CreateTransactionCommand of(Long payerId, Long payeeId, Long amountInCents) {
-    return new CreateTransactionCommand(payerId, payeeId, amountInCents);
+  public static CreateTransactionCommand of(Long payerId, Long payeeId, Long amount) {
+    return new CreateTransactionCommand(payerId, payeeId, amount * 100);
   }
 }

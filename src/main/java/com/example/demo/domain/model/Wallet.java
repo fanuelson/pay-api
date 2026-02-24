@@ -1,11 +1,11 @@
 package com.example.demo.domain.model;
 
+import com.example.demo.domain.exception.InsufficientBalanceException;
 import com.example.demo.domain.helper.MoneyHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -17,7 +17,7 @@ public class Wallet {
   private Long id;
   private Long userId;
   private Long balanceInCents;
-  private int version;
+  private Long reservedBalanceInCents;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -25,7 +25,6 @@ public class Wallet {
     this.id = null;
     this.userId = userId;
     this.balanceInCents = balanceInCents;
-    this.version = 0;
     this.createdAt = LocalDateTime.now();
     this.updatedAt = LocalDateTime.now();
 
@@ -36,7 +35,6 @@ public class Wallet {
     this.id = other.getId();
     this.userId = other.getUserId();
     this.balanceInCents = other.getBalanceInCents();
-    this.version = other.getVersion();
     this.createdAt = other.getCreatedAt();
     this.updatedAt = other.getUpdatedAt();
     validate();
@@ -60,19 +58,47 @@ public class Wallet {
     }
   }
 
-  public void debit(long amountInCents) {
+  public void reserve(long amountInCents) {
     if (amountInCents <= 0) {
-      throw new IllegalArgumentException("Valor de débito deve ser maior que zero");
+      throw new IllegalArgumentException("Valor de reserva deve ser maior que zero");
     }
 
     if (balanceInCents < amountInCents) {
-      throw new IllegalArgumentException(
-        "Saldo insuficiente. Saldo atual: " + getBalanceInReais() +
+      throw new InsufficientBalanceException(
+        "Saldo insuficiente. Saldo disponível: " + getBalanceInReais() +
           ", Valor solicitado: " + formatCentsToReais(amountInCents)
       );
     }
 
     this.balanceInCents = MoneyHelper.subtract(this.balanceInCents, amountInCents);
+    this.reservedBalanceInCents = MoneyHelper.add(this.reservedBalanceInCents, amountInCents);
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  public void releaseReserve(long amountInCents) {
+    if (amountInCents <= 0) {
+      throw new IllegalArgumentException("Valor de liberação deve ser maior que zero");
+    }
+
+    if (reservedBalanceInCents < amountInCents) {
+      throw new IllegalArgumentException("Saldo reservado insuficiente para liberação");
+    }
+
+    this.reservedBalanceInCents = MoneyHelper.subtract(this.reservedBalanceInCents, amountInCents);
+    this.balanceInCents = MoneyHelper.add(this.balanceInCents, amountInCents);
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  public void debit(long amountInCents) {
+    if (amountInCents <= 0) {
+      throw new IllegalArgumentException("Valor de débito deve ser maior que zero");
+    }
+
+    if (reservedBalanceInCents < amountInCents) {
+      throw new IllegalArgumentException("Saldo reservado insuficiente para débito");
+    }
+
+    this.reservedBalanceInCents = MoneyHelper.subtract(this.reservedBalanceInCents, amountInCents);
     this.updatedAt = LocalDateTime.now();
   }
 

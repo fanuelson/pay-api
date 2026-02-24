@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -35,29 +34,15 @@ public class Transaction {
     this.amountInCents = amountInCents;
     this.status = TransactionStatus.PENDING;
     this.createdAt = LocalDateTime.now();
-
-    validate();
-  }
-
-  private void validate() {
-    if (payerId.equals(payeeId)) {
-      throw new IllegalArgumentException("Pagador e recebedor não podem ser o mesmo usuário");
-    }
-    if (amountInCents <= 0) {
-      throw new IllegalArgumentException("Valor da transação deve ser maior que zero");
-    }
   }
 
   public void authorized(String code) {
-    if (isNotPending()) {
-      throw new IllegalStateException("Apenas transações PENDING podem ser autorizadas");
-    }
     this.status = TransactionStatus.AUTHORIZED;
     this.authorizationCode = code;
   }
 
   public void completed() {
-    if (isNotPending() && isNotAuthorized()) {
+    if (isNotPending() || isNotAuthorized()) {
       throw new IllegalStateException("Apenas transações AUTHORIZED ou PENDING podem ser completadas");
     }
     this.status = TransactionStatus.COMPLETED;

@@ -21,7 +21,7 @@ public class TransferEventListener {
 
   @KafkaListener(
     topics = "${kafka.topics.transfer-events}",
-    containerFactory = "transferListenerContainerFactory"
+    containerFactory = "listenerContainerFactory"
   )
   public void onTransferEvent(
     @Payload TransferEvent event,

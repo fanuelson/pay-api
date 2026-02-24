@@ -9,7 +9,8 @@ public record TransferEvent(
   long amountInCents,
   String status,
   String authorizationCode,
-  LocalDateTime timestamp
+  LocalDateTime timestamp,
+  String statusDetails
 ) {
 
   public TransferEvent(
@@ -18,7 +19,8 @@ public record TransferEvent(
     long payeeId,
     long amountInCents,
     String status,
-    String authorizationCode
+    String authorizationCode,
+    String statusDetails
   ) {
     this(
       transactionId,
@@ -27,7 +29,44 @@ public record TransferEvent(
       amountInCents,
       status,
       authorizationCode,
-      LocalDateTime.now()
+      LocalDateTime.now(),
+      statusDetails
+    );
+  }
+
+  public TransferEvent withStatus(String newStatus) {
+    return new TransferEvent(
+      transactionId,
+      payerId,
+      payeeId,
+      amountInCents,
+      newStatus,
+      authorizationCode,
+      statusDetails
+    );
+  }
+
+  public TransferEvent withStatusDetails(String newStatusDetails) {
+    return new TransferEvent(
+      transactionId,
+      payerId,
+      payeeId,
+      amountInCents,
+      status,
+      authorizationCode,
+      newStatusDetails
+    );
+  }
+
+  public TransferEvent withAuthorizationCode(String authorizationCode) {
+    return new TransferEvent(
+      transactionId,
+      payerId,
+      payeeId,
+      amountInCents,
+      status,
+      authorizationCode,
+      statusDetails
     );
   }
 }

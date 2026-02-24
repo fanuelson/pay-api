@@ -1,5 +1,6 @@
 package com.example.demo.application.validation;
 
+import com.example.demo.application.chain.transfer.TransferContext;
 import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class PayeeExistsValidator implements TransferValidator {
   public ValidationResult validate(final TransferContext context) {
     var errors = new ArrayList<ValidationError>();
     userRepository.findById(context.getPayeeId()).ifPresentOrElse(
-      context::setPayeeUser,
+      context::setPayee,
       () -> errors.add(ValidationError.of("TRANSFER_PAYEE_NOT_FOUND", "Payee not found", "payeeId"))
     );
     return ValidationResult.of(errors);

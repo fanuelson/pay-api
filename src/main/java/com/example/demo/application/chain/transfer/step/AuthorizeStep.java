@@ -1,9 +1,10 @@
-package com.example.demo.application.saga.transfer.step;
+package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.saga.SagaStep;
-import com.example.demo.application.saga.transfer.TransferSagaContext;
+import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.domain.exception.BusinessException;
+import com.example.demo.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,34 +12,29 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AuthorizeStep implements SagaStep<TransferSagaContext> {
+public class AuthorizeStep implements TransferHandler {
 
   private final AuthorizationService authorizationService;
+  private final TransactionRepository transactionRepository;
 
   @Override
-  public String getName() {
+  public String name() {
     return "Authorize";
   }
 
   @Override
-  public void execute(TransferSagaContext context) {
+  public void execute(TransferContext context) {
     var response = authorizationService.authorize(
         context.getPayerId(),
         context.getPayeeId(),
         context.getAmountInCents()
     );
 
-    log.info("Authorization response: authorized={}, message={}",
-        response.isAuthorized(), response.getMessage());
-
-    if (!response.isAuthorized()) {
+    if (response.isUnauthorized()) {
       throw new BusinessException(response.getMessage());
     }
 
     context.getTransaction().authorized(response.getAuthorizationCode());
-  }
-
-  @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
+    transactionRepository.update(context.getTransactionId(), context.getTransaction());
   }
 }

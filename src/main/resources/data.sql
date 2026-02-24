@@ -28,11 +28,11 @@ VALUES (5, 'Ana Costa', '55566677788', 'ana.costa@email.com', 'COMMON', 'EMAIL;S
 
 -- Carteira do João (R$ 1.000,00)
 INSERT INTO wallets (id, user_id, balance_in_cents, created_at, updated_at)
-VALUES (1, 1, 100000, NOW(), NOW());
+VALUES (1, 1, 100_000_000, NOW(), NOW());
 
 -- Carteira da Maria (R$ 10,00 - saldo insuficiente para transferir R$ 100,00)
 INSERT INTO wallets (id, user_id, balance_in_cents, created_at, updated_at)
-VALUES (2, 2, 1000, NOW(), NOW());
+VALUES (2, 2, 0, NOW(), NOW());
 
 -- Carteira da Loja (R$ 5.000,00)
 INSERT INTO wallets (id, user_id, balance_in_cents, created_at, updated_at)
@@ -40,7 +40,7 @@ VALUES (3, 3, 500000, NOW(), NOW());
 
 -- Carteira do Pedro (R$ 500,00)
 INSERT INTO wallets (id, user_id, balance_in_cents, created_at, updated_at)
-VALUES (4, 4, 50000, NOW(), NOW());
+VALUES (4, 4, 100_000_000, NOW(), NOW());
 
 -- Carteira da Ana (R$ 200,00)
 INSERT INTO wallets (id, user_id, balance_in_cents, created_at, updated_at)

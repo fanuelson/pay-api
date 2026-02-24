@@ -1,25 +1,25 @@
-package com.example.demo.application.saga.transfer.step;
+package com.example.demo.application.chain.transfer.step;
 
+import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.application.port.in.CreateNotificationCommand;
-import com.example.demo.application.saga.SagaStep;
-import com.example.demo.application.saga.transfer.TransferSagaContext;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class NotifyStep implements SagaStep<TransferSagaContext> {
+public class NotifyStep implements TransferHandler {
 
   private final CreateNotificationUseCase createNotificationUseCase;
 
   @Override
-  public String getName() {
+  public String name() {
     return "Notify";
   }
 
   @Override
-  public void execute(TransferSagaContext context) {
+  public void execute(TransferContext context) {
     var transaction = context.getTransaction();
 
     createNotificationUseCase.execute(CreateNotificationCommand.of(
@@ -33,10 +33,6 @@ public class NotifyStep implements SagaStep<TransferSagaContext> {
         context.getPayeeId(),
         "Você recebeu R$ " + formatAmount(context.getAmountInCents())
     ));
-  }
-
-  @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
   }
 
   private String formatAmount(Long cents) {

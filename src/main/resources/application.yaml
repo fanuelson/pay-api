@@ -5,7 +5,7 @@ spring:
     banner-mode: off
   # Datasource Configuration
   datasource:
-    url: jdbc:h2:mem:localdb;INIT=CREATE SCHEMA IF NOT EXISTS app
+    url: jdbc:h2:mem:pay-db;INIT=CREATE SCHEMA IF NOT EXISTS app
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -38,10 +38,6 @@ spring:
       retries: 3
       properties:
         enable.idempotence: true
-    listener:
-      concurrency: 3
-      ack-mode: manual
-
 
 kafka:
   topics:
@@ -78,91 +74,32 @@ resilience4j:
         minimumNumberOfCalls: 5
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 30s
+        waitDurationInOpenState: 10s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
         recordExceptions:
-          - java.lang.Exception
-#        ignoreExceptions:
-#          - com.example.demo.domain.exception.FieldValidationException
+          - com.example.demo.infra.exception.InfraException
+          - org.springframework.web.client.RestClientException
+        ignoreExceptions:
+          - com.example.demo.domain.exception.DomainException
 
     instances:
-      # Authorization Service - Mais restritivo (crítico)
+      # Authorization Service - Crítico, fail-fast
       authorizationService:
         baseConfig: default
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        permittedNumberOfCallsInHalfOpenState: 3
-        waitDurationInOpenState: 30s
-        failureRateThreshold: 50  # 50% de falhas abre o circuito
         slowCallDurationThreshold: 5s
         slowCallRateThreshold: 50
 
-      # Notification Service - Mais permissivo (não crítico)
+      # Notification Service - Não crítico, mais permissivo
       notificationService:
         baseConfig: default
         slidingWindowSize: 20
         minimumNumberOfCalls: 10
         permittedNumberOfCallsInHalfOpenState: 5
-        waitDurationInOpenState: 60s
-        failureRateThreshold: 70  # 70% de falhas abre o circuito
+        failureRateThreshold: 70
         slowCallDurationThreshold: 10s
         slowCallRateThreshold: 70
-
-  # Retry Configuration
-  retry:
-    configs:
-      default:
-        maxAttempts: 3
-        waitDuration: 1s
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
-        retryExceptions:
-          - java.lang.Exception
-#        ignoreExceptions:
-#          - com.example.demo.domain.exception.FieldValidationException
-
-    instances:
-      # Authorization Service - Menos tentativas (crítico)
-      authorizationService:
-        maxAttempts: 2
-        waitDuration: 500ms
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
-        retryExceptions:
-          - org.springframework.web.client.RestClientException
+        recordExceptions:
           - com.example.demo.infra.exception.InfraException
-
-      # Notification Service - Mais tentativas (não crítico)
-      notificationService:
-        maxAttempts: 3
-        waitDuration: 2s
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
-        retryExceptions:
           - org.springframework.web.client.RestClientException
-          - com.example.demo.infra.exception.InfraException
-
-  # Time Limiter Configuration (opcional)
-  timelimiter:
-    configs:
-      default:
-        timeoutDuration: 10s
-        cancelRunningFuture: true
-    instances:
-      authorizationService:
-        timeoutDuration: 5s
-      notificationService:
-        timeoutDuration: 10s
-
-  # Bulkhead Configuration (opcional - para limitar concorrência)
-  bulkhead:
-    configs:
-      default:
-        maxConcurrentCalls: 10
-        maxWaitDuration: 100ms
-    instances:
-      authorizationService:
-        maxConcurrentCalls: 5
-      notificationService:
-        maxConcurrentCalls: 10
+          - com.example.demo.application.exceptions.NotificationException

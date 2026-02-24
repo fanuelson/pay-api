@@ -1,7 +1,7 @@
-package com.example.demo.application.saga.transfer.step;
+package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.saga.SagaStep;
-import com.example.demo.application.saga.transfer.TransferSagaContext;
+import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.domain.exception.ElementNotFoundException;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.domain.repository.UserRepository;
@@ -11,19 +11,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LoadDataStep implements SagaStep<TransferSagaContext> {
+public class LoadDataStep implements TransferHandler {
 
   private final TransactionRepository transactionRepository;
   private final UserRepository userRepository;
   private final WalletRepository walletRepository;
 
   @Override
-  public String getName() {
+  public String name() {
     return "LoadData";
   }
 
   @Override
-  public void execute(TransferSagaContext context) {
+  public void execute(TransferContext context) {
     var transaction = transactionRepository.findById(context.getTransactionId())
         .orElseThrow(() -> new ElementNotFoundException("Transaction not found"));
 
@@ -50,9 +50,5 @@ public class LoadDataStep implements SagaStep<TransferSagaContext> {
     context.setPayee(payee);
     context.setPayerWallet(payerWallet);
     context.setPayeeWallet(payeeWallet);
-  }
-
-  @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
   }
 }

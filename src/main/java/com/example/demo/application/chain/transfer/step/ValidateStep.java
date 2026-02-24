@@ -1,42 +1,30 @@
-package com.example.demo.application.saga.transfer.step;
+package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.saga.SagaStep;
-import com.example.demo.application.saga.transfer.TransferSagaContext;
-import com.example.demo.application.validation.TransferContext;
+import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.application.validation.TransferValidator;
 import com.example.demo.domain.exception.BusinessValidationException;
 import com.example.demo.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ValidateStep implements SagaStep<TransferSagaContext> {
+public class ValidateStep implements TransferHandler {
 
   private final List<TransferValidator> validators;
   private final TransactionRepository transactionRepository;
 
   @Override
-  public String getName() {
+  public String name() {
     return "Validate";
   }
 
   @Override
-  public void execute(TransferSagaContext context) {
-    var transferContext = new TransferContext(
-        context.getPayerId(),
-        context.getPayeeId(),
-        context.getAmountInCents(),
-        context.getPayer(),
-        context.getPayee(),
-        context.getPayerWallet(),
-        context.getPayeeWallet()
-    );
-
+  public void execute(TransferContext context) {
     validators.forEach(validator -> {
-      var result = validator.validate(transferContext);
+      var result = validator.validate(context);
       if (result.isInvalid()) {
         throw new BusinessValidationException(result.getErrors());
       }
@@ -44,7 +32,7 @@ public class ValidateStep implements SagaStep<TransferSagaContext> {
   }
 
   @Override
-  public void compensate(TransferSagaContext context, Exception cause) {
+  public void compensate(TransferContext context, Exception cause) {
     context.getTransaction().failed(cause.getMessage());
     transactionRepository.save(context.getTransaction());
   }

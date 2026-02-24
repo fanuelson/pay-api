@@ -1,6 +1,5 @@
 package com.example.demo.infra.messaging;
 
-import com.example.demo.application.port.out.event.NotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -26,7 +25,7 @@ public class KafkaConfig {
   // ==================== NOTIFICATION ====================
 
   @Bean
-  public ProducerFactory<String, NotificationEvent> notificationProducerFactory() {
+  public ProducerFactory<String, Object> producerFactory() {
     return new DefaultKafkaProducerFactory<>(
       kafkaProperties.buildProducerProperties(),
       new StringSerializer(),
@@ -35,13 +34,13 @@ public class KafkaConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, NotificationEvent> notificationKafkaTemplate() {
-    return new KafkaTemplate<>(notificationProducerFactory());
+  public KafkaTemplate<String, Object> kafkaTemplate() {
+    return new KafkaTemplate<>(producerFactory());
   }
 
   @Bean
-  public ConsumerFactory<String, NotificationEvent> notificationConsumerFactory() {
-    var deserializer = new JacksonJsonDeserializer<>(NotificationEvent.class);
+  public ConsumerFactory<String, Object> consumerFactory() {
+    var deserializer = new JacksonJsonDeserializer<>(Object.class);
     deserializer.addTrustedPackages("*");
     return new DefaultKafkaConsumerFactory<>(
       kafkaProperties.buildConsumerProperties(),
@@ -51,9 +50,10 @@ public class KafkaConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, NotificationEvent> notificationListenerContainerFactory() {
-    var factory = new ConcurrentKafkaListenerContainerFactory<String, NotificationEvent>();
-    factory.setConsumerFactory(notificationConsumerFactory());
+  public ConcurrentKafkaListenerContainerFactory<String, Object> listenerContainerFactory() {
+    var factory = new ConcurrentKafkaListenerContainerFactory<String, Object>();
+    factory.setConsumerFactory(consumerFactory());
+    factory.setConcurrency(5);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
   }

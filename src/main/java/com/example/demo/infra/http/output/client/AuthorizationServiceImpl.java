@@ -5,16 +5,14 @@ import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.infra.http.output.exception.AuthorizationException;
 import com.example.demo.infra.http.output.resource.AuthorizationResponseDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
 import java.util.UUID;
-
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -26,29 +24,32 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
   @Override
   @CircuitBreaker(name = "authorizationService", fallbackMethod = "authorizationFallback")
-  @Retry(name = "authorizationService")
   public AuthorizationResponse authorize(Long payerId, Long payeeId, Long amountInCents) {
-    try {
-      final var response = restClient.get()
-        .uri("/authorize")
-        .retrieve()
-        .body(AuthorizationResponseDTO.class);
 
-      if (nonNull(response) && response.isAuthorized()) {
-        return AuthorizationResponse.authorized(generateAuthorizationCode());
-      }
+    final var response = restClient.get()
+      .uri("/authorize")
+      .retrieve()
+      .onStatus(
+        HttpStatusCode::isError,
+        (req, res) -> {
+          throw AuthorizationException.of(res.getStatusText());
+        }
+      )
+      .body(AuthorizationResponseDTO.class);
+
+    if (isNull(response) || response.isUnauthorized()) {
       return AuthorizationResponse.denied();
-    } catch (Exception ex) {
-      log.error("Error authorizing transfer", ex);
-      throw AuthorizationException.of(ex);
     }
+
+    return AuthorizationResponse.authorized(generateAuthorizationCode());
+
   }
 
   private AuthorizationResponse authorizationFallback(
-    Long payerId, Long payeeId, Long amountInCents, Exception ex
+    Long payerId, Long payeeId, Long amountInCents, Throwable ex
   ) {
     log.error("Circuit breaker activated for authorization service", ex);
-    return AuthorizationResponse.unavailable();
+    throw AuthorizationException.of(ex);
   }
 
   private String generateAuthorizationCode() {

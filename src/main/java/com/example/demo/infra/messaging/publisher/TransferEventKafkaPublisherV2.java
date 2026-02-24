@@ -5,12 +5,15 @@ import com.example.demo.application.port.out.event.TransferEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+
 @Slf4j
 @Component
-public class TransferEventKafkaPublisher implements TransferEventPublisher {
+@Primary
+public class TransferEventKafkaPublisherV2 implements TransferEventPublisher {
 
   @Autowired
   private KafkaTemplate<String, Object> kafkaTemplate;
@@ -20,18 +23,19 @@ public class TransferEventKafkaPublisher implements TransferEventPublisher {
 
   @Override
   public void publish(TransferEvent event) {
-    publish(topic, String.valueOf(event.payerId()), event);
+    final var resolvedTopic = switch (event.status()) {
+      case "PENDING" -> "transfer.validate";
+      case "VALIDATED" -> "transfer.authorize";
+      case "AUTHORIZED" -> "transfer.reserve";
+      case "RESERVED" -> "transfer.credit";
+      case "COMPLETED" -> "transfer.notify";
+      case "FAILED" -> "transfer.failed";
+      default -> topic;
+    };
+    publish(resolvedTopic, String.valueOf(event.payerId()), event);
   }
 
   private void publish(String topic, String key, Object event) {
-    kafkaTemplate.send(topic, key, event)
-      .whenComplete((result, ex) -> {
-        if (ex != null) {
-          log.error("Failed to publish: {}", event, ex);
-        } else {
-          log.debug("Published: event={}, partition={}, offset={}",
-            event, result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
-        }
-      });
+    kafkaTemplate.send(topic, key, event);
   }
 }
