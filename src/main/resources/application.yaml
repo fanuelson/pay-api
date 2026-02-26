@@ -44,6 +44,10 @@ kafka:
     transfer-events: transfer-events
     notification-events: notification-events
 
+outbox:
+  poll-interval-ms: 5000
+  dispatch-timeout-minutes: 5
+
 external:
   authorization:
     url: https://util.devi.tools/api/v2

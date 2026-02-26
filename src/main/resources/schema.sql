@@ -83,3 +83,25 @@ CREATE TABLE notifications
 CREATE INDEX idx_notification_transaction ON notifications (transaction_id);
 CREATE INDEX idx_notification_recipient ON notifications (recipient_id);
 CREATE INDEX idx_notification_status_attempts ON notifications (status, attempts);
+
+-- Tabela de Outbox (entrega garantida de eventos ao Kafka)
+CREATE TABLE outbox_events
+(
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    aggregate_id   VARCHAR(255) NOT NULL,
+    event_key      VARCHAR(255),
+    aggregate_type VARCHAR(100) NOT NULL,
+    event_type     VARCHAR(100) NOT NULL,
+    topic          VARCHAR(255) NOT NULL,
+    payload        TEXT         NOT NULL,
+    payload_type   VARCHAR(255) NOT NULL,
+    status         VARCHAR(20)  NOT NULL DEFAULT 'PENDING',
+    attempts       INT          NOT NULL DEFAULT 0,
+    max_attempts   INT          NOT NULL DEFAULT 5,
+    created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    dispatched_at  TIMESTAMP,
+
+    CONSTRAINT chk_outbox_status CHECK (status IN ('PENDING', 'DISPATCHED', 'FAILED'))
+);
+
+CREATE INDEX idx_outbox_status_created ON outbox_events (status, created_at);

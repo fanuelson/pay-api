@@ -8,6 +8,7 @@ import com.example.demo.domain.repository.NotificationRepository;
 import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class CreateNotificationUseCase {
   private final NotificationRepository notificationRepository;
   private final NotificationEventPublisher notificationEventPublisher;
 
+  @Transactional
   public void execute(final CreateNotificationCommand command) {
     final var userId = command.getUserId();
     final var transactionId = command.getTransactionId();
