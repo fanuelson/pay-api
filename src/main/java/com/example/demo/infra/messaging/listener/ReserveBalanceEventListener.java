@@ -1,12 +1,13 @@
 package com.example.demo.infra.messaging.listener;
 
 import com.example.demo.application.chain.TransferChain;
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.application.chain.transfer.step.ReserveBalanceStep;
 import com.example.demo.application.port.out.event.TransferEvent;
 import com.example.demo.application.port.out.event.TransferEventPublisher;
 import com.example.demo.domain.exception.InsufficientBalanceException;
 import com.example.demo.domain.model.TransactionStatus;
+import com.example.demo.domain.repository.TransactionAggregateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.*;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
   exclude = {InsufficientBalanceException.class, IllegalArgumentException.class}
 )
 @KafkaListener(
-  topics = "transfer.reserve",
+  topics = "transfer.authorized",
   containerFactory = "listenerContainerFactory",
   groupId = "reserve-balance-group"
 )
@@ -37,12 +38,11 @@ public class ReserveBalanceEventListener {
   private final ReserveBalanceStep reserveBalanceStep;
   private final TransferChain chain;
   private final TransferEventPublisher publisher;
+  private final TransactionAggregateRepository repository;
 
   @KafkaHandler(isDefault = true)
   public void handle(TransferEvent event, Acknowledgment ack) {
-    var context = TransferContext.builder()
-        .transactionId(event.transactionId())
-        .build();
+    var context = repository.findById(event.transactionId());
 
     chain.executeStep(reserveBalanceStep, context);
 
@@ -57,10 +57,7 @@ public class ReserveBalanceEventListener {
       Acknowledgment ack
   ) {
     log.error("DLT: reserveBalance failed for transactionId={}, reason={}", event.transactionId(), errorMessage);
-
-    var context = TransferContext.builder()
-        .transactionId(event.transactionId())
-        .build();
+    var context = repository.findById(event.transactionId());
 
     try {
       // compensa em reverso: reserveBalance → authorize(no-op) → validate

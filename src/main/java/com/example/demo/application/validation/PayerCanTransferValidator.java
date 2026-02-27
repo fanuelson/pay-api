@@ -1,6 +1,6 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.domain.model.UserType;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class PayerCanTransferValidator implements TransferValidator {
 
   @Override
-  public ValidationResult validate(TransferContext context) {
+  public ValidationResult validate(TransactionAggregate context) {
 
     if (context.getPayer().is(UserType.MERCHANT)) {
       return ValidationResult.invalid(

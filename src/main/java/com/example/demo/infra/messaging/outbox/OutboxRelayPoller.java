@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class OutboxRelayPoller {
 
-  private static final int BATCH_SIZE = 500;
+  private static final int BATCH_SIZE = 100;
 
   private final OutboxEventRepository outboxEventRepository;
   private final KafkaTemplate<String, Object> kafkaTemplate;
@@ -25,7 +25,7 @@ public class OutboxRelayPoller {
   @Value("${outbox.dispatch-timeout-minutes:5}")
   private int dispatchTimeoutMinutes;
 
-  @Scheduled(fixedDelayString = "${outbox.poll-interval-ms:5000}")
+//  @Scheduled(fixedDelayString = "${outbox.poll-interval-ms:5000}")
   public void poll() {
     dispatchPending();
     recoverStaleDispatched();

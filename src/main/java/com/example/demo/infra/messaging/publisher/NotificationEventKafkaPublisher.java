@@ -1,7 +1,8 @@
 package com.example.demo.infra.messaging.publisher;
 
-import com.example.demo.application.port.out.event.NotificationEvent;
-import com.example.demo.application.port.out.event.NotificationEventPublisher;
+import com.example.demo.domain.notification.NotificationEvent;
+import com.example.demo.domain.notification.NotificationEventPublisher;
+import com.example.demo.domain.notification.NotificationFailedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +23,16 @@ public class NotificationEventKafkaPublisher implements NotificationEventPublish
 
   @Override
   public void publish(NotificationEvent event) {
-    var notificationId = event.getNotificationId();
+    final var notificationId = event.notificationId();
     log.info("Publishing NotificationEvent: notificationId={}", notificationId);
 
     kafkaTemplate.send(topic, notificationId.toString(), event)
       .whenComplete((result, ex) -> handleComplete(notificationId, result, ex));
+  }
+
+  @Override
+  public void publish(NotificationFailedEvent event) {
+
   }
 
   private void handleComplete(Long notificationId, SendResult<String, Object> result, Throwable ex) {

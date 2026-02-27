@@ -1,6 +1,4 @@
-package com.example.demo.domain.repository;
-
-import com.example.demo.domain.model.Notification;
+package com.example.demo.domain.notification;
 
 import java.util.List;
 import java.util.Optional;

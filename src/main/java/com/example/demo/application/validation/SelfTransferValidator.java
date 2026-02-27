@@ -1,11 +1,11 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 
 public class SelfTransferValidator implements TransferValidator {
 
   @Override
-  public ValidationResult validate(TransferContext context) {
+  public ValidationResult validate(TransactionAggregate context) {
     if (context.getPayerId().equals(context.getPayeeId())) {
       return ValidationResult.invalid(
         ValidationError.of("TRANSFER_SELF_TRANSFER_NOT_ALLOWED", "Payee not found", "payeeId")

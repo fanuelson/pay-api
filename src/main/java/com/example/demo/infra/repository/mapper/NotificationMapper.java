@@ -1,7 +1,7 @@
 package com.example.demo.infra.repository.mapper;
 
 
-import com.example.demo.domain.model.Notification;
+import com.example.demo.domain.notification.Notification;
 import com.example.demo.infra.repository.jpa.entities.NotificationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

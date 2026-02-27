@@ -1,12 +1,12 @@
 package com.example.demo.infra.messaging.listener;
 
 import com.example.demo.application.chain.TransferChain;
-import com.example.demo.application.chain.transfer.TransferContext;
 import com.example.demo.application.chain.transfer.step.CreditStep;
 import com.example.demo.application.port.out.event.TransferEvent;
 import com.example.demo.application.port.out.event.TransferEventPublisher;
 import com.example.demo.domain.exception.InsufficientBalanceException;
 import com.example.demo.domain.model.TransactionStatus;
+import com.example.demo.domain.repository.TransactionAggregateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.*;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
   exclude = {InsufficientBalanceException.class, IllegalArgumentException.class}
 )
 @KafkaListener(
-  topics = "transfer.credit",
+  topics = "transfer.reserved",
   containerFactory = "listenerContainerFactory",
   groupId = "credit-group"
 )
@@ -37,12 +37,11 @@ public class CreditEventListener {
   private final CreditStep creditStep;
   private final TransferChain chain;
   private final TransferEventPublisher publisher;
+  private final TransactionAggregateRepository repository;
 
   @KafkaHandler(isDefault = true)
   public void handle(TransferEvent event, Acknowledgment ack) {
-    var context = TransferContext.builder()
-        .transactionId(event.transactionId())
-        .build();
+    var context = repository.findById(event.transactionId());
 
     chain.executeStep(creditStep, context);
 
@@ -52,15 +51,12 @@ public class CreditEventListener {
 
   @DltHandler
   public void dlt(
-      TransferEvent event,
-      @Header(KafkaHeaders.EXCEPTION_MESSAGE) String errorMessage,
-      Acknowledgment ack
+    TransferEvent event,
+    @Header(KafkaHeaders.EXCEPTION_MESSAGE) String errorMessage,
+    Acknowledgment ack
   ) {
     log.error("DLT: credit failed for transactionId={}, reason={}", event.transactionId(), errorMessage);
-
-    var context = TransferContext.builder()
-        .transactionId(event.transactionId())
-        .build();
+    var context = repository.findById(event.transactionId());
 
     try {
       // compensa em reverso: credit → reserveBalance → authorize(no-op) → validate
@@ -70,8 +66,8 @@ public class CreditEventListener {
     }
 
     publisher.publish(event
-        .withStatus(TransactionStatus.FAILED.name())
-        .withStatusDetails(errorMessage));
+      .withStatus(TransactionStatus.FAILED.name())
+      .withStatusDetails(errorMessage));
     ack.acknowledge();
   }
 }

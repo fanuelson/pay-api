@@ -1,10 +1,10 @@
 package com.example.demo.infra.http.input.controller;
 
+import com.example.demo.domain.notification.NotificationEventPublisher;
 import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
 import com.example.demo.domain.model.Transaction;
 import com.example.demo.domain.model.TransactionStatus;
-import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.application.port.out.service.LockService;
@@ -75,7 +75,7 @@ public class TestController {
         .payerId(1L)
         .payeeId(2L)
         .amountInCents(200L)
-        .status(TransactionStatus.PENDING)
+        .status(TransactionStatus.CREATED)
         .build()
     );
     createNotificationUseCase.execute(CreateNotificationCommand.of(t.getId(), 2L, "heeey"));

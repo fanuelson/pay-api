@@ -1,6 +1,6 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ public class PayeeExistsValidator implements TransferValidator {
   private final UserRepository userRepository;
 
   @Override
-  public ValidationResult validate(final TransferContext context) {
+  public ValidationResult validate(final TransactionAggregate context) {
     var errors = new ArrayList<ValidationError>();
     userRepository.findById(context.getPayeeId()).ifPresentOrElse(
       context::setPayee,

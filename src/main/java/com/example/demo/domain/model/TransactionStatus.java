@@ -1,7 +1,7 @@
 package com.example.demo.domain.model;
 
 public enum TransactionStatus {
-    PENDING,      // Transação criada, aguardando processamento
+    CREATED,      // Transação criada, aguardando processamento
     VALIDATED,
     RESERVED,
     AUTHORIZED,   // Autorizada pelo serviço externo

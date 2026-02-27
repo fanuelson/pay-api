@@ -1,9 +1,9 @@
 package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
-import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.model.NotificationStatus;
-import com.example.demo.domain.model.NotificationChannel;
+import com.example.demo.domain.notification.Notification;
+import com.example.demo.domain.notification.NotificationStatus;
+import com.example.demo.domain.notification.NotificationChannel;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import com.example.demo.infra.repository.jpa.config.JpaConfig;
 import com.example.demo.infra.repository.mapper.NotificationMapperImpl;

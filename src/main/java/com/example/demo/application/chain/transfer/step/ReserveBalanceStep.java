@@ -1,6 +1,6 @@
 package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.domain.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +18,14 @@ public class ReserveBalanceStep implements TransferHandler {
   }
 
   @Override
-  public void execute(TransferContext context) {
+  public void execute(TransactionAggregate context) {
     var wallet = context.getPayerWallet();
     wallet.reserve(context.getAmountInCents());
     walletRepository.update(wallet.getId(), wallet);
   }
 
   @Override
-  public void compensate(TransferContext context, Exception cause) {
+  public void compensate(TransactionAggregate context, Exception cause) {
     var wallet = context.getPayerWallet();
     wallet.releaseReserve(context.getAmountInCents());
     walletRepository.update(wallet.getId(), wallet);

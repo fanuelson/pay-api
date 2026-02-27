@@ -1,6 +1,6 @@
 package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.application.port.out.service.AuthorizationService;
 import com.example.demo.domain.exception.BusinessException;
@@ -23,7 +23,7 @@ public class AuthorizeStep implements TransferHandler {
   }
 
   @Override
-  public void execute(TransferContext context) {
+  public void execute(TransactionAggregate context) {
     var response = authorizationService.authorize(
         context.getPayerId(),
         context.getPayeeId(),

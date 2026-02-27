@@ -1,7 +1,8 @@
 package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.chain.transfer.TransferContext;
 import com.example.demo.application.chain.transfer.TransferHandler;
+import com.example.demo.domain.model.TransactionAggregate;
+import com.example.demo.domain.repository.TransactionRepository;
 import com.example.demo.domain.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class CreditStep implements TransferHandler {
 
   private final WalletRepository walletRepository;
+  private final TransactionRepository transactionRepository;
 
   @Override
   public String name() {
@@ -20,7 +22,7 @@ public class CreditStep implements TransferHandler {
 
   @Override
   @Transactional
-  public void execute(TransferContext context) {
+  public void execute(TransactionAggregate context) {
     var payerWallet = context.getPayerWallet();
     var payeeWallet = context.getPayeeWallet();
     final var amount = context.getAmountInCents();
@@ -28,11 +30,13 @@ public class CreditStep implements TransferHandler {
     payeeWallet.credit(amount);
     walletRepository.update(payerWallet.getId(), payerWallet);
     walletRepository.update(payeeWallet.getId(), payeeWallet);
+    context.getTransaction().completed();
+    transactionRepository.update(context.getTransactionId(), context.getTransaction());
   }
 
   @Override
   @Transactional
-  public void compensate(TransferContext context, Exception cause) {
+  public void compensate(TransactionAggregate context, Exception cause) {
     var payerWallet = context.getPayerWallet();
     var payeeWallet = context.getPayeeWallet();
     final var amount = context.getAmountInCents();
@@ -40,5 +44,7 @@ public class CreditStep implements TransferHandler {
     payeeWallet.debit(amount);
     walletRepository.update(payerWallet.getId(), payerWallet);
     walletRepository.update(payeeWallet.getId(), payeeWallet);
+    context.getTransaction().failed(cause.getMessage());
+    transactionRepository.update(context.getTransactionId(), context.getTransaction());
   }
 }

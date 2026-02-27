@@ -1,7 +1,7 @@
 package com.example.demo.infra.repository.jpa.entities;
 
 import com.example.demo.domain.helper.StringHelper;
-import com.example.demo.domain.model.NotificationChannel;
+import com.example.demo.domain.notification.NotificationChannel;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

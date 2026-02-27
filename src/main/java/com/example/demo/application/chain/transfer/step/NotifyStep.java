@@ -1,6 +1,6 @@
 package com.example.demo.application.chain.transfer.step;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 import com.example.demo.application.chain.transfer.TransferHandler;
 import com.example.demo.application.port.in.CreateNotificationCommand;
 import com.example.demo.application.usecase.CreateNotificationUseCase;
@@ -19,7 +19,7 @@ public class NotifyStep implements TransferHandler {
   }
 
   @Override
-  public void execute(TransferContext context) {
+  public void execute(TransactionAggregate context) {
     var transaction = context.getTransaction();
 
     createNotificationUseCase.execute(CreateNotificationCommand.of(

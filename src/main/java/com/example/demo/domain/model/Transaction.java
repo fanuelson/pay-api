@@ -32,7 +32,7 @@ public class Transaction {
     this.payerId = payerId;
     this.payeeId = payeeId;
     this.amountInCents = amountInCents;
-    this.status = TransactionStatus.PENDING;
+    this.status = TransactionStatus.CREATED;
     this.createdAt = LocalDateTime.now();
   }
 
@@ -42,8 +42,8 @@ public class Transaction {
   }
 
   public void completed() {
-    if (isNotPending() || isNotAuthorized()) {
-      throw new IllegalStateException("Apenas transações AUTHORIZED ou PENDING podem ser completadas");
+    if (isNotPending() && isNotAuthorized()) {
+      throw new IllegalStateException("Apenas transações AUTHORIZED ou PENDING podem ser completadas, current: " + status.name());
     }
     this.status = TransactionStatus.COMPLETED;
     this.completedAt = LocalDateTime.now();
@@ -72,6 +72,6 @@ public class Transaction {
   }
 
   public boolean isNotPending() {
-    return status != TransactionStatus.PENDING;
+    return status != TransactionStatus.CREATED;
   }
 }

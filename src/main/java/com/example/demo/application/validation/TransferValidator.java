@@ -1,5 +1,5 @@
 package com.example.demo.application.validation;
 
-import com.example.demo.application.chain.transfer.TransferContext;
+import com.example.demo.domain.model.TransactionAggregate;
 
-public interface TransferValidator extends Validator<TransferContext> {}
+public interface TransferValidator extends Validator<TransactionAggregate> {}

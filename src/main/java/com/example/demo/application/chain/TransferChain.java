@@ -1,9 +1,8 @@
 package com.example.demo.application.chain;
 
-import com.example.demo.application.chain.transfer.TransferContext;
 import com.example.demo.application.chain.transfer.TransferHandler;
+import com.example.demo.domain.model.TransactionAggregate;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,20 @@ public final class TransferChain {
     this.handlers = List.copyOf(handlers);
   }
 
+  public static Builder start(TransferHandler first) {
+    return new Builder(first);
+  }
+
+  public static Builder start() {
+    return new Builder();
+  }
+
   /**
    * Executa todos os handlers em sequência.
    * Em caso de falha, compensa os handlers já executados em ordem reversa.
    * Usado para execução local (síncrona).
    */
-  public void execute(TransferContext context) {
+  public void execute(TransactionAggregate context) {
     var executed = new ArrayDeque<TransferHandler>();
     for (var handler : handlers) {
       try {
@@ -42,8 +49,7 @@ public final class TransferChain {
    * O primeiro handler da chain (LoadData) é sempre executado antes.
    * Usado pelos Kafka listeners no fluxo distribuído.
    */
-  public void executeStep(TransferHandler target, TransferContext context) {
-    handlers.getFirst().execute(context);
+  public void executeStep(TransferHandler target, TransactionAggregate context) {
     log.info("Executing handler: {}", target.name());
     target.execute(context);
   }
@@ -53,16 +59,9 @@ public final class TransferChain {
    * O target em si NÃO é compensado — ele falhou e nunca completou com sucesso.
    * Usado pelos @DltHandler: cada listener só precisa passar seu próprio handler.
    */
-  public void compensateFrom(TransferHandler target, TransferContext context, Exception cause) {
-    try {
-      handlers.getFirst().execute(context);
-    } catch (Exception e) {
-      log.error("Failed to load data for compensation. transactionId={}", context.getTransactionId(), e);
-      return;
-    }
-
+  public void compensateFrom(TransferHandler target, TransactionAggregate context, Exception cause) {
     int idx = indexOf(target);
-    for (int i = idx - 1; i >= 1; i--) {
+    for (int i = idx - 1; i >= 0; i--) {
       safeCompensate(handlers.get(i), context, cause);
     }
   }
@@ -74,7 +73,7 @@ public final class TransferChain {
     throw new IllegalArgumentException("Handler not registered in chain: " + target.name());
   }
 
-  private void safeCompensate(TransferHandler handler, TransferContext context, Exception cause) {
+  private void safeCompensate(TransferHandler handler, TransactionAggregate context, Exception cause) {
     try {
       log.info("Compensating handler: {}", handler.name());
       handler.compensate(context, cause);
@@ -83,16 +82,15 @@ public final class TransferChain {
     }
   }
 
-  public static Builder start(TransferHandler first) {
-    return new Builder(first);
-  }
-
   public static final class Builder {
 
     private final List<TransferHandler> handlers = new ArrayList<>();
 
     private Builder(TransferHandler first) {
       handlers.add(first);
+    }
+
+    private Builder() {
     }
 
     public Builder then(TransferHandler next) {

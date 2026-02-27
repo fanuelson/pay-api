@@ -1,8 +1,9 @@
 package com.example.demo.infra.messaging.listener;
 
 import com.example.demo.application.port.in.SendNotificationCommand;
-import com.example.demo.application.port.out.event.NotificationEvent;
 import com.example.demo.application.usecase.SendNotificationUseCase;
+import com.example.demo.domain.notification.NotificationEvent;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.*;
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Component;
   backOff = @BackOff(delayString = "5000ms"),
   attempts = "5",
   numPartitions = "5",
-  concurrency = "5"
+  concurrency = "5",
+  exclude = {CallNotPermittedException.class}
 )
 @KafkaListener(
   topics = "${kafka.topics.notification-events}",
@@ -31,7 +33,7 @@ public class NotificationEventListener {
 
   @KafkaHandler(isDefault = true)
   public void onNotificationEvent(NotificationEvent event, Acknowledgment ack) {
-    sendNotificationUseCase.execute(SendNotificationCommand.of(event.getNotificationId()));
+    sendNotificationUseCase.execute(SendNotificationCommand.of(event.notificationId()));
     ack.acknowledge();
   }
 
@@ -41,7 +43,7 @@ public class NotificationEventListener {
     @Header(KafkaHeaders.EXCEPTION_MESSAGE) String errorMessage,
     Acknowledgment ack
   ) {
-    sendNotificationUseCase.handleFailure(event.getNotificationId(), errorMessage);
+    sendNotificationUseCase.handleFailure(event.notificationId(), errorMessage);
     ack.acknowledge();
   }
 

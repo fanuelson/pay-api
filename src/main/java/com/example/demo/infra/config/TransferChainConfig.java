@@ -10,21 +10,20 @@ public class TransferChainConfig {
 
   @Bean
   public TransferChain transferChain(
-      LoadDataStep loadData,
-      ValidateStep validate,
-      ReserveBalanceStep reserveBalance,
-      AuthorizeStep authorize,
-      CreditStep credit,
-      CompleteStep complete,
-      NotifyStep notify
+    ValidateStep validate,
+    ReserveBalanceStep reserveBalance,
+    AuthorizeStep authorize,
+    CreditStep credit,
+    CompleteStep complete,
+    NotifyStep notify
   ) {
-    return TransferChain.start(loadData)
-        .then(validate)
-        .then(authorize)
-        .then(reserveBalance)
-        .then(credit)
-        .then(complete)
-        .then(notify)
-        .build();
+    return TransferChain.start()
+      .then(validate)
+      .then(authorize)
+      .then(reserveBalance)
+      .then(credit)
+      .then(complete)
+      .then(notify)
+      .build();
   }
 }

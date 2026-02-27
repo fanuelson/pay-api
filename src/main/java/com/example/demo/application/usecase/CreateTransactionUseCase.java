@@ -27,7 +27,7 @@ public class CreateTransactionUseCase {
         .id(transactionId)
         .payerId(command.getPayerId())
         .payeeId(command.getPayeeId())
-        .status(TransactionStatus.PENDING)
+        .status(TransactionStatus.CREATED)
         .amountInCents(command.getAmountInCents())
         .createdAt(LocalDateTime.now())
         .build();
@@ -39,7 +39,7 @@ public class CreateTransactionUseCase {
         command.getPayerId(),
         command.getPayeeId(),
         command.getAmountInCents(),
-        TransactionStatus.PENDING.name(),
+        TransactionStatus.CREATED.name(),
         null,
         null
     );

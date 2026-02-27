@@ -2,6 +2,7 @@ package com.example.demo.infra.http.output.client;
 
 import com.example.demo.application.exceptions.NotificationException;
 import com.example.demo.application.port.out.service.NotificationService;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,13 @@ public class NotificationServiceImpl implements NotificationService {
     return true;
   }
 
-  private boolean fallback(Long userId, String email, String message, Throwable ex) {
+  private boolean fallback(Long userId, String email, String message, CallNotPermittedException ex) {
     log.warn("Circuit breaker open - userId={}, reason={}", userId, ex.getMessage());
+    throw ex;
+  }
+
+  private boolean fallback(Long userId, String email, String message, Throwable ex) {
+    log.warn("Circuit breaker open2 - userId={}, reason={}", userId, ex.getMessage());
     throw NotificationException.of(ex.getMessage());
   }
 }

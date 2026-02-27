@@ -50,9 +50,7 @@ CREATE TABLE transactions
     CONSTRAINT fk_transaction_payer FOREIGN KEY (payer_id) REFERENCES users (id),
     CONSTRAINT fk_transaction_payee FOREIGN KEY (payee_id) REFERENCES users (id),
     CONSTRAINT chk_amount CHECK (amount_in_cents > 0),
-    CONSTRAINT chk_different_users CHECK (payer_id != payee_id
-) ,
-    CONSTRAINT chk_status CHECK (status IN ('PENDING', 'AUTHORIZED', 'COMPLETED', 'FAILED', 'REVERSED'))
+    CONSTRAINT chk_different_users CHECK (payer_id != payee_id)
 );
 
 CREATE INDEX idx_transaction_payer ON transactions (payer_id);

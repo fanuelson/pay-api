@@ -1,8 +1,8 @@
 package com.example.demo.infra.repository;
 
 import com.example.demo.domain.exception.ElementNotFoundException;
-import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.repository.NotificationRepository;
+import com.example.demo.domain.notification.Notification;
+import com.example.demo.domain.notification.NotificationRepository;
 import com.example.demo.infra.repository.mapper.NotificationMapper;
 import com.example.demo.infra.repository.jpa.NotificationJpaRepository;
 import lombok.RequiredArgsConstructor;

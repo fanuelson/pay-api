@@ -2,10 +2,8 @@ package com.example.demo.application.usecase;
 
 
 import com.example.demo.application.port.in.SendNotificationCommand;
-import com.example.demo.application.port.out.event.NotificationEventPublisher;
 import com.example.demo.application.port.out.service.NotificationService;
-import com.example.demo.domain.model.Notification;
-import com.example.demo.domain.repository.NotificationRepository;
+import com.example.demo.domain.notification.*;
 import com.example.demo.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,14 +35,16 @@ public class SendNotificationUseCase {
 
     notification.sent();
     notificationRepository.update(notification);
+    notificationEventPublisher.publish(NotificationEvent.of(notificationId, notification.getStatus()));
   }
 
   public void handleFailure(Long notificationId, String reason) {
     Notification notification = notificationRepository
       .findById(notificationId)
       .orElseThrow();
-    notification.failed(reason);
+    notification.failed();
     notificationRepository.update(notification);
+    notificationEventPublisher.publish(NotificationFailedEvent.of(notificationId, reason));
   }
 
 }
