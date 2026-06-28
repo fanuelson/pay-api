@@ -58,5 +58,5 @@ ALTER TABLE users AUTO_INCREMENT = 6;
 ALTER TABLE wallets AUTO_INCREMENT = 6;
 
 -- Transação fake apenas para criar notificação
-INSERT INTO transactions (id, payer_id, payee_id, amount_in_cents, status, authorization_code, created_at, completed_at)
-VALUES ('1', 1, 2, 200, 'COMPLETED', 'AUTH-TEST', NOW(), NOW());
+INSERT INTO transactions (id, payer_id, payee_id, amount_in_cents, created_at)
+VALUES ('1', 1, 2, 200, NOW());

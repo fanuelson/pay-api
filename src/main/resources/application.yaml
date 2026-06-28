@@ -7,8 +7,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/pay-api-db?createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password:
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:rootpassword}
 
   sql:
     init:
@@ -131,7 +131,6 @@ resilience4j:
         exponentialBackoffMultiplier: 2
         retryExceptions:
           - org.springframework.web.client.RestClientException
-          - com.example.demo.infra.exception.InfraException
 
       # Notification Service - Mais tentativas (não crítico)
       notificationService:
@@ -141,7 +140,6 @@ resilience4j:
         exponentialBackoffMultiplier: 2
         retryExceptions:
           - org.springframework.web.client.RestClientException
-          - com.example.demo.infra.exception.InfraException
 
   # Time Limiter Configuration (opcional)
   timelimiter:
